@@ -134,8 +134,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         navBtnCauHoi = new javax.swing.JToggleButton();
         navBtnUser = new javax.swing.JToggleButton();
         navBtnThongKe = new javax.swing.JToggleButton();
-        navBtnThongKe1 = new javax.swing.JToggleButton();
-        navBtnThongKe3 = new javax.swing.JToggleButton();
         navBtnDangXuat = new javax.swing.JToggleButton();
         currentPanel = new javax.swing.JPanel();
         examplePanel1 = new javax.swing.JPanel();
@@ -184,19 +182,13 @@ public class DashboardFrame extends javax.swing.JFrame {
         sidePanel.add(jPanel4, java.awt.BorderLayout.NORTH);
 
         navigationPanel.setPreferredSize(new java.awt.Dimension(160, 600));
-        navigationPanel.setLayout(new java.awt.GridLayout(10, 1));
+        navigationPanel.setLayout(new java.awt.GridLayout(6, 1));
 
-        navBtnDeThi.setText("Đặt bàn");
-        navBtnDeThi.setToolTipText("");
+        navBtnDeThi.setText("Đề Thi");
         navBtnDeThi.setActionCommand("DeThi");
-        navBtnDeThi.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navBtnDeThiActionPerformed(evt);
-            }
-        });
         navigationPanel.add(navBtnDeThi);
 
-        navBtnThi.setText("Khách hàng");
+        navBtnThi.setText("Thi");
         navBtnThi.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 navBtnThiActionPerformed(evt);
@@ -204,36 +196,20 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         navigationPanel.add(navBtnThi);
 
-        navBtnCauHoi.setText("Quản lí món ăn");
-        navBtnCauHoi.setToolTipText("");
+        navBtnCauHoi.setText("Câu hỏi");
         navBtnCauHoi.setActionCommand("CauHoi");
         navigationPanel.add(navBtnCauHoi);
 
-        navBtnUser.setText("Quản lí nguyên liệu");
-        navBtnUser.setToolTipText("");
+        navBtnUser.setText("Người dùng");
         navBtnUser.setActionCommand("NguoiDung");
         navigationPanel.add(navBtnUser);
 
-        navBtnThongKe.setText("Nhà cung cấp");
+        navBtnThongKe.setText("Thống Kê");
         navBtnThongKe.setActionCommand("ThongKe");
         navigationPanel.add(navBtnThongKe);
 
-        navBtnThongKe1.setText("Nhân viên");
-        navBtnThongKe1.setActionCommand("ThongKe");
-        navigationPanel.add(navBtnThongKe1);
-
-        navBtnThongKe3.setText("Hóa đơn");
-        navBtnThongKe3.setToolTipText("");
-        navBtnThongKe3.setActionCommand("ThongKe");
-        navigationPanel.add(navBtnThongKe3);
-
         navBtnDangXuat.setText("Đăng xuất");
         navBtnDangXuat.setActionCommand("DangXuat");
-        navBtnDangXuat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                navBtnDangXuatActionPerformed(evt);
-            }
-        });
         navigationPanel.add(navBtnDangXuat);
 
         sidePanel.add(navigationPanel, java.awt.BorderLayout.WEST);
@@ -268,14 +244,6 @@ public class DashboardFrame extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void navBtnDeThiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navBtnDeThiActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_navBtnDeThiActionPerformed
-
-    private void navBtnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_navBtnDangXuatActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_navBtnDangXuatActionPerformed
 
     private void navBtnThiActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_navBtnThiActionPerformed
         // TODO add your handling code here:
@@ -342,8 +310,6 @@ public class DashboardFrame extends javax.swing.JFrame {
     private javax.swing.JToggleButton navBtnDeThi;
     private javax.swing.JToggleButton navBtnThi;
     private javax.swing.JToggleButton navBtnThongKe;
-    private javax.swing.JToggleButton navBtnThongKe1;
-    private javax.swing.JToggleButton navBtnThongKe3;
     private javax.swing.JToggleButton navBtnUser;
     private javax.swing.JToggleButton navBtnUserInfo;
     private javax.swing.JPanel navigationPanel;

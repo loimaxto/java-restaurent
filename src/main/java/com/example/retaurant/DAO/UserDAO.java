@@ -31,8 +31,6 @@ public class UserDAO implements CrudInterface<UserDTO> {
       throw e;
     }
   }
- 
-  
 
   @Override
   public int create(UserDTO user) throws SQLException {
@@ -105,7 +103,7 @@ public class UserDAO implements CrudInterface<UserDTO> {
 
   public ArrayList<UserDTO> getAll() throws SQLException {
 
-    String sql = "SELECT * FROM tai_khoan";
+    String sql = "SELECT * FROM users";
     try (Connection connection = DBConnection.getConnection();
         PreparedStatement ps = connection.prepareStatement(sql);) {
       ResultSet rs = ps.executeQuery();
@@ -199,19 +197,4 @@ public class UserDAO implements CrudInterface<UserDTO> {
     }
     return list;
   }
-    public static void main(String[] args)  {
-        String sql = "SELECT * FROM tai_khoan";
-        try (Connection connection = DBConnection.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql);) {
-          ResultSet rs = ps.executeQuery();
-          if (rs.next()) {
-              System.out.println(rs.getString("username"));
-          }
-          
-        } catch (SQLException e) {
-          e.printStackTrace();
-        
-        }
-        
-    }
 }
