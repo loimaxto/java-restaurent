@@ -125,18 +125,22 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="1"/>
-            <Property name="rows" type="int" value="6"/>
+            <Property name="rows" type="int" value="10"/>
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JToggleButton" name="navBtnDeThi">
               <Properties>
-                <Property name="text" type="java.lang.String" value="&#x110;&#x1ec1; Thi"/>
+                <Property name="text" type="java.lang.String" value="&#x110;&#x1eb7;t b&#xe0;n"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="actionCommand" type="java.lang.String" value="DeThi"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navBtnDeThiActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JToggleButton" name="navBtnThi">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Thi"/>
+                <Property name="text" type="java.lang.String" value="Kh&#xe1;ch h&#xe0;ng"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navBtnThiActionPerformed"/>
@@ -144,19 +148,34 @@
             </Component>
             <Component class="javax.swing.JToggleButton" name="navBtnCauHoi">
               <Properties>
-                <Property name="text" type="java.lang.String" value="C&#xe2;u h&#x1ecf;i"/>
+                <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xed; m&#xf3;n &#x103;n"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="actionCommand" type="java.lang.String" value="CauHoi"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JToggleButton" name="navBtnUser">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ng&#x1b0;&#x1edd;i d&#xf9;ng"/>
+                <Property name="text" type="java.lang.String" value="Qu&#x1ea3;n l&#xed; nguy&#xea;n li&#x1ec7;u"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="actionCommand" type="java.lang.String" value="NguoiDung"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JToggleButton" name="navBtnThongKe">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Th&#x1ed1;ng K&#xea;"/>
+                <Property name="text" type="java.lang.String" value="Nh&#xe0; cung c&#x1ea5;p"/>
+                <Property name="actionCommand" type="java.lang.String" value="ThongKe"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="navBtnThongKe1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Nh&#xe2;n vi&#xea;n"/>
+                <Property name="actionCommand" type="java.lang.String" value="ThongKe"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="navBtnThongKe3">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="H&#xf3;a &#x111;&#x1a1;n"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="actionCommand" type="java.lang.String" value="ThongKe"/>
               </Properties>
             </Component>
@@ -165,6 +184,9 @@
                 <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng xu&#x1ea5;t"/>
                 <Property name="actionCommand" type="java.lang.String" value="DangXuat"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="navBtnDangXuatActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
