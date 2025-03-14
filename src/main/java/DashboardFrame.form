@@ -125,7 +125,7 @@
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridLayout">
             <Property name="columns" type="int" value="1"/>
-            <Property name="rows" type="int" value="10"/>
+            <Property name="rows" type="int" value="11"/>
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JToggleButton" name="btnDatBan">
@@ -182,6 +182,13 @@
             <Component class="javax.swing.JToggleButton" name="btnThongKe">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Th&#x1ed1;ng k&#xea;"/>
+                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="actionCommand" type="java.lang.String" value="ThongKe"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="btnKhuyenMai">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Khuy&#x1ebf;n m&#xe3;i"/>
                 <Property name="toolTipText" type="java.lang.String" value=""/>
                 <Property name="actionCommand" type="java.lang.String" value="ThongKe"/>
               </Properties>

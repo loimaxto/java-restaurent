@@ -6,6 +6,8 @@
 
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
+import com.example.retaurant.GUI.DatBan.DatBanPN;
+import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -19,35 +21,45 @@ public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
 
-
+    private DatBanPN datBanPN = new DatBanPN();
+    private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
+    
     public DashboardFrame() {
         initComponents();
         currentPanel.removeAll();
 
         cardLayout = new CardLayout();
         currentPanel.setLayout(cardLayout);
+        
         // add panel moi tai dayday
+        currentPanel.add(datBanPN,btnDatBan.getActionCommand());
+        currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
 
-    
-
-        buttonGroup.add(btnDatBan);
-        buttonGroup.add(btnMonAn);
-        buttonGroup.add(btnNguyenLieu);
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
+        buttonGroup.add(btnDatBan);
+        buttonGroup.add(btnHoaDon);
         buttonGroup.add(btnKhachHang);
-        buttonGroup.add(navBtnUserInfo);
+        buttonGroup.add(btnKhuyenMai);
+        buttonGroup.add(btnMonAn);
+        buttonGroup.add(btnNguyenLieu);
+        buttonGroup.add(btnNhanVien);
+        buttonGroup.add(btnTaiKhoan);
+        buttonGroup.add(btnThongKe);
 
         btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
         btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
-        navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
         btnDangXuat.addActionListener(e -> handleLogout());
         btnDatBan.setSelected(true);
-
+        navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
+            
         cardLayout.show(currentPanel, btnDatBan.getActionCommand());
+        
+        btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
+        btnKhuyenMai.addActionListener(e -> switchPanel(btnKhuyenMai.getActionCommand()));
         updateNavigateButton();
     }
 
@@ -137,6 +149,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnNhanVien = new javax.swing.JToggleButton();
         btnHoaDon = new javax.swing.JToggleButton();
         btnThongKe = new javax.swing.JToggleButton();
+        btnKhuyenMai = new javax.swing.JToggleButton();
         btnTaiKhoan = new javax.swing.JToggleButton();
         btnDangXuat = new javax.swing.JToggleButton();
         currentPanel = new javax.swing.JPanel();
@@ -186,7 +199,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         sidePanel.add(jPanel4, java.awt.BorderLayout.NORTH);
 
         navigationPanel.setPreferredSize(new java.awt.Dimension(160, 600));
-        navigationPanel.setLayout(new java.awt.GridLayout(10, 1));
+        navigationPanel.setLayout(new java.awt.GridLayout(11, 1));
 
         btnDatBan.setText("Đặt bàn");
         btnDatBan.setActionCommand("DeThi");
@@ -235,6 +248,11 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnThongKe.setToolTipText("");
         btnThongKe.setActionCommand("ThongKe");
         navigationPanel.add(btnThongKe);
+
+        btnKhuyenMai.setText("Khuyến mãi");
+        btnKhuyenMai.setToolTipText("");
+        btnKhuyenMai.setActionCommand("ThongKe");
+        navigationPanel.add(btnKhuyenMai);
 
         btnTaiKhoan.setText("Tài Khoản");
         btnTaiKhoan.setToolTipText("");
@@ -357,6 +375,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnDatBan;
     private javax.swing.JToggleButton btnHoaDon;
     private javax.swing.JToggleButton btnKhachHang;
+    private javax.swing.JToggleButton btnKhuyenMai;
     private javax.swing.JToggleButton btnMonAn;
     private javax.swing.JToggleButton btnNguyenLieu;
     private javax.swing.JToggleButton btnNhanVien;
