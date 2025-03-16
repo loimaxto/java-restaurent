@@ -368,7 +368,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             }
         });
     }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnCungCap;
     private javax.swing.JToggleButton btnDangXuat;

@@ -10,16 +10,19 @@ package com.example.retaurant.DAO;
  */
 
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class BanDAO {
 
     private Connection connection;
 
-    public BanDAO(Connection connection) {
-        this.connection = connection;
+    public BanDAO() {
+        connection =  DBConnection.getConnection();
     }
 
     public BanDTO getBanById(int banId) throws SQLException {
@@ -94,5 +97,15 @@ public class BanDAO {
         ban.setTinhTrangSuDung(resultSet.getInt("tinh_trang_su_dung"));
         ban.setTrangThaiBan(resultSet.getInt("trang_thai_ban"));
         return ban;
+    }
+   
+    public static void main(String[] args) {
+        BanDAO a= new BanDAO();
+        
+        try {
+            System.out.println(a.getBanById(1).toString());
+        } catch (SQLException ex) {
+            Logger.getLogger(BanDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
