@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
-
+    //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
     
@@ -31,10 +31,10 @@ public class DashboardFrame extends javax.swing.JFrame {
         cardLayout = new CardLayout();
         currentPanel.setLayout(cardLayout);
         
-        // add panel moi tai dayday
+        // add panel moi cho phần chuyển trang
         currentPanel.add(datBanPN,btnDatBan.getActionCommand());
         currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
-
+        
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
         buttonGroup.add(btnDatBan);
@@ -47,6 +47,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         buttonGroup.add(btnTaiKhoan);
         buttonGroup.add(btnThongKe);
 
+        //them sự kiện chuyển trang
         btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnDatBan.setSelected(true);
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));

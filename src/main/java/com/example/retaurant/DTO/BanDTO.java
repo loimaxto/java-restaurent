@@ -12,8 +12,8 @@ package com.example.retaurant.DTO;
 public class BanDTO {
     private Integer banId;
     private String tenBan;
-    private Integer tinhTrangSuDung;
-    private Integer trangThaiBan;
+    private Integer tinhTrangSuDung; //1 dang dat \ 2 trống
+    private Integer trangThaiBan; // 1: dung \ 2 xoa
 
     public BanDTO() {
     }

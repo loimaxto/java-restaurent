@@ -6,7 +6,9 @@ package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
 import javax.swing.JFrame;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -14,16 +16,30 @@ import javax.swing.SwingUtilities;
  */
 public class DatBanPN extends javax.swing.JPanel {
     BanBUS busBan;
+    MyTableModel model;
     public DatBanPN() {
         busBan = new BanBUS();
+        
+        
         initComponents();
         intStyle();
         
     }
     public void intStyle() {
-        table.getColumnModel().getColumn(2).setCellRenderer(new TableActionCellRender());
-    
-    }
+        model = new MyTableModel();
+        table.setModel(model);
+        table.setRowHeight(40);
+        table.setCellSelectionEnabled(false);
+        table.setRowSelectionAllowed(false);
+        table.setShowVerticalLines(false);
+        
+        MyTableModel tableModel = new MyTableModel();
+        
+
+        TableColumn column = table.getColumnModel().getColumn(2);
+        column.setCellRenderer(new ButtonCellRenderer());
+        column.setCellEditor(new ButtonCellEditor(table, tableModel));   
+}
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
