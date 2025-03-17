@@ -5,6 +5,9 @@
 package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
+import com.example.retaurant.DTO.BanDTO;
+import java.util.List;
+import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -15,16 +18,18 @@ import javax.swing.table.TableColumn;
  * @author light
  */
 public class DatBanPN extends javax.swing.JPanel {
+
     BanBUS busBan;
     MyTableModel model;
+
     public DatBanPN() {
         busBan = new BanBUS();
-        
-        
+
         initComponents();
         intStyle();
-        
+
     }
+
     public void intStyle() {
         model = new MyTableModel();
         table.setModel(model);
@@ -32,15 +37,24 @@ public class DatBanPN extends javax.swing.JPanel {
         table.setCellSelectionEnabled(false);
         table.setRowSelectionAllowed(false);
         table.setShowVerticalLines(false);
-        
-        MyTableModel tableModel = new MyTableModel();
-        
 
         TableColumn column = table.getColumnModel().getColumn(2);
         column.setCellRenderer(new ButtonCellRenderer());
-        column.setCellEditor(new ButtonCellEditor(table, tableModel));   
-}
-
+        column.setCellEditor(new ButtonCellEditor(table, model));
+        loadModelData();
+        
+    }
+    
+    public void loadModelData() {
+        List<BanDTO> listBan = busBan.getAllBans();
+        
+        for ( BanDTO item : listBan) {
+            Vector row = new Vector();
+            row.add(item.getTenBan());
+            row.add(item.getTinhTrangSuDung());
+            model.addRow(row);
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -141,7 +155,7 @@ public class DatBanPN extends javax.swing.JPanel {
         add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
 
-     public static void main(String[] args) {
+    public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Panel Runner");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
