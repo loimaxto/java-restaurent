@@ -48,12 +48,14 @@ public class DashboardFrame extends javax.swing.JFrame {
         buttonGroup.add(btnThongKe);
 
         btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
+        btnDatBan.setSelected(true);
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
         btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
+        btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
+        btnNhanVien.setSelected(true);
         btnDangXuat.addActionListener(e -> handleLogout());
-        btnDatBan.setSelected(true);
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
             
         cardLayout.show(currentPanel, btnDatBan.getActionCommand());
@@ -282,16 +284,16 @@ public class DashboardFrame extends javax.swing.JFrame {
         examplePanel1Layout.setHorizontalGroup(
             examplePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(examplePanel1Layout.createSequentialGroup()
-                .addGap(324, 324, 324)
+                .addGap(297, 297, 297)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(622, Short.MAX_VALUE))
+                .addContainerGap(649, Short.MAX_VALUE))
         );
         examplePanel1Layout.setVerticalGroup(
             examplePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(examplePanel1Layout.createSequentialGroup()
-                .addContainerGap(373, Short.MAX_VALUE)
+                .addGap(296, 296, 296)
                 .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(243, 243, 243))
+                .addContainerGap(320, Short.MAX_VALUE))
         );
 
         currentPanel.add(examplePanel1, "card3");

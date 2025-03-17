@@ -9,27 +9,28 @@ package com.example.retaurant.DTO;
  * @author ASUS
  */
 public class TaiKhoan {
-    private int maNhanVien;
+    private int maTaiKhoan;
     private String tenDangNhap;
     private String matKhau;
     private String quyen;
-
+    private int trangThai;
     public TaiKhoan() {
     }
 
-    public TaiKhoan(int maNhanVien, String tenDangNhap, String matKhau, String quyen) {
-        this.maNhanVien = maNhanVien;
+    public TaiKhoan(int maTaiKhoan, String tenDangNhap, String matKhau, String quyen , int trangThai) {
+        this.maTaiKhoan = maTaiKhoan;
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
         this.quyen = quyen;
+        this.trangThai = trangThai ; 
     }
 
-    public int getMaNhanVien() {
-        return maNhanVien;
+    public int getMaTaiKhoan() {
+        return maTaiKhoan;
     }
 
-    public void setMaNhanVien(int maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setMaTaiKhoan(int maTaiKhoan) {
+        this.maTaiKhoan = maTaiKhoan;
     }
 
     public String getTenDangNhap() {
@@ -54,5 +55,13 @@ public class TaiKhoan {
 
     public void setQuyen(String quyen) {
         this.quyen = quyen;
+    }
+
+    public int getTrangThai() {
+        return trangThai;
+    }
+
+    public void setTrangThai(int trangThai) {
+        this.trangThai = trangThai;
     }
 }

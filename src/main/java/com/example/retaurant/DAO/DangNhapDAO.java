@@ -26,15 +26,15 @@ public class DangNhapDAO {
             return null;
         }
         try {
-            String sql = "SELECT * FROM taikhoan WHERE TenDangNhap=? AND MatKhau=? AND TrangThai=1";
+            String sql = "SELECT * FROM tai_khoan WHERE username=? AND password=? AND trang_thai=1";
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, tk.getTenDangNhap());
             pre.setString(2, tk.getMatKhau());
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
                 tkLogin = tk;
-                tkLogin.setMaNhanVien(rs.getInt("MaNV"));
-                tkLogin.setQuyen(rs.getString("Quyen"));
+                tkLogin.setTenDangNhap(rs.getString("username"));
+                tkLogin.setQuyen(rs.getString("quyen"));
             }
             return tkLogin;
         } catch (SQLException e) {

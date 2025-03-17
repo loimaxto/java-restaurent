@@ -27,13 +27,14 @@ public class DBConnection {
             String PASSWORD = props.getProperty("db.password");
 
             Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("Connect DB successfully");
+            
             return DriverManager.getConnection(URL, USER, PASSWORD);
         } catch (ClassNotFoundException e) {
             System.out.println("MySQL Driver not found! or Unable to load config file");
             e.printStackTrace();
         } catch (SQLException e) {
             System.out.println("Database connection failed!");
+            System.out.println(e);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(DBConnection.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) { 
@@ -52,7 +53,8 @@ public class DBConnection {
         String dbUrl = props.getProperty("db.url");
         String dbUser = props.getProperty("db.user");
         String dbPassword = props.getProperty("db.password");
-
+        
+        Connection c = getConnection();
         // Use the properties to establish a database connection
         System.out.println("Database URL: " + dbUrl);
         System.out.println("Database User: " + dbUser);
