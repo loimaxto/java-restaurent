@@ -197,19 +197,4 @@ public class UserDAO implements CrudInterface<UserDTO> {
     }
     return list;
   }
-  public static void main(String[] args)  {
-        String sql = "SELECT * FROM tai_khoan";
-        try (Connection connection = DBConnection.getConnection();
-            PreparedStatement ps = connection.prepareStatement(sql);) {
-          ResultSet rs = ps.executeQuery();
-          if (rs.next()) {
-              System.out.println(rs.getString("username"));
-          }
-          
-        } catch (SQLException e) {
-          e.printStackTrace();
-        
-        }
-        
-    }
 }
