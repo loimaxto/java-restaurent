@@ -6,6 +6,9 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.MonAnDAO;
 import com.example.retaurant.DTO.MonAnDTO;
+import com.example.retaurant.utils.DBConnection;
+
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,10 +19,11 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class MonAnBUS {
-    private MonAnDAO monAnDAO;
-
-    public MonAnBUS(MonAnDAO monAnDAO) {
-        this.monAnDAO = monAnDAO;
+    
+    private Connection connection = DBConnection.getConnection();
+    private MonAnDAO monAnDAO ;
+    public MonAnBUS() {
+        monAnDAO = new MonAnDAO(connection);
     }
 
    public List<MonAnDTO> getAllMonAn() {
@@ -68,4 +72,11 @@ public class MonAnBUS {
         }
     }
     
+    public static void main(String[] args) {
+        MonAnBUS monAnBUS = new MonAnBUS();
+        List<MonAnDTO> dsMonAn = monAnBUS.getAllMonAn();
+        for (MonAnDTO monAn : dsMonAn) {
+            System.out.println("ID: " + monAn.getSpId() + ", Tên món ăn: " + monAn.getTenSp() + ", Gia tần: " + monAn.getGiaSp() + ", Trang thái: " + monAn.getTrangThai());        
+        }
+    }
 }
