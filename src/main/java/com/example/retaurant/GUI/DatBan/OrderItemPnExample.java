@@ -20,11 +20,11 @@ public class OrderItemPnExample extends JFrame {
         setLayout(new FlowLayout());
 
         // Create an OrderItemPn
-        OrderItemPn itemPanel = new OrderItemPn("Pizza", 12.50, 2);
+        OrderItemPn itemPanel = new OrderItemPn("Pizza", 2);
         add(itemPanel);
 
         // Create Another OrderItemPn
-        OrderItemPn itemPanel2 = new OrderItemPn("Burger", 8.00, 1);
+        OrderItemPn itemPanel2 = new OrderItemPn("Burger", 1);
         add(itemPanel2);
 
         setVisible(true);

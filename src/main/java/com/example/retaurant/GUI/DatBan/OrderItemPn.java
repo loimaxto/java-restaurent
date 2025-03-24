@@ -19,15 +19,12 @@ public class OrderItemPn extends JPanel {
     private double itemPrice;
     private int quantity;
     private JLabel itemNameLabel;
-    private JLabel priceLabel;
     private JLabel quantityLabel;
-    private JLabel sumPriceLabel;
     private JButton increaseButton;
     private JButton decreaseButton;
 
-    public OrderItemPn(String itemName, double itemPrice, int quantity) {
+    public OrderItemPn(String itemName, int quantity) {
         this.itemName = itemName;
-        this.itemPrice = itemPrice;
         this.quantity = quantity;
 
         setLayout(new GridBagLayout());
@@ -39,22 +36,15 @@ public class OrderItemPn extends JPanel {
 
         // Item Name
         itemNameLabel = new JLabel(itemName);
+        itemNameLabel.setPreferredSize(new Dimension(150, itemNameLabel.getPreferredSize().height));
+        itemNameLabel.setMinimumSize(new Dimension(100, itemNameLabel.getPreferredSize().height));
+        itemNameLabel.setBackground(Color.red);
         add(itemNameLabel, gbc);
-
-        // Price
-        gbc.gridx++;
-        priceLabel = new JLabel("$" + String.format("%.2f", itemPrice));
-        add(priceLabel, gbc);
 
         // Quantity
         gbc.gridx++;
         quantityLabel = new JLabel(String.valueOf(quantity));
         add(quantityLabel, gbc);
-
-        // Sum Price
-        gbc.gridx++;
-        sumPriceLabel = new JLabel("$" + String.format("%.2f", itemPrice * quantity));
-        add(sumPriceLabel, gbc);
 
         // Increase Button
         gbc.gridx++;
@@ -93,15 +83,10 @@ public class OrderItemPn extends JPanel {
 
     private void updateQuantity() {
         quantityLabel.setText(String.valueOf(quantity));
-        sumPriceLabel.setText("$" + String.format("%.2f", itemPrice * quantity));
     }
 
     public int getQuantity(){
         return quantity;
-    }
-
-    public double getSumPrice(){
-        return itemPrice * quantity;
     }
 
     public String getItemName(){

@@ -9,20 +9,20 @@ package com.example.retaurant.DAO;
  *
  * @author light
  */
-import com.example.retaurant.DTO.BillDTO;
+import com.example.retaurant.DTO.HoaDonDTO;
+import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BillDAO {
+public class HoaDonDAO {
 
     private Connection connection;
-
-    public BillDAO(Connection connection) {
-        this.connection = connection;
+    public HoaDonDAO( ) {
+        this.connection = DBConnection.getConnection();
     }
 
-    public BillDTO getBillById(Integer hdId) throws SQLException {
+    public HoaDonDTO getBillById(Integer hdId) throws SQLException {
         String sql = "SELECT * FROM hoa_don WHERE hd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, hdId);
@@ -35,9 +35,9 @@ public class BillDAO {
         }
     }
 
-    public List<BillDTO> getAllBills() throws SQLException {
+    public List<HoaDonDTO> getAllBills() throws SQLException {
         String sql = "SELECT * FROM hoa_don";
-        List<BillDTO> bills = new ArrayList<>();
+        List<HoaDonDTO> bills = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
             while (resultSet.next()) {
@@ -47,9 +47,9 @@ public class BillDAO {
         }
     }
 
-    public int addBill(BillDTO bill) throws SQLException {
+    public int addBill(HoaDonDTO bill) throws SQLException {
         String sql = "INSERT INTO hoa_don (thoi_gian, ghi_chu, tong_gia, kh_id, ban_id, nguoi_lap_id, km_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setTimestamp(1, bill.getThoiGian());
             statement.setByte(2, bill.getGhiChu());
             statement.setInt(3, bill.getTongGia());
@@ -89,7 +89,7 @@ public class BillDAO {
         }
     }
 
-    public boolean updateBill(BillDTO bill) throws SQLException {
+    public boolean updateBill(HoaDonDTO bill) throws SQLException {
         String sql = "UPDATE hoa_don SET thoi_gian = ?, ghi_chu = ?, tong_gia = ?, kh_id = ?, ban_id = ?, nguoi_lap_id = ?, km_id = ? WHERE hd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setTimestamp(1, bill.getThoiGian());
@@ -128,9 +128,32 @@ public class BillDAO {
             return statement.executeUpdate() > 0;
         }
     }
-    
-    private BillDTO mapResultSetToBillDTO(ResultSet resultSet) throws SQLException {
-        BillDTO bill = new BillDTO();
+   public int addDefaultHoaDon(int tableId) {
+    String sql = "INSERT INTO hoa_don (ban_id, nguoi_lap_id) VALUES (?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+        statement.setInt(1, tableId);
+        statement.setInt(2, 2); // cố định người tạo là 2
+
+        int affectedRows = statement.executeUpdate();
+        if (affectedRows == 0) {
+            throw new SQLException("Inserting hoa_don failed, no rows affected.");
+        }
+        try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Failed to retrieve the generated key.");
+            }
+        }
+    } catch (SQLException e) {
+        System.err.println("SQL Exception occurred while adding default hoa_don: " + e.getMessage());
+        e.printStackTrace();
+        return -1; // Return a default value to indicate failure
+    }
+}
+
+    private HoaDonDTO mapResultSetToBillDTO(ResultSet resultSet) throws SQLException {
+        HoaDonDTO bill = new HoaDonDTO();
         bill.setHdId(resultSet.getInt("hd_id"));
         bill.setThoiGian(resultSet.getTimestamp("thoi_gian"));
         bill.setGhiChu(resultSet.getByte("ghi_chu"));
@@ -141,4 +164,6 @@ public class BillDAO {
         bill.setKmId((Integer) resultSet.getObject("km_id"));
         return bill;
     }
+
+    
 }

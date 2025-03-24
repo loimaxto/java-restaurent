@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author light
  */
 public class BanBUS {
-    private BanDAO banDAO;
+    static private BanDAO banDAO;
 
     public BanBUS() {
         banDAO = new BanDAO();
@@ -50,6 +50,23 @@ public class BanBUS {
     }
 
     public boolean updateBan(BanDTO ban) {
+        try {
+            return banDAO.updateBan(ban);
+        } catch (SQLException e) {
+            System.out.println("Error updating ban: " + e.getMessage());
+            return false;
+        }
+    }
+    public boolean updateBanDangDuocDat(BanDTO ban, int hoaDonId) {
+        if (ban.getTinhTrangSuDung() == 0) { // chua co ai dat ban
+            ban.setTinhTrangSuDung(1-ban.getTinhTrangSuDung());
+            ban.setIdHoaDonHienTai(hoaDonId);
+        } else {
+            //huy ban or thanh toan xong
+            ban.setTinhTrangSuDung(1-ban.getTinhTrangSuDung()); 
+            ban.setIdHoaDonHienTai(null);
+        }
+        
         try {
             return banDAO.updateBan(ban);
         } catch (SQLException e) {

@@ -25,7 +25,7 @@ public class TableWithButtons extends JFrame {
 
         TableColumn column = table.getColumnModel().getColumn(2);
         column.setCellRenderer(new ButtonCellRenderer());
-        column.setCellEditor(new ButtonCellEditor(table, tableModel));
+//        column.setCellEditor(new ButtonCellEditor(table, tableModel));
 
         add(new JScrollPane(table));
         setVisible(true);

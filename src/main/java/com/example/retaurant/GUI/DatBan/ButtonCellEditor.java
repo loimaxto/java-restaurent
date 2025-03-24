@@ -1,6 +1,9 @@
 package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
+import com.example.retaurant.BUS.HoaDonBUS;
+import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.DTO.HoaDonDTO;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
@@ -12,14 +15,16 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
     private int currentRow;
     private JTable table;
     private MyTableModel tableModel;
+    private DatBanPN datBanPN;
     static private BanBUS busBan = new BanBUS();
+    static private HoaDonBUS busHoaDon = new HoaDonBUS();
     
-    public ButtonCellEditor(JTable table, MyTableModel tableModel) {
+    public ButtonCellEditor(JTable table, MyTableModel tableModel, DatBanPN datBanPN) {
         this.table = table;
         this.tableModel = tableModel;
+        this.datBanPN = datBanPN;
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
     }
-//    public int getTableID(row)
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         this.currentRow = row;
@@ -57,9 +62,17 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         button.addActionListener(e -> {
             if (currentRow != -1) {
                 Object tenBan = tableModel.getValueAt(currentRow, 0);
-                System.out.println(" dat ban: " + getTableID(tenBan.toString()));
+                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
+                System.out.println(" dat ban: " + currentIdBan);
                 
+                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan);
                 
+                datBanPN.setHoaDonForListItemPN(busHoaDon.getBillById(newHoaDonId));
+                
+                BanDTO currentBanDTO = busBan.getBanById(newHoaDonId);
+                busBan.updateBanDangDuocDat(currentBanDTO,newHoaDonId);
+                
+                datBanPN.setBanForListItemPN(currentBanDTO);
                 stopCellEditing();
             }
         });
@@ -76,7 +89,7 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         });
         return button;
     }
-     public static int getTableID(String tenBan) {
+     public static int getBanIdTuTenBan(String tenBan) {
         if (tenBan == null || tenBan.isEmpty()) {
             return -1; 
         }

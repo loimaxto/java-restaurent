@@ -7,6 +7,7 @@ package com.example.retaurant.GUI.DatBan;
 import com.example.retaurant.BUS.BanBUS;
 import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.DTO.HoaDonDTO;
 import com.example.retaurant.DTO.MonAnDTO;
 import com.example.retaurant.utils.RemoveVn;
 import java.awt.Dimension;
@@ -16,14 +17,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.table.TableColumn;
@@ -35,8 +35,9 @@ import javax.swing.table.TableColumn;
 public class DatBanPN extends javax.swing.JPanel {
 
     private BanBUS busBan;
-    private MonAnBUS busMonAn = new MonAnBUS();
+    static private MonAnBUS busMonAn = new MonAnBUS();
     MyTableModel model;
+    private ScrollableRowPanel scrollableRowPanel;
     private Timer searchTimer;
     
     private List<MonAnDTO> searchResults ;
@@ -58,9 +59,11 @@ public class DatBanPN extends javax.swing.JPanel {
 
         TableColumn column = table.getColumnModel().getColumn(2);
         column.setCellRenderer(new ButtonCellRenderer());
-        column.setCellEditor(new ButtonCellEditor(table, model));
+        column.setCellEditor(new ButtonCellEditor(table, model, this));
         loadModelData();
         
+        scrollableRowPanel = new ScrollableRowPanel();
+        bodyPN.add(scrollableRowPanel);
         
         searchTextField.addKeyListener(new KeyAdapter() {
             @Override
@@ -125,6 +128,7 @@ public class DatBanPN extends javax.swing.JPanel {
         popupMenu.revalidate();
 
     }
+   
     public void loadModelData() {
         List<BanDTO> listBan = busBan.getAllBans();
         
@@ -133,6 +137,8 @@ public class DatBanPN extends javax.swing.JPanel {
             row.add(item.getTenBan());
             row.add(item.getTinhTrangSuDung());
             model.addRow(row);
+            
+            
         }
     }
     @SuppressWarnings("unchecked")
@@ -148,11 +154,14 @@ public class DatBanPN extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
-        idTableLabel = new javax.swing.JLabel();
+        tableNameLb = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
-        itemListBillPN = new javax.swing.JPanel();
+        headerPN = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        bodyPN = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         btnPay = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
@@ -179,7 +188,7 @@ public class DatBanPN extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 542, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 347, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(56, 56, 56))
         );
@@ -237,14 +246,15 @@ public class DatBanPN extends javax.swing.JPanel {
         jPanel3.setPreferredSize(new java.awt.Dimension(200, 524));
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
-        idTableLabel.setText("ten ba");
-        idTableLabel.setMaximumSize(new java.awt.Dimension(100, 16));
-        idTableLabel.setPreferredSize(new java.awt.Dimension(50, 16));
-        jPanel3.add(idTableLabel);
-        idTableLabel.getAccessibleContext().setAccessibleName("ten ban");
+        tableNameLb.setText("ten ba");
+        tableNameLb.setMaximumSize(new java.awt.Dimension(100, 16));
+        tableNameLb.setPreferredSize(new java.awt.Dimension(50, 16));
+        jPanel3.add(tableNameLb);
+        tableNameLb.getAccessibleContext().setAccessibleName("ten ban");
 
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
-        jPanel4.setPreferredSize(new java.awt.Dimension(332, 100));
+        jPanel4.setMinimumSize(new java.awt.Dimension(88, 25));
+        jPanel4.setPreferredSize(new java.awt.Dimension(332, 60));
 
         jLabel2.setText("Tìm kiếm");
         jPanel4.add(jLabel2);
@@ -256,18 +266,19 @@ public class DatBanPN extends javax.swing.JPanel {
 
         jPanel3.add(jPanel4);
 
-        javax.swing.GroupLayout itemListBillPNLayout = new javax.swing.GroupLayout(itemListBillPN);
-        itemListBillPN.setLayout(itemListBillPNLayout);
-        itemListBillPNLayout.setHorizontalGroup(
-            itemListBillPNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 410, Short.MAX_VALUE)
-        );
-        itemListBillPNLayout.setVerticalGroup(
-            itemListBillPNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 377, Short.MAX_VALUE)
-        );
+        headerPN.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 15, 1, 1));
+        headerPN.setLayout(new java.awt.GridLayout(1, 0));
 
-        jPanel3.add(itemListBillPN);
+        jLabel4.setText("Tên");
+        headerPN.add(jLabel4);
+
+        jLabel5.setText("Số lượng");
+        headerPN.add(jLabel5);
+
+        jPanel3.add(headerPN);
+
+        bodyPN.setLayout(new java.awt.BorderLayout());
+        jPanel3.add(bodyPN);
 
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 1));
 
@@ -286,11 +297,22 @@ public class DatBanPN extends javax.swing.JPanel {
 
         add(jPanel3);
     }// </editor-fold>//GEN-END:initComponents
-
+    
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPayActionPerformed
-
+    public JPanel getListItemJPanel() {
+        return bodyPN;
+    }
+    public JLabel getTenBanLabel() {
+        return tableNameLb;
+    }
+    public void setBanForListItemPN(BanDTO banDTO){
+        this.scrollableRowPanel.setDtoBan(banDTO);
+    }
+    public void setHoaDonForListItemPN(HoaDonDTO dtoHoaDonDTO) {
+        this.scrollableRowPanel.setDtoHoaDon(dtoHoaDon);
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Panel Runner");
@@ -304,14 +326,17 @@ public class DatBanPN extends javax.swing.JPanel {
             frame.setVisible(true);
         });
     }
+   
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel bodyPN;
     private javax.swing.JButton btnPay;
     private javax.swing.JButton btnSave;
-    private javax.swing.JLabel idTableLabel;
-    private javax.swing.JPanel itemListBillPN;
+    private javax.swing.JPanel headerPN;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
@@ -322,5 +347,6 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
+    private javax.swing.JLabel tableNameLb;
     // End of variables declaration//GEN-END:variables
 }
