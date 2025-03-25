@@ -158,10 +158,10 @@ public class HoaDonDAO {
         bill.setThoiGian(resultSet.getTimestamp("thoi_gian"));
         bill.setGhiChu(resultSet.getByte("ghi_chu"));
         bill.setTongGia(resultSet.getInt("tong_gia"));
-        bill.setKhId((Integer) resultSet.getObject("kh_id"));
-        bill.setBanId((Integer) resultSet.getObject("ban_id"));
-        bill.setNguoiLapId((Integer) resultSet.getObject("nguoi_lap_id"));
-        bill.setKmId((Integer) resultSet.getObject("km_id"));
+        bill.setKhId(resultSet.getInt("kh_id"));
+        bill.setBanId( resultSet.getInt("ban_id"));
+        bill.setNguoiLapId( resultSet.getInt("nguoi_lap_id"));
+        bill.setKmId( resultSet.getInt("km_id"));
         return bill;
     }
 
