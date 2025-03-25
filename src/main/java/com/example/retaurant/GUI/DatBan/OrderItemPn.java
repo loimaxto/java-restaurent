@@ -16,7 +16,6 @@ import java.awt.event.ActionListener;
 public class OrderItemPn extends JPanel {
 
     private String itemName;
-    private double itemPrice;
     private int quantity;
     private JLabel itemNameLabel;
     private JLabel quantityLabel;
@@ -36,14 +35,15 @@ public class OrderItemPn extends JPanel {
 
         // Item Name
         itemNameLabel = new JLabel(itemName);
-        itemNameLabel.setPreferredSize(new Dimension(150, itemNameLabel.getPreferredSize().height));
-        itemNameLabel.setMinimumSize(new Dimension(100, itemNameLabel.getPreferredSize().height));
+        itemNameLabel.setPreferredSize(new Dimension(200, itemNameLabel.getPreferredSize().height));
+        itemNameLabel.setMinimumSize(new Dimension(170, itemNameLabel.getPreferredSize().height));
         itemNameLabel.setBackground(Color.red);
         add(itemNameLabel, gbc);
 
         // Quantity
         gbc.gridx++;
         quantityLabel = new JLabel(String.valueOf(quantity));
+        quantityLabel.setPreferredSize(new Dimension(40, itemNameLabel.getPreferredSize().height));
         add(quantityLabel, gbc);
 
         // Increase Button

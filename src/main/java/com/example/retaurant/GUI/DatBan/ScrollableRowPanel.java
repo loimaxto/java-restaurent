@@ -1,54 +1,74 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.example.retaurant.GUI.DatBan;
 
-/**
- *
- * @author light
- */
 import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.HoaDonDTO;
 import javax.swing.*;
 import java.awt.*;
 
 public class ScrollableRowPanel extends JPanel {
-    
-    
+
     private JPanel contentPanel;
     private JScrollPane scrollPane;
-    private GridBagConstraints gbc;
     private BanDTO dtoBan;
     private HoaDonDTO dtoHoaDon;
-    
+
     public ScrollableRowPanel() {
+        initComponent();
+    }
+
+    private void initComponent() {
         setLayout(new BorderLayout());
-        
+
+        // FlowLayout with vertical stacking
         contentPanel = new JPanel();
-        contentPanel.setLayout(new GridBagLayout());
+        contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        
+        // Ensure contentPanel can grow in height
+        contentPanel.setPreferredSize(new Dimension(300, 0)); 
 
         scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
         add(scrollPane, BorderLayout.CENTER);
-
-        gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
-        gbc.insets = new Insets(5, 5, 5, 5);
     }
 
     public void addRowPanel(JPanel rowPanel) {
-        contentPanel.add(rowPanel, gbc);
-        gbc.gridy++;
+        // Insert new row at the top by adding at index 0
+        contentPanel.add(rowPanel, 0);
+
+        // Adjust panel height dynamically
+        int newHeight = contentPanel.getComponentCount() * rowPanel.getPreferredSize().height + 20;
+        contentPanel.setPreferredSize(new Dimension(300, newHeight));
+
+        // Refresh UI
+        contentPanel.revalidate();
+        contentPanel.repaint();
+
+        // Scroll to top to make new item fully visible
+        SwingUtilities.invokeLater(() -> {
+            JViewport viewport = scrollPane.getViewport();
+            viewport.setViewPosition(new Point(0, 0));
+        });
     }
 
-    public JPanel getContentPanel(){
+    public JPanel getContentPanel() {
         return contentPanel;
+    }
+
+    public BanDTO getBanDTO() {
+        return dtoBan;
+    }
+
+    public void removeAllChildPanels() {
+        contentPanel.removeAll();
+        contentPanel.setPreferredSize(new Dimension(300, 0));
+        contentPanel.revalidate();
+        contentPanel.repaint();
+    }
+
+    public HoaDonDTO getHoaDonDTO() {
+        return dtoHoaDon;
     }
 
     public void setDtoBan(BanDTO dtoBan) {

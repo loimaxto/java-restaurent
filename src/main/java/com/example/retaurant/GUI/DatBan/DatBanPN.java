@@ -5,12 +5,16 @@
 package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
+import com.example.retaurant.BUS.CtHoaDonBUS;
+import com.example.retaurant.BUS.HoaDonBUS;
 import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.DTO.CtHoaDonDTO;
 import com.example.retaurant.DTO.HoaDonDTO;
 import com.example.retaurant.DTO.MonAnDTO;
 import com.example.retaurant.utils.RemoveVn;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -35,15 +39,20 @@ import javax.swing.table.TableColumn;
 public class DatBanPN extends javax.swing.JPanel {
 
     private BanBUS busBan;
-    static private MonAnBUS busMonAn = new MonAnBUS();
+    private HoaDonBUS busHoaDon;
+    private CtHoaDonBUS busCtHoaDon;
+    static private MonAnBUS busMonAn;
     MyTableModel model;
     private ScrollableRowPanel scrollableRowPanel;
     private Timer searchTimer;
-    
-    private List<MonAnDTO> searchResults ;
+
+    private List<MonAnDTO> searchResults;
+
     public DatBanPN() {
         busBan = new BanBUS();
-
+        busHoaDon = new HoaDonBUS();
+        busCtHoaDon = new CtHoaDonBUS();
+        busMonAn = new MonAnBUS();
         initComponents();
         intStyle();
 
@@ -61,10 +70,10 @@ public class DatBanPN extends javax.swing.JPanel {
         column.setCellRenderer(new ButtonCellRenderer());
         column.setCellEditor(new ButtonCellEditor(table, model, this));
         loadModelData();
-        
+
         scrollableRowPanel = new ScrollableRowPanel();
         bodyPN.add(scrollableRowPanel);
-        
+
         searchTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -82,11 +91,11 @@ public class DatBanPN extends javax.swing.JPanel {
                 searchTimer.setRepeats(false);
                 searchTimer.start();
             }
-            
+
         });
-        
+//        renderTest();
     }
-    
+
     private void performSearch(String query) {
         searchResults = new ArrayList<>();
         List<MonAnDTO> listMonAn = busMonAn.getAllMonAn();
@@ -106,14 +115,16 @@ public class DatBanPN extends javax.swing.JPanel {
             popupMenu.add(noResultsItem);
 
         } else {
+            // voi moi san pham trong ket qua tim kiem, them vao hoa don hien tai
             for (MonAnDTO result : searchResults) {
                 JMenuItem menuItem = new JMenuItem(result.getTenSp());
                 menuItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-//                        selectedItems.add(result);
-//                        JOptionPane.showMessageDialog(frame, "Added: " + result);
+                        System.out.println(result);
+                        themSanPhamVaoHoaDonHienTai(result);
                         popupMenu.setVisible(false);
+                        renderMonAnTrongHoaDon();
                     }
                 });
                 popupMenu.add(menuItem);
@@ -128,19 +139,52 @@ public class DatBanPN extends javax.swing.JPanel {
         popupMenu.revalidate();
 
     }
-   
+
     public void loadModelData() {
         List<BanDTO> listBan = busBan.getAllBans();
-        
-        for ( BanDTO item : listBan) {
+
+        for (BanDTO item : listBan) {
             Vector row = new Vector();
             row.add(item.getTenBan());
             row.add(item.getTinhTrangSuDung());
             model.addRow(row);
-            
-            
         }
     }
+
+    public void themSanPhamVaoHoaDonHienTai(MonAnDTO monAn) {
+        HoaDonDTO currentHoaDonDTO = scrollableRowPanel.getHoaDonDTO();
+
+        if (currentHoaDonDTO == null) {
+            System.out.println("bàn hiện tại không có hóa đơn");
+            return;
+        }
+        CtHoaDonDTO newCtHoaDon = new CtHoaDonDTO(currentHoaDonDTO.getHdId(), monAn.getSpId(), 1, monAn.getGiaSp());
+        busCtHoaDon.addCtHoaDon(newCtHoaDon);
+        System.out.println("them xong");
+    }
+
+    public void renderMonAnTrongHoaDon() {
+        scrollableRowPanel.removeAllChildPanels();
+        int hoadonId = scrollableRowPanel.getHoaDonDTO().getHdId();
+        System.out.println("hoa don hien tai: " + hoadonId);
+        ArrayList<CtHoaDonDTO> listMonAn = (ArrayList) busCtHoaDon.getAllCtHoaDonsByHoaDonId(hoadonId);
+        if (listMonAn == null) {
+            System.out.println("khong co san pham" + hoadonId);
+            return;
+        };
+        System.out.println("co san pham" + hoadonId);
+        System.out.println(listMonAn.size());
+        for (CtHoaDonDTO item : listMonAn) {
+            MonAnDTO monAnItem = busMonAn.getMonAnById(item.getSpdId());
+            OrderItemPn rowPanel = new OrderItemPn(monAnItem.getTenSp(), 1);
+            rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+            scrollableRowPanel.addRowPanel(rowPanel);
+        }
+
+    }
+
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -153,7 +197,7 @@ public class DatBanPN extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
+        leftPanel = new javax.swing.JPanel();
         tableNameLb = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -188,7 +232,7 @@ public class DatBanPN extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 347, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addGap(56, 56, 56))
         );
@@ -242,14 +286,15 @@ public class DatBanPN extends javax.swing.JPanel {
 
         add(jPanel1);
 
-        jPanel3.setMinimumSize(new java.awt.Dimension(300, 0));
-        jPanel3.setPreferredSize(new java.awt.Dimension(200, 524));
-        jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
+        leftPanel.setMaximumSize(new java.awt.Dimension(450, 2147483647));
+        leftPanel.setMinimumSize(new java.awt.Dimension(400, 0));
+        leftPanel.setPreferredSize(new java.awt.Dimension(400, 524));
+        leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.Y_AXIS));
 
         tableNameLb.setText("ten ba");
         tableNameLb.setMaximumSize(new java.awt.Dimension(100, 16));
         tableNameLb.setPreferredSize(new java.awt.Dimension(50, 16));
-        jPanel3.add(tableNameLb);
+        leftPanel.add(tableNameLb);
         tableNameLb.getAccessibleContext().setAccessibleName("ten ban");
 
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
@@ -264,7 +309,7 @@ public class DatBanPN extends javax.swing.JPanel {
         searchTextField.setPreferredSize(new java.awt.Dimension(150, 25));
         jPanel4.add(searchTextField);
 
-        jPanel3.add(jPanel4);
+        leftPanel.add(jPanel4);
 
         headerPN.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 15, 1, 1));
         headerPN.setLayout(new java.awt.GridLayout(1, 0));
@@ -275,11 +320,12 @@ public class DatBanPN extends javax.swing.JPanel {
         jLabel5.setText("Số lượng");
         headerPN.add(jLabel5);
 
-        jPanel3.add(headerPN);
+        leftPanel.add(headerPN);
 
         bodyPN.setLayout(new java.awt.BorderLayout());
-        jPanel3.add(bodyPN);
+        leftPanel.add(bodyPN);
 
+        jPanel6.setMinimumSize(new java.awt.Dimension(186, 100));
         jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 1));
 
         btnPay.setText("Thanh toán");
@@ -291,28 +337,45 @@ public class DatBanPN extends javax.swing.JPanel {
         jPanel6.add(btnPay);
 
         btnSave.setText("Lưu");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
         jPanel6.add(btnSave);
 
-        jPanel3.add(jPanel6);
+        leftPanel.add(jPanel6);
 
-        add(jPanel3);
+        add(leftPanel);
     }// </editor-fold>//GEN-END:initComponents
-    
+
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnPayActionPerformed
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnSaveActionPerformed
     public JPanel getListItemJPanel() {
         return bodyPN;
     }
+
     public JLabel getTenBanLabel() {
         return tableNameLb;
     }
-    public void setBanForListItemPN(BanDTO banDTO){
+
+    public void setTenBanXemChiTietHienTai(String name) {
+        tableNameLb.setText(name);
+    }
+
+    public void setBanForListScrollItemPN(BanDTO banDTO) {
         this.scrollableRowPanel.setDtoBan(banDTO);
     }
-    public void setHoaDonForListItemPN(HoaDonDTO dtoHoaDonDTO) {
-        this.scrollableRowPanel.setDtoHoaDon(dtoHoaDon);
+
+    public void setHoaDonForListScrollItemPN(HoaDonDTO dtoHoaDonDTO) {
+        this.scrollableRowPanel.setDtoHoaDon(dtoHoaDonDTO);
     }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Panel Runner");
@@ -326,7 +389,7 @@ public class DatBanPN extends javax.swing.JPanel {
             frame.setVisible(true);
         });
     }
-   
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyPN;
     private javax.swing.JButton btnPay;
@@ -341,10 +404,10 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel leftPanel;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
     private javax.swing.JLabel tableNameLb;

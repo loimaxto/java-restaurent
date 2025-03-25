@@ -64,15 +64,17 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
                 Object tenBan = tableModel.getValueAt(currentRow, 0);
                 int currentIdBan = getBanIdTuTenBan(tenBan.toString());
                 System.out.println(" dat ban: " + currentIdBan);
-                
+                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan );
                 int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan);
                 
-                datBanPN.setHoaDonForListItemPN(busHoaDon.getBillById(newHoaDonId));
-                
-                BanDTO currentBanDTO = busBan.getBanById(newHoaDonId);
+               
+                // lay id ban nut duoc nhan 
+                BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
                 busBan.updateBanDangDuocDat(currentBanDTO,newHoaDonId);
                 
-                datBanPN.setBanForListItemPN(currentBanDTO);
+                //cai hoa moi tao va cap nhat id hoa don cho ban hiện tại
+                datBanPN.setHoaDonForListScrollItemPN(busHoaDon.getBillById(newHoaDonId));
+                datBanPN.setBanForListScrollItemPN(currentBanDTO);
                 stopCellEditing();
             }
         });

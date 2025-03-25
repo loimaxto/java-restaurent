@@ -19,7 +19,7 @@ public class ScrollableRowPanelExample extends JFrame {
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         BanDTO a = new BanDTO();
-        ScrollableRowPanel scrollablePanel = new ScrollableRowPanel(a);
+        ScrollableRowPanel scrollablePanel = new ScrollableRowPanel();
     
         
         // Create row panels
