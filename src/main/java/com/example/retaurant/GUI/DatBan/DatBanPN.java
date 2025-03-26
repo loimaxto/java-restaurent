@@ -5,12 +5,27 @@
 package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
+import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.DTO.MonAnDTO;
+import com.example.retaurant.utils.RemoveVn;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.table.TableColumn;
 
 /**
@@ -19,9 +34,12 @@ import javax.swing.table.TableColumn;
  */
 public class DatBanPN extends javax.swing.JPanel {
 
-    BanBUS busBan;
+    private BanBUS busBan;
+    private MonAnBUS busMonAn = new MonAnBUS();
     MyTableModel model;
-
+    private Timer searchTimer;
+    
+    private List<MonAnDTO> searchResults ;
     public DatBanPN() {
         busBan = new BanBUS();
 
@@ -43,8 +61,70 @@ public class DatBanPN extends javax.swing.JPanel {
         column.setCellEditor(new ButtonCellEditor(table, model));
         loadModelData();
         
+        
+        searchTextField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (searchTimer != null) {
+                    searchTimer.stop();
+                }
+                searchTimer = new Timer(500, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent evt) {
+                        performSearch(searchTextField.getText());
+                        searchTimer.stop();
+                        searchTimer = null;
+                    }
+                });
+                searchTimer.setRepeats(false);
+                searchTimer.start();
+            }
+            
+        });
+        
     }
     
+    private void performSearch(String query) {
+        searchResults = new ArrayList<>();
+        List<MonAnDTO> listMonAn = busMonAn.getAllMonAn();
+        for (MonAnDTO item : listMonAn) {
+            String itemNoVn = RemoveVn.removeDiacritics(item.getTenSp());
+            String searchString = RemoveVn.removeDiacritics(query);
+            if (itemNoVn.toLowerCase().contains(searchString.toLowerCase())) {
+                searchResults.add(item);
+            }
+        }
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        if (searchResults.isEmpty()) {
+            JMenuItem noResultsItem = new JMenuItem("Không thấy sản phẩm");
+            noResultsItem.setEnabled(false); // Disable the item so it can't be clicked
+            popupMenu.add(noResultsItem);
+
+        } else {
+            for (MonAnDTO result : searchResults) {
+                JMenuItem menuItem = new JMenuItem(result.getTenSp());
+                menuItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+//                        selectedItems.add(result);
+//                        JOptionPane.showMessageDialog(frame, "Added: " + result);
+                        popupMenu.setVisible(false);
+                    }
+                });
+                popupMenu.add(menuItem);
+            }
+        }
+
+        // Show the popup menu below the search bar
+        Point location = searchTextField.getLocationOnScreen();
+        location.y += searchTextField.getHeight();
+        popupMenu.show(searchTextField, 0, searchTextField.getHeight());
+        popupMenu.setPreferredSize(new Dimension(searchTextField.getWidth(), popupMenu.getPreferredSize().height));
+        popupMenu.revalidate();
+
+    }
     public void loadModelData() {
         List<BanDTO> listBan = busBan.getAllBans();
         
@@ -59,6 +139,8 @@ public class DatBanPN extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -68,10 +150,17 @@ public class DatBanPN extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         idTableLabel = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        searchTextField = new javax.swing.JTextField();
+        itemListBillPN = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         btnPay = new javax.swing.JButton();
         btnSave = new javax.swing.JButton();
+
+        jMenu1.setText("jMenu1");
+
+        jMenuItem1.setText("jMenuItem1");
+        jMenu1.add(jMenuItem1);
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -149,36 +238,38 @@ public class DatBanPN extends javax.swing.JPanel {
         jPanel3.setLayout(new javax.swing.BoxLayout(jPanel3, javax.swing.BoxLayout.Y_AXIS));
 
         idTableLabel.setText("ten ba");
+        idTableLabel.setMaximumSize(new java.awt.Dimension(100, 16));
+        idTableLabel.setPreferredSize(new java.awt.Dimension(50, 16));
         jPanel3.add(idTableLabel);
+        idTableLabel.getAccessibleContext().setAccessibleName("ten ban");
 
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
         jPanel4.setPreferredSize(new java.awt.Dimension(332, 100));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 332, Short.MAX_VALUE)
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 100, Short.MAX_VALUE)
-        );
+        jLabel2.setText("Tìm kiếm");
+        jPanel4.add(jLabel2);
+
+        searchTextField.setMargin(new java.awt.Insets(2, 6, 2, 10));
+        searchTextField.setMaximumSize(new java.awt.Dimension(2147483647, 26));
+        searchTextField.setPreferredSize(new java.awt.Dimension(150, 25));
+        jPanel4.add(searchTextField);
 
         jPanel3.add(jPanel4);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 332, Short.MAX_VALUE)
+        javax.swing.GroupLayout itemListBillPNLayout = new javax.swing.GroupLayout(itemListBillPN);
+        itemListBillPN.setLayout(itemListBillPNLayout);
+        itemListBillPNLayout.setHorizontalGroup(
+            itemListBillPNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 410, Short.MAX_VALUE)
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 350, Short.MAX_VALUE)
+        itemListBillPNLayout.setVerticalGroup(
+            itemListBillPNLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 377, Short.MAX_VALUE)
         );
 
-        jPanel3.add(jPanel5);
+        jPanel3.add(itemListBillPN);
+
+        jPanel6.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 1));
 
         btnPay.setText("Thanh toán");
         btnPay.addActionListener(new java.awt.event.ActionListener() {
@@ -217,15 +308,19 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JButton btnPay;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel idTableLabel;
+    private javax.swing.JPanel itemListBillPN;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 }

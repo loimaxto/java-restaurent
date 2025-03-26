@@ -20,6 +20,7 @@ import java.util.Arrays;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
+    
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();

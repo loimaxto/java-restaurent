@@ -58,6 +58,8 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
             if (currentRow != -1) {
                 Object tenBan = tableModel.getValueAt(currentRow, 0);
                 System.out.println(" dat ban: " + getTableID(tenBan.toString()));
+                
+                
                 stopCellEditing();
             }
         });
