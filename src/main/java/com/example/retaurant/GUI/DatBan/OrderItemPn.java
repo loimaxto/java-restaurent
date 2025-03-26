@@ -8,6 +8,9 @@ package com.example.retaurant.GUI.DatBan;
  *
  * @author light
  */
+import com.example.retaurant.BUS.CtHoaDonBUS;
+import com.example.retaurant.DTO.CtHoaDonDTO;
+import com.example.retaurant.DTO.MonAnDTO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,17 +18,20 @@ import java.awt.event.ActionListener;
 
 public class OrderItemPn extends JPanel {
 
-    private String itemName;
-    private int quantity;
     private JLabel itemNameLabel;
     private JLabel quantityLabel;
     private JButton increaseButton;
     private JButton decreaseButton;
+    private CtHoaDonDTO dtoCtHoaDon;
+    private MonAnDTO dtoMonAn;
+    private DatBanPN datBanPN;
+    static private CtHoaDonBUS busCtHoaDon = new CtHoaDonBUS();
 
-    public OrderItemPn(String itemName, int quantity) {
-        this.itemName = itemName;
-        this.quantity = quantity;
-
+    public OrderItemPn(CtHoaDonDTO dtoCtHoaDonDTO, MonAnDTO dtoMonAn, DatBanPN datBanPN) {
+        this.dtoCtHoaDon = dtoCtHoaDonDTO;
+        this.dtoMonAn = dtoMonAn;
+        this.datBanPN = datBanPN;
+        
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -34,7 +40,7 @@ public class OrderItemPn extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
 
         // Item Name
-        itemNameLabel = new JLabel(itemName);
+        itemNameLabel = new JLabel(dtoMonAn.getTenSp());
         itemNameLabel.setPreferredSize(new Dimension(200, itemNameLabel.getPreferredSize().height));
         itemNameLabel.setMinimumSize(new Dimension(170, itemNameLabel.getPreferredSize().height));
         itemNameLabel.setBackground(Color.red);
@@ -42,7 +48,7 @@ public class OrderItemPn extends JPanel {
 
         // Quantity
         gbc.gridx++;
-        quantityLabel = new JLabel(String.valueOf(quantity));
+        quantityLabel = new JLabel(String.valueOf(dtoCtHoaDonDTO.getSoLuong()));
         quantityLabel.setPreferredSize(new Dimension(40, itemNameLabel.getPreferredSize().height));
         add(quantityLabel, gbc);
 
@@ -70,26 +76,35 @@ public class OrderItemPn extends JPanel {
     }
 
     private void increaseQuantity() {
-        quantity++;
+        dtoCtHoaDon.setSoLuong(dtoCtHoaDon.getSoLuong() + 1);
+
         updateQuantity();
     }
 
     private void decreaseQuantity() {
-        if (quantity > 1) {
-            quantity--;
+        if (dtoCtHoaDon.getSoLuong() <= 1) {
+            Object[] options = {"Xác nhận", "Hủy"};
+            int choice = JOptionPane.showOptionDialog(null,
+                    "Xác nhận xóa sản phẩm: " + dtoMonAn.getTenSp(),
+                    "Xác nhận",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[1]); // Default to "Không đồng ý"
+
+            if (choice == 0) { // "Đồng ý"
+                busCtHoaDon.deleteCtHoaDon(dtoCtHoaDon.getHdId(), dtoCtHoaDon.getSpdId());
+                datBanPN.renderMonAnTrongHoaDon();
+            }
+        } else {
+            dtoCtHoaDon.setSoLuong(dtoCtHoaDon.getSoLuong() + 1);
             updateQuantity();
         }
     }
 
     private void updateQuantity() {
-        quantityLabel.setText(String.valueOf(quantity));
-    }
-
-    public int getQuantity(){
-        return quantity;
-    }
-
-    public String getItemName(){
-        return itemName;
+        quantityLabel.setText(String.valueOf(dtoCtHoaDon.getSoLuong()));
+        busCtHoaDon.updateCtHoaDon(dtoCtHoaDon);
     }
 }

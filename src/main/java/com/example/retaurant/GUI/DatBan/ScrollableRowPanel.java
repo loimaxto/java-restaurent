@@ -4,6 +4,7 @@ import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.HoaDonDTO;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class ScrollableRowPanel extends JPanel {
 
@@ -11,12 +12,13 @@ public class ScrollableRowPanel extends JPanel {
     private JScrollPane scrollPane;
     private BanDTO dtoBan;
     private HoaDonDTO dtoHoaDon;
-
+    private List itemListPanel;
     public ScrollableRowPanel() {
         initComponent();
     }
 
     private void initComponent() {
+        itemListPanel = new List();
         setLayout(new BorderLayout());
 
         // FlowLayout with vertical stacking
@@ -41,9 +43,7 @@ public class ScrollableRowPanel extends JPanel {
         int newHeight = contentPanel.getComponentCount() * rowPanel.getPreferredSize().height + 20;
         contentPanel.setPreferredSize(new Dimension(300, newHeight));
 
-        // Refresh UI
-        contentPanel.revalidate();
-        contentPanel.repaint();
+        
 
         // Scroll to top to make new item fully visible
         SwingUtilities.invokeLater(() -> {
@@ -51,7 +51,10 @@ public class ScrollableRowPanel extends JPanel {
             viewport.setViewPosition(new Point(0, 0));
         });
     }
-
+    public void addEmptyLabel() {
+        JLabel emptyLabel = new JLabel("Bàn chưa gọi món");
+        contentPanel.add(emptyLabel);
+    }
     public JPanel getContentPanel() {
         return contentPanel;
     }
@@ -70,7 +73,9 @@ public class ScrollableRowPanel extends JPanel {
     public HoaDonDTO getHoaDonDTO() {
         return dtoHoaDon;
     }
-
+    public void setListOrderItem(ArrayList listMonAnOrder) {
+//        this.itemListPanel =(List) listMonAnOrder;
+    }
     public void setDtoBan(BanDTO dtoBan) {
         this.dtoBan = dtoBan;
     }

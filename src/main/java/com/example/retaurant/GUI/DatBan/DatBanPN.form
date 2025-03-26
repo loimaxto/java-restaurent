@@ -156,7 +156,7 @@
         <Property name="axis" type="int" value="1"/>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="tableNameLb">
+        <Component class="javax.swing.JLabel" name="tenBanLb">
           <Properties>
             <Property name="text" type="java.lang.String" value="ten ba"/>
             <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">

@@ -57,19 +57,21 @@ public class BanBUS {
             return false;
         }
     }
-    public boolean updateBanDangDuocDat(BanDTO ban, int hoaDonId) {
+    public boolean updateBanDangDuocDat(BanDTO ban, Integer hoaDonId) {
         if (ban.getTinhTrangSuDung() == 0) { // chua co ai dat ban
-            ban.setTinhTrangSuDung(1-ban.getTinhTrangSuDung());
+           
+            ban.setTinhTrangSuDung(1);
             ban.setIdHoaDonHienTai(hoaDonId);
         } else {
             //huy ban or thanh toan xong
-            ban.setTinhTrangSuDung(1-ban.getTinhTrangSuDung()); 
+            ban.setTinhTrangSuDung(0); 
             ban.setIdHoaDonHienTai(null);
         }
         
         try {
             return banDAO.updateBan(ban);
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println("Error updating ban: " + e.getMessage());
             return false;
         }

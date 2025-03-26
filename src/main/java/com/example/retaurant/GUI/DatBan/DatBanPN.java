@@ -26,6 +26,7 @@ import java.util.Vector;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
@@ -69,7 +70,7 @@ public class DatBanPN extends javax.swing.JPanel {
         TableColumn column = table.getColumnModel().getColumn(2);
         column.setCellRenderer(new ButtonCellRenderer());
         column.setCellEditor(new ButtonCellEditor(table, model, this));
-        loadModelData();
+        renderThongTinBan();
 
         scrollableRowPanel = new ScrollableRowPanel();
         bodyPN.add(scrollableRowPanel);
@@ -122,9 +123,10 @@ public class DatBanPN extends javax.swing.JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         System.out.println(result);
-                        themSanPhamVaoHoaDonHienTai(result);
+                        boolean isThemThanhCong = themSanPhamVaoHoaDonHienTai(result);
                         popupMenu.setVisible(false);
-                        renderMonAnTrongHoaDon();
+                        if( isThemThanhCong) renderMonAnTrongHoaDon();
+                        
                     }
                 });
                 popupMenu.add(menuItem);
@@ -140,7 +142,8 @@ public class DatBanPN extends javax.swing.JPanel {
 
     }
 
-    public void loadModelData() {
+    public void renderThongTinBan() {
+        model.resetData();
         List<BanDTO> listBan = busBan.getAllBans();
 
         for (BanDTO item : listBan) {
@@ -151,39 +154,47 @@ public class DatBanPN extends javax.swing.JPanel {
         }
     }
 
-    public void themSanPhamVaoHoaDonHienTai(MonAnDTO monAn) {
+    public boolean themSanPhamVaoHoaDonHienTai(MonAnDTO monAn) {
         HoaDonDTO currentHoaDonDTO = scrollableRowPanel.getHoaDonDTO();
 
         if (currentHoaDonDTO == null) {
             System.out.println("bàn hiện tại không có hóa đơn");
-            return;
+            JOptionPane.showMessageDialog(null, "Chưa chọn bàn!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+            return false;
+        } else {
+            CtHoaDonDTO newCtHoaDon = new CtHoaDonDTO(currentHoaDonDTO.getHdId(), monAn.getSpId(), 1, monAn.getGiaSp());
+            busCtHoaDon.addCtHoaDon(newCtHoaDon);
+            System.out.println("them xong");
+            return true;
         }
-        CtHoaDonDTO newCtHoaDon = new CtHoaDonDTO(currentHoaDonDTO.getHdId(), monAn.getSpId(), 1, monAn.getGiaSp());
-        busCtHoaDon.addCtHoaDon(newCtHoaDon);
-        System.out.println("them xong");
+
+    }
+
+    public void resetThongTinHoaDon() {
+        tenBanLb.setText("Chưa chọn bàn");
+        scrollableRowPanel.setDtoBan(null);
+        scrollableRowPanel.setDtoHoaDon(null);
+        scrollableRowPanel.removeAllChildPanels();
     }
 
     public void renderMonAnTrongHoaDon() {
         scrollableRowPanel.removeAllChildPanels();
         int hoadonId = scrollableRowPanel.getHoaDonDTO().getHdId();
-        System.out.println("hoa don hien tai: " + hoadonId);
         ArrayList<CtHoaDonDTO> listMonAn = (ArrayList) busCtHoaDon.getAllCtHoaDonsByHoaDonId(hoadonId);
         if (listMonAn == null) {
             System.out.println("khong co san pham" + hoadonId);
+            scrollableRowPanel.addEmptyLabel();
             return;
         };
-        System.out.println("co san pham" + hoadonId);
-        System.out.println(listMonAn.size());
         for (CtHoaDonDTO item : listMonAn) {
             MonAnDTO monAnItem = busMonAn.getMonAnById(item.getSpdId());
-            OrderItemPn rowPanel = new OrderItemPn(monAnItem.getTenSp(), 1);
+            OrderItemPn rowPanel = new OrderItemPn(item,monAnItem,this);
             rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
 
             scrollableRowPanel.addRowPanel(rowPanel);
         }
 
     }
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -198,7 +209,7 @@ public class DatBanPN extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         leftPanel = new javax.swing.JPanel();
-        tableNameLb = new javax.swing.JLabel();
+        tenBanLb = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
@@ -291,11 +302,11 @@ public class DatBanPN extends javax.swing.JPanel {
         leftPanel.setPreferredSize(new java.awt.Dimension(400, 524));
         leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        tableNameLb.setText("ten ba");
-        tableNameLb.setMaximumSize(new java.awt.Dimension(100, 16));
-        tableNameLb.setPreferredSize(new java.awt.Dimension(50, 16));
-        leftPanel.add(tableNameLb);
-        tableNameLb.getAccessibleContext().setAccessibleName("ten ban");
+        tenBanLb.setText("ten ba");
+        tenBanLb.setMaximumSize(new java.awt.Dimension(100, 16));
+        tenBanLb.setPreferredSize(new java.awt.Dimension(50, 16));
+        leftPanel.add(tenBanLb);
+        tenBanLb.getAccessibleContext().setAccessibleName("ten ban");
 
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
         jPanel4.setMinimumSize(new java.awt.Dimension(88, 25));
@@ -361,11 +372,11 @@ public class DatBanPN extends javax.swing.JPanel {
     }
 
     public JLabel getTenBanLabel() {
-        return tableNameLb;
+        return tenBanLb;
     }
 
     public void setTenBanXemChiTietHienTai(String name) {
-        tableNameLb.setText(name);
+        tenBanLb.setText(name);
     }
 
     public void setBanForListScrollItemPN(BanDTO banDTO) {
@@ -410,6 +421,6 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JPanel leftPanel;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
-    private javax.swing.JLabel tableNameLb;
+    private javax.swing.JLabel tenBanLb;
     // End of variables declaration//GEN-END:variables
 }

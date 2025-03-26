@@ -77,8 +77,13 @@ public class BanDAO {
             statement.setString(1, ban.getTenBan());
             statement.setInt(2, ban.getTinhTrangSuDung());
             statement.setInt(3, ban.getTrangThaiBan());
-            statement.setInt(4, ban.getBanId());
-            statement.setInt(5, ban.getIdHoaDonHienTai());
+            statement.setInt(5, ban.getBanId());
+            if (ban.getIdHoaDonHienTai() == null){
+                statement.setNull(4, Types.INTEGER);
+            } else {
+                statement.setInt(4, ban.getIdHoaDonHienTai());
+            }
+            
             return statement.executeUpdate() > 0;
         }
     }

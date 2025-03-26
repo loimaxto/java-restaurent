@@ -10,6 +10,7 @@ import java.awt.*;
 import javax.swing.AbstractCellEditor;
 
 public class ButtonCellEditor extends AbstractCellEditor implements TableCellEditor {
+
     private JPanel panel;
     private JButton detailButton, orderButton, cancelButton;
     private int currentRow;
@@ -18,13 +19,14 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
     private DatBanPN datBanPN;
     static private BanBUS busBan = new BanBUS();
     static private HoaDonBUS busHoaDon = new HoaDonBUS();
-    
+
     public ButtonCellEditor(JTable table, MyTableModel tableModel, DatBanPN datBanPN) {
         this.table = table;
         this.tableModel = tableModel;
         this.datBanPN = datBanPN;
         panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
     }
+
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         this.currentRow = row;
@@ -32,12 +34,12 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
 
         Object rowData = tableModel.getValueAt(currentRow, 1);
         if ((String) rowData != "Trống") {
-            detailButton = createDetailButton();
+            detailButton = createChiTietBtn();
             cancelButton = createCancelButton();
             panel.add(detailButton);
             panel.add(cancelButton);
         } else {
-            orderButton = createOrderButton();
+            orderButton = createDatBanBtn();
             panel.add(orderButton);
         }
 
@@ -46,54 +48,80 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         return panel;
     }
 
-    private JButton createDetailButton() {
+    private JButton createChiTietBtn() {
         JButton button = new JButton("Chi tiết");
-        button.addActionListener(e -> {
-            if (currentRow != -1) {
-                
-                System.out.println("detail" + tableModel.getRowValues(currentRow)[0]);
-                stopCellEditing();
-            }
-        });
-        return button;
-    }
-    private JButton createOrderButton() {
-        JButton button = new JButton("Đặt bàn");
         button.addActionListener(e -> {
             if (currentRow != -1) {
                 Object tenBan = tableModel.getValueAt(currentRow, 0);
                 int currentIdBan = getBanIdTuTenBan(tenBan.toString());
-                System.out.println(" dat ban: " + currentIdBan);
-                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan );
-                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan);
-                
-               
-                // lay id ban nut duoc nhan 
+                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
-                busBan.updateBanDangDuocDat(currentBanDTO,newHoaDonId);
-                
                 //cai hoa moi tao va cap nhat id hoa don cho ban hiện tại
+                datBanPN.setHoaDonForListScrollItemPN(busHoaDon.getBillById(currentBanDTO.getIdHoaDonHienTai()));
+                datBanPN.setBanForListScrollItemPN(currentBanDTO);
+                datBanPN.renderMonAnTrongHoaDon();
+            }
+        });
+        return button;
+    }
+
+    private JButton createDatBanBtn() {
+        JButton button = new JButton("Đặt bàn");
+        button.addActionListener(e -> {
+            if (currentRow != -1) {
+
+                Object tenBan = tableModel.getValueAt(currentRow, 0);
+                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
+                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
+                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan);
+
+                // lay id ban nut duoc nhan và cập nhật hóa đơn của bàn
+                BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
+                busBan.updateBanDangDuocDat(currentBanDTO, newHoaDonId);
+
+                //cap nha thoa moi tao va cap nhat id hoa don cho ban hiện tại
                 datBanPN.setHoaDonForListScrollItemPN(busHoaDon.getBillById(newHoaDonId));
                 datBanPN.setBanForListScrollItemPN(currentBanDTO);
+                datBanPN.renderThongTinBan();
+                datBanPN.renderMonAnTrongHoaDon();
                 stopCellEditing();
             }
         });
         return button;
     }
+
     private JButton createCancelButton() {
         JButton button = new JButton("Hủy");
         button.addActionListener(e -> {
             if (currentRow != -1) {
-                Object rowData = tableModel.getValueAt(currentRow, 0);
-                System.out.println(" huy " + rowData);
-                stopCellEditing();
+
+                Object tenBan = tableModel.getValueAt(currentRow, 0);
+                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
+                BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
+                Object[] options = {"Xác nhận", "Hủy"};
+                int choice = JOptionPane.showOptionDialog(null,
+                        "Chắc chắn xóa " + currentBanDTO.getTenBan() + " ?",
+                        "Xác nhận",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[1]); // Default to "Không đồng ý"
+                if (choice == JOptionPane.YES_OPTION) {
+                    busBan.updateBanDangDuocDat(currentBanDTO, null);
+                    // loai bo dto ban,dto hoa don trong panel chứa thông tin hóa đơn
+                    datBanPN.resetThongTinHoaDon();
+                    datBanPN.renderThongTinBan();
+                    stopCellEditing();
+                } 
             }
         });
         return button;
     }
-     public static int getBanIdTuTenBan(String tenBan) {
+
+    public static int getBanIdTuTenBan(String tenBan) {
         if (tenBan == null || tenBan.isEmpty()) {
-            return -1; 
+            return -1;
         }
         StringBuilder numbers = new StringBuilder();
         for (char c : tenBan.toCharArray()) {
@@ -105,12 +133,13 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
             try {
                 return Integer.parseInt(numbers.toString());
             } catch (NumberFormatException e) {
-                return -1; 
+                return -1;
             }
         } else {
-            return -1; 
+            return -1;
         }
     }
+
     @Override
     public Object getCellEditorValue() {
         return null;

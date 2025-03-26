@@ -19,10 +19,7 @@ public class MyTableModel extends AbstractTableModel {
 
     public MyTableModel() {
         data = new ArrayList<>();
-//        data.add(new Object[]{1, "Table 1", ""});
-//        data.add(new Object[]{2, "Table 2", ""});
-//        data.add(new Object[]{3, "Table 3", ""});
-//        data.add(new Object[]{4, "Table 4", ""});
+
     }
     public void addRow(Vector row) {
          data.add(new Object[]{row.get(0), getTableStatus(row.get(1)), ""});
@@ -61,5 +58,10 @@ public class MyTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 2;
+    }
+    
+    public void resetData() {
+        data.clear();  
+        fireTableDataChanged(); 
     }
 }
