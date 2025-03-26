@@ -4,10 +4,13 @@
  */
 package com.example.retaurant.GUI.DatBan;
 
+import javax.swing.JButton;
+
 /**
  *
  * @author light
  */
-public class BtnCellTableRender {
+public class ActionBtn extends JButton{
+    private boolean isVisable;
     
 }

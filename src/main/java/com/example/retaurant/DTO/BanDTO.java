@@ -12,19 +12,28 @@ package com.example.retaurant.DTO;
 public class BanDTO {
     private Integer banId;
     private String tenBan;
-    private Integer tinhTrangSuDung;
-    private Integer trangThaiBan;
-
+    private Integer tinhTrangSuDung; //1 dang dat \ 2 trống
+    private Integer trangThaiBan; // 1: dung \ 2 xoa
+    private Integer idHoaDonHienTai;
     public BanDTO() {
     }
 
-    public BanDTO(Integer banId, String tenBan, Integer tinhTrangSuDung, Integer trangThaiBan) {
+    public BanDTO(Integer banId, String tenBan, Integer tinhTrangSuDung, Integer trangThaiBan,Integer idHoaDonHienTai) {
         this.banId = banId;
         this.tenBan = tenBan;
+        this.idHoaDonHienTai = idHoaDonHienTai;
         this.tinhTrangSuDung = tinhTrangSuDung;
         this.trangThaiBan = trangThaiBan;
     }
 
+    public Integer getIdHoaDonHienTai() {
+        return idHoaDonHienTai;
+    }
+
+    public void setIdHoaDonHienTai(Integer idHoaDonHienTai) {
+        this.idHoaDonHienTai = idHoaDonHienTai;
+    }
+    
     public Integer getBanId() {
         return banId;
     }
@@ -64,6 +73,7 @@ public class BanDTO {
                 ", tenBan='" + tenBan + '\'' +
                 ", tinhTrangSuDung=" + tinhTrangSuDung +
                 ", trangThaiBan=" + trangThaiBan +
+                ", current bill=" + idHoaDonHienTai +
                 '}';
     }
 }

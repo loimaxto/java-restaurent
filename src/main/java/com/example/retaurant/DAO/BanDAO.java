@@ -72,12 +72,18 @@ public class BanDAO {
     }
 
     public boolean updateBan(BanDTO ban) throws SQLException {
-        String sql = "UPDATE ban SET ten_ban = ?, tinh_trang_su_dung = ?, trang_thai_ban = ? WHERE ban_id = ?";
+        String sql = "UPDATE ban SET ten_ban = ?, tinh_trang_su_dung = ?, trang_thai_ban = ?,id_hoadon_hientai = ? WHERE ban_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, ban.getTenBan());
             statement.setInt(2, ban.getTinhTrangSuDung());
             statement.setInt(3, ban.getTrangThaiBan());
-            statement.setInt(4, ban.getBanId());
+            statement.setInt(5, ban.getBanId());
+            if (ban.getIdHoaDonHienTai() == null){
+                statement.setNull(4, Types.INTEGER);
+            } else {
+                statement.setInt(4, ban.getIdHoaDonHienTai());
+            }
+            
             return statement.executeUpdate() > 0;
         }
     }
@@ -96,6 +102,7 @@ public class BanDAO {
         ban.setTenBan(resultSet.getString("ten_ban"));
         ban.setTinhTrangSuDung(resultSet.getInt("tinh_trang_su_dung"));
         ban.setTrangThaiBan(resultSet.getInt("trang_thai_ban"));
+        ban.setIdHoaDonHienTai(resultSet.getInt("id_hoadon_hientai"));
         return ban;
     }
    

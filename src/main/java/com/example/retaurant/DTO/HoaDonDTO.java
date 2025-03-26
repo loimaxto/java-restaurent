@@ -10,7 +10,7 @@ package com.example.retaurant.DTO;
  */
 import java.sql.Timestamp;
 
-public class BillDTO {
+public class HoaDonDTO {
     private Integer hdId; // Converted to Integer
     private Timestamp thoiGian;
     private Byte ghiChu;
@@ -20,10 +20,10 @@ public class BillDTO {
     private Integer nguoiLapId; // Converted to Integer (nullable)
     private Integer kmId; // Converted to Integer (nullable)
 
-    public BillDTO() {
+    public HoaDonDTO() {
     }
 
-    public BillDTO(Integer hdId, Timestamp thoiGian, Byte ghiChu, Integer tongGia, Integer khId, Integer banId, Integer nguoiLapId, Integer kmId) {
+    public HoaDonDTO(Integer hdId, Timestamp thoiGian, Byte ghiChu, Integer tongGia, Integer khId, Integer banId, Integer nguoiLapId, Integer kmId) {
         this.hdId = hdId;
         this.thoiGian = thoiGian;
         this.ghiChu = ghiChu;
