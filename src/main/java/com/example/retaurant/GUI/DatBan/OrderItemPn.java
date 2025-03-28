@@ -31,6 +31,8 @@ public class OrderItemPn extends JPanel {
         this.dtoCtHoaDon = dtoCtHoaDonDTO;
         this.dtoMonAn = dtoMonAn;
         this.datBanPN = datBanPN;
+        this.dtoCtHoaDon.setGiaTaiLucDat(dtoMonAn.getGiaSp());
+        busCtHoaDon.updateCtHoaDon(this.dtoCtHoaDon);
         
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -74,10 +76,10 @@ public class OrderItemPn extends JPanel {
         });
         add(decreaseButton, gbc);
     }
-
+    
     private void increaseQuantity() {
         dtoCtHoaDon.setSoLuong(dtoCtHoaDon.getSoLuong() + 1);
-
+        busCtHoaDon.updateCtHoaDon(dtoCtHoaDon);
         updateQuantity();
     }
 
@@ -98,11 +100,19 @@ public class OrderItemPn extends JPanel {
                 datBanPN.renderMonAnTrongHoaDon();
             }
         } else {
-            dtoCtHoaDon.setSoLuong(dtoCtHoaDon.getSoLuong() + 1);
+            dtoCtHoaDon.setSoLuong(dtoCtHoaDon.getSoLuong() - 1);
+            busCtHoaDon.updateCtHoaDon(dtoCtHoaDon);
             updateQuantity();
         }
     }
-
+    public MonAnDTO getMonAnDTO() {
+        return dtoMonAn;
+    }
+    
+    public CtHoaDonDTO getCtHoaDonDTO() {
+        return dtoCtHoaDon;
+    }
+    
     private void updateQuantity() {
         quantityLabel.setText(String.valueOf(dtoCtHoaDon.getSoLuong()));
         busCtHoaDon.updateCtHoaDon(dtoCtHoaDon);

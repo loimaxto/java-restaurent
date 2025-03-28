@@ -9,6 +9,7 @@ package com.example.retaurant.DAO;
  * @author light
  */
 import com.example.retaurant.DTO.CtHoaDonDTO;
+import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
 import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -36,9 +37,30 @@ public class CtHoaDonDAO {
             return ctHoaDons;
         }
     }
-
+    
+     public List<CtHoaDonDTO> getAllCtHoaDonByHoaDonIdCoTenSp(int hoadonId) throws SQLException {
+        String sql = "SELECT * FROM ct_hoa_don WHERE hd_id = ?"; // Semicolon removed
+        List<CtHoaDonDTO> ctHoaDons = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, hoadonId);
+            try(ResultSet resultSet = statement.executeQuery()) { // Executing the prepared statement
+                while (resultSet.next()) {
+                    ctHoaDons.add(
+                    new CtSanPhamThanhToanDTO(
+                            hoadonId,
+                            hoadonId,
+                            hoadonId,
+                            hoadonId,
+                            hoadonId,
+                            sql)
+                    );
+                }
+            }
+            return ctHoaDons;
+        }
+    }
     public boolean addCtHoaDon(CtHoaDonDTO ctHoaDon) throws SQLException {
-        String sql = "INSERT INTO ct_hoa_don (hd_id, spd_id, so_luong, gia_tai_luc_dat) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO ct_hoa_don (hd_id, spd_id, so_luong, gia_tai_luc_dat,tong_tien_ct) VALUES (?, ?, ?, ?,?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             if (ctHoaDon.getHdId() != null) {
                 statement.setInt(1, ctHoaDon.getHdId());
@@ -60,6 +82,11 @@ public class CtHoaDonDAO {
             } else {
                 statement.setNull(4, Types.INTEGER);
             }
+             if (ctHoaDon.getTongTienCt()!= null) {
+                statement.setInt(5, ctHoaDon.getTongTienCt());
+            } else {
+                statement.setNull(5, Types.INTEGER);
+            }
             return statement.executeUpdate() > 0;
         }
     }
@@ -71,6 +98,7 @@ public class CtHoaDonDAO {
                 statement.setInt(2, ctHoaDon.getGiaTaiLucDat());
                 statement.setInt(3, ctHoaDon.getHdId());
                 statement.setInt(4, ctHoaDon.getSpdId());
+                statement.setInt(5, ctHoaDon.getTongTienCt());
             return statement.executeUpdate() > 0;
         }
     }
@@ -98,6 +126,7 @@ public class CtHoaDonDAO {
         ctHoaDon.setSpdId( resultSet.getInt("spd_id"));
         ctHoaDon.setSoLuong( resultSet.getInt("so_luong"));
         ctHoaDon.setGiaTaiLucDat( resultSet.getInt("gia_tai_luc_dat"));
+        ctHoaDon.setTongTienCt(resultSet.getInt("tong_tien_ct"));
         return ctHoaDon;
     }
 }

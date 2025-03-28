@@ -190,7 +190,7 @@ public class DatBanPN extends javax.swing.JPanel {
             MonAnDTO monAnItem = busMonAn.getMonAnById(item.getSpdId());
             OrderItemPn rowPanel = new OrderItemPn(item,monAnItem,this);
             rowPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-
+            
             scrollableRowPanel.addRowPanel(rowPanel);
         }
 
@@ -209,17 +209,17 @@ public class DatBanPN extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         leftPanel = new javax.swing.JPanel();
-        tenBanLb = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         searchTextField = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
+        tenBanLb = new javax.swing.JLabel();
         headerPN = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         bodyPN = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         btnPay = new javax.swing.JButton();
-        btnSave = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -302,25 +302,44 @@ public class DatBanPN extends javax.swing.JPanel {
         leftPanel.setPreferredSize(new java.awt.Dimension(400, 524));
         leftPanel.setLayout(new javax.swing.BoxLayout(leftPanel, javax.swing.BoxLayout.Y_AXIS));
 
-        tenBanLb.setText("ten ba");
-        tenBanLb.setMaximumSize(new java.awt.Dimension(100, 16));
-        tenBanLb.setPreferredSize(new java.awt.Dimension(50, 16));
-        leftPanel.add(tenBanLb);
-        tenBanLb.getAccessibleContext().setAccessibleName("ten ban");
-
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
         jPanel4.setMinimumSize(new java.awt.Dimension(88, 25));
         jPanel4.setPreferredSize(new java.awt.Dimension(332, 60));
 
-        jLabel2.setText("Tìm kiếm");
+        jLabel2.setText("Tìm kiếm món ăn");
         jPanel4.add(jLabel2);
 
         searchTextField.setMargin(new java.awt.Insets(2, 6, 2, 10));
         searchTextField.setMaximumSize(new java.awt.Dimension(2147483647, 26));
-        searchTextField.setPreferredSize(new java.awt.Dimension(150, 25));
+        searchTextField.setPreferredSize(new java.awt.Dimension(250, 25));
         jPanel4.add(searchTextField);
 
         leftPanel.add(jPanel4);
+
+        tenBanLb.setText("ten ba");
+        tenBanLb.setMaximumSize(new java.awt.Dimension(100, 16));
+        tenBanLb.setPreferredSize(new java.awt.Dimension(50, 16));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(49, 49, 49)
+                .addComponent(tenBanLb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(301, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tenBanLb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(78, Short.MAX_VALUE))
+        );
+
+        tenBanLb.getAccessibleContext().setAccessibleName("ten ban");
+
+        leftPanel.add(jPanel3);
 
         headerPN.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 15, 1, 1));
         headerPN.setLayout(new java.awt.GridLayout(1, 0));
@@ -347,14 +366,6 @@ public class DatBanPN extends javax.swing.JPanel {
         });
         jPanel6.add(btnPay);
 
-        btnSave.setText("Lưu");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveActionPerformed(evt);
-            }
-        });
-        jPanel6.add(btnSave);
-
         leftPanel.add(jPanel6);
 
         add(leftPanel);
@@ -362,11 +373,15 @@ public class DatBanPN extends javax.swing.JPanel {
 
     private void btnPayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPayActionPerformed
         // TODO add your handling code here:
+        ArrayList<OrderItemPn> listOrderItemPns = scrollableRowPanel.getOrderItemPns();
+        CtHoaDonBUS ctHoaDonBUS = new CtHoaDonBUS();
+        for ( OrderItemPn item : listOrderItemPns) {
+            CtHoaDonDTO itemCtHoaDonDTO = item.getCtHoaDonDTO();
+            itemCtHoaDonDTO.setTongTienCt(itemCtHoaDonDTO.getSoLuong() * itemCtHoaDonDTO.getGiaTaiLucDat());
+            ctHoaDonBUS.updateCtHoaDon(itemCtHoaDonDTO);
+        }
+        
     }//GEN-LAST:event_btnPayActionPerformed
-
-    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSaveActionPerformed
     public JPanel getListItemJPanel() {
         return bodyPN;
     }
@@ -404,7 +419,6 @@ public class DatBanPN extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyPN;
     private javax.swing.JButton btnPay;
-    private javax.swing.JButton btnSave;
     private javax.swing.JPanel headerPN;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -415,6 +429,7 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
