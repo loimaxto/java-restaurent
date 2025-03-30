@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class MonAnGUI extends JFrame {
+public class MonAnGUI extends JPanel {
     private final JTable table;
     private final DefaultTableModel tableModel;
     private final JTextField txtTimKiem;
@@ -31,10 +31,7 @@ public class MonAnGUI extends JFrame {
     private MonAnBUS monAnBUS;
 
     public MonAnGUI() {
-        setTitle("Quản Lý Món Ăn");
-        setSize(800, 450);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+          setPreferredSize(new Dimension(800, 450));
         setLayout(new BorderLayout());
 
         JPanel panelTable = new JPanel(new BorderLayout());
@@ -188,7 +185,13 @@ public class MonAnGUI extends JFrame {
     }
         
     public static void main(String[] args) {
-        MonAnGUI monAnGUI = new MonAnGUI();
+        
+    JFrame frame = new JFrame("Quản Lý Món Ăn");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(800, 450);
+    frame.setLocationRelativeTo(null);
+    frame.setContentPane(new MonAnGUI());
+    frame.setVisible(true);
     }
 }
 
