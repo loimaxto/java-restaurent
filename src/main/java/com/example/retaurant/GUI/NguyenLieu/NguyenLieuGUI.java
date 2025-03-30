@@ -2,12 +2,21 @@ package com.example.retaurant.GUI.NguyenLieu;
 
 import com.example.retaurant.BUS.NguyenLieuBUS;
 import com.example.retaurant.DTO.NguyenLieuDTO;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.List;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.List;
 
 public class NguyenLieuGUI extends JFrame {
     private final NguyenLieuBUS nguyenLieuBUS = new NguyenLieuBUS();
@@ -156,6 +165,7 @@ public class NguyenLieuGUI extends JFrame {
         buttonPanel.add(createButton("Cập nhật", "image/check-icon.png", e -> updateNguyenLieu()));
         buttonPanel.add(createButton("Xóa", "image/delete-icon.png", e -> deleteNguyenLieu()));
         buttonPanel.add(createButton("Làm mới", "image/Refresh-icon.png", e -> clearForm()));
+        buttonPanel.add(createButton("Xuất Excel", "image/excel-icon.png", e -> exportToExcel()));
         
         return buttonPanel;
     }
@@ -168,12 +178,14 @@ public class NguyenLieuGUI extends JFrame {
         JButton button = new JButton(text);
         
         try {
-            ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
-            if (icon.getImageLoadStatus() == MediaTracker.COMPLETE) {
-                button.setIcon(new ImageIcon(icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+            java.net.URL imgURL = getClass().getResource("/" + iconPath);
+            if (imgURL != null) {
+                button.setIcon(new ImageIcon(imgURL));
+            } else {
+                System.err.println("Couldn't find icon: " + iconPath);
             }
         } catch (Exception e) {
-            System.out.println("Could not load icon: " + iconPath);
+            System.err.println("Error loading icon: " + e.getMessage());
         }
         
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -185,11 +197,7 @@ public class NguyenLieuGUI extends JFrame {
             new EmptyBorder(5, 15, 5, 15)
         ));
         button.setFocusPainted(false);
-        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        
-        if (listener != null) {
-            button.addActionListener(listener);
-        }
+        button.addActionListener(listener);
         
         return button;
     }
@@ -210,7 +218,6 @@ public class NguyenLieuGUI extends JFrame {
         ));
     }
 
-    // Business Logic Methods
     private void loadDataToTable() {
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         tableModel.setRowCount(0);
@@ -320,6 +327,65 @@ public class NguyenLieuGUI extends JFrame {
         txtTen.setText("");
         txtDonVi.setText("");
         txtSoLuong.setText("");
+    }
+
+    private void exportToExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu file Excel");
+        fileChooser.setSelectedFile(new File("NguyenLieu_Export.xlsx"));
+        
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection != JFileChooser.APPROVE_OPTION) return;
+        
+        File outputFile = fileChooser.getSelectedFile();
+        if (!outputFile.getName().toLowerCase().endsWith(".xlsx")) {
+            outputFile = new File(outputFile.getAbsolutePath() + ".xlsx");
+        }
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Nguyên Liệu");
+            
+            // Create header row with style
+            CellStyle headerStyle = workbook.createCellStyle();
+            org.apache.poi.ss.usermodel.Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+            
+            Row headerRow = sheet.createRow(0);
+            String[] headers = {"ID", "Tên Nguyên Liệu", "Đơn Vị", "Số Lượng"};
+            for (int i = 0; i < headers.length; i++) {
+                Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headers[i]);
+                cell.setCellStyle(headerStyle);
+            }
+            
+            // Export data from table
+            for (int i = 0; i < tableModel.getRowCount(); i++) {
+                Row row = sheet.createRow(i + 1);
+                for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                    Object value = tableModel.getValueAt(i, j);
+                    row.createCell(j).setCellValue(value != null ? value.toString() : "");
+                }
+            }
+            
+            // Auto-size columns
+            for (int i = 0; i < headers.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+            
+            // Write to file
+            try (FileOutputStream out = new FileOutputStream(outputFile)) {
+                workbook.write(out);
+                JOptionPane.showMessageDialog(this, 
+                    "Xuất Excel thành công!\nĐã lưu tại: " + outputFile.getAbsolutePath(),
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, 
+                "Lỗi khi xuất Excel:\n" + ex.getMessage(),
+                "Lỗi", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
