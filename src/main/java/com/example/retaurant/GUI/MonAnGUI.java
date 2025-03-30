@@ -113,6 +113,7 @@ public class MonAnGUI extends JPanel {
     
     private void loadMonAn() {
         tableModel.setRowCount(0); 
+        monAnBUS = new MonAnBUS();
         List<MonAnDTO> dsMonAn = monAnBUS.getAllMonAn();
         int stt = 1;
         for (MonAnDTO monAn : dsMonAn) {
