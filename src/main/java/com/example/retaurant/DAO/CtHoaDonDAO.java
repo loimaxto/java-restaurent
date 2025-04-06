@@ -91,14 +91,21 @@ public class CtHoaDonDAO {
         }
     }
 
-    public boolean updateCtHoaDon(CtHoaDonDTO ctHoaDon) throws SQLException {
-        String sql = "UPDATE ct_hoa_don SET so_luong = ?, gia_tai_luc_dat = ? WHERE hd_id = ? AND spd_id = ?";
+    public boolean updateCtHoaDonThemMonVaoHoaDon(CtHoaDonDTO ctHoaDon) throws SQLException {
+        String sql = "UPDATE ct_hoa_don SET so_luong = ?, gia_tai_luc_dat = ?,gia_tai_luc_dat =? WHERE hd_id = ? AND spd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
                 statement.setInt(1, ctHoaDon.getSoLuong());
-                statement.setInt(2, ctHoaDon.getGiaTaiLucDat());
-                statement.setInt(3, ctHoaDon.getHdId());
-                statement.setInt(4, ctHoaDon.getSpdId());
-                statement.setInt(5, ctHoaDon.getTongTienCt());
+                if (ctHoaDon.getGiaTaiLucDat()!= null) {
+                    statement.setInt(2, ctHoaDon.getGiaTaiLucDat());
+                    statement.setInt(3, ctHoaDon.getGiaTaiLucDat()*ctHoaDon.getSoLuong());
+                } else {
+                    statement.setNull(2, Types.INTEGER);
+                    statement.setNull(3, Types.INTEGER);
+                }
+                
+                statement.setInt(4, ctHoaDon.getHdId());
+                statement.setInt(5, ctHoaDon.getSpdId());
+               
             return statement.executeUpdate() > 0;
         }
     }

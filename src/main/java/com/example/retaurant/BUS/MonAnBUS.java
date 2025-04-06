@@ -30,11 +30,20 @@ public class MonAnBUS {
         try {
             return monAnDAO.getAllDsMonAn();
         } catch (SQLException ex) {
+            ex.printStackTrace();
             Logger.getLogger(MonAnBUS.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-
+    public List<MonAnDTO> searchMonAnByName(String keyword) {
+        try {
+            return monAnDAO.searchMonAnByName(keyword);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(MonAnBUS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     public MonAnDTO getMonAnById(int spId) {
         try {
             return monAnDAO.getMonAnById(spId);
@@ -49,6 +58,7 @@ public class MonAnBUS {
         try {
             return monAnDAO.addMonAn(monAn) > 0;
         } catch (SQLException e) {
+            e.printStackTrace();
             System.out.println("Lỗi khi thêm món ăn: " + e.getMessage());
             return false;
         }
@@ -74,9 +84,9 @@ public class MonAnBUS {
     
     public static void main(String[] args) {
         MonAnBUS monAnBUS = new MonAnBUS();
-        List<MonAnDTO> dsMonAn = monAnBUS.getAllMonAn();
+        List<MonAnDTO> dsMonAn = monAnBUS.searchMonAnByName("a");
         for (MonAnDTO monAn : dsMonAn) {
-            System.out.println("ID: " + monAn.getSpId() + ", Tên món ăn: " + monAn.getTenSp() + ", Gia tần: " + monAn.getGiaSp() + ", Trang thái: " + monAn.getTrangThai());        
+            System.out.println("ID: " + monAn.getSpId() + ", Tên món ăn: " + monAn.getTenSp() + ", Gia : " + monAn.getGiaSp() + ", Trang thái: " + monAn.getTrangThai());        
         }
     }
 }

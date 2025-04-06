@@ -46,7 +46,7 @@ public class MonAnDTO {
         return giaSp;
     }
 
-    public void setGiaSp(Integer giasp) {
+    public void setGiaSp(Integer giaSp) {
         this.giaSp = giaSp;
     }
 

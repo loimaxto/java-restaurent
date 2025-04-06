@@ -99,15 +99,10 @@ public class DatBanPN extends javax.swing.JPanel {
 
     private void performSearch(String query) {
         searchResults = new ArrayList<>();
-        List<MonAnDTO> listMonAn = busMonAn.getAllMonAn();
+        List<MonAnDTO> listMonAn = busMonAn.searchMonAnByName(query);
         for (MonAnDTO item : listMonAn) {
-            String itemNoVn = RemoveVn.removeDiacritics(item.getTenSp());
-            String searchString = RemoveVn.removeDiacritics(query);
-            if (itemNoVn.toLowerCase().contains(searchString.toLowerCase())) {
-                searchResults.add(item);
-            }
+            searchResults.add(item);
         }
-
         JPopupMenu popupMenu = new JPopupMenu();
 
         if (searchResults.isEmpty()) {
@@ -204,8 +199,13 @@ public class DatBanPN extends javax.swing.JPanel {
         jMenuItem1 = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        tenKhLabel = new javax.swing.JLabel();
+        textFieldTimKh = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        textFieldTenKh = new javax.swing.JTextField();
+        sdtTextField = new javax.swing.JLabel();
+        textFieldsdt = new javax.swing.JTextField();
+        btnThemKh = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         leftPanel = new javax.swing.JPanel();
@@ -232,9 +232,18 @@ public class DatBanPN extends javax.swing.JPanel {
 
         jPanel2.setPreferredSize(new java.awt.Dimension(708, 100));
 
-        jLabel1.setText("Đặt bàn");
+        tenKhLabel.setText("Tên khách hàng");
 
-        jLabel3.setText("jLabel3");
+        jButton1.setText("Tìm kiếm");
+
+        sdtTextField.setText("Số điện thoại");
+
+        btnThemKh.setText("Thêm khách hàng");
+        btnThemKh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemKhActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -242,22 +251,42 @@ public class DatBanPN extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 184, Short.MAX_VALUE)
-                .addComponent(jLabel3)
-                .addGap(56, 56, 56))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(tenKhLabel)
+                        .addGap(34, 34, 34)
+                        .addComponent(textFieldTenKh))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(textFieldTimKh, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(77, 77, 77)
+                        .addComponent(sdtTextField)
+                        .addGap(30, 30, 30)
+                        .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(42, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnThemKh)
+                        .addContainerGap())))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(jLabel1))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(jLabel3)))
-                .addContainerGap(56, Short.MAX_VALUE))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textFieldTimKh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
+                    .addComponent(btnThemKh))
+                .addGap(15, 15, 15)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(tenKhLabel)
+                    .addComponent(textFieldTenKh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sdtTextField)
+                    .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(31, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2);
@@ -304,7 +333,7 @@ public class DatBanPN extends javax.swing.JPanel {
 
         jPanel4.setMaximumSize(new java.awt.Dimension(32767, 40));
         jPanel4.setMinimumSize(new java.awt.Dimension(88, 25));
-        jPanel4.setPreferredSize(new java.awt.Dimension(332, 60));
+        jPanel4.setPreferredSize(new java.awt.Dimension(332, 45));
 
         jLabel2.setText("Tìm kiếm món ăn");
         jPanel4.add(jLabel2);
@@ -316,7 +345,9 @@ public class DatBanPN extends javax.swing.JPanel {
 
         leftPanel.add(jPanel4);
 
-        tenBanLb.setText("ten ba");
+        jPanel3.setPreferredSize(new java.awt.Dimension(400, 50));
+
+        tenBanLb.setText("Chưa chọn bàn");
         tenBanLb.setMaximumSize(new java.awt.Dimension(100, 16));
         tenBanLb.setPreferredSize(new java.awt.Dimension(50, 16));
 
@@ -326,15 +357,15 @@ public class DatBanPN extends javax.swing.JPanel {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(49, 49, 49)
-                .addComponent(tenBanLb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(301, Short.MAX_VALUE))
+                .addComponent(tenBanLb, javax.swing.GroupLayout.PREFERRED_SIZE, 233, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(118, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(tenBanLb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(78, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         tenBanLb.getAccessibleContext().setAccessibleName("ten ban");
@@ -382,6 +413,10 @@ public class DatBanPN extends javax.swing.JPanel {
         }
         
     }//GEN-LAST:event_btnPayActionPerformed
+
+    private void btnThemKhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemKhActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnThemKhActionPerformed
     public JPanel getListItemJPanel() {
         return bodyPN;
     }
@@ -419,10 +454,10 @@ public class DatBanPN extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyPN;
     private javax.swing.JButton btnPay;
+    private javax.swing.JButton btnThemKh;
     private javax.swing.JPanel headerPN;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JMenu jMenu1;
@@ -434,8 +469,13 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel leftPanel;
+    private javax.swing.JLabel sdtTextField;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
     private javax.swing.JLabel tenBanLb;
+    private javax.swing.JLabel tenKhLabel;
+    private javax.swing.JTextField textFieldTenKh;
+    private javax.swing.JTextField textFieldTimKh;
+    private javax.swing.JTextField textFieldsdt;
     // End of variables declaration//GEN-END:variables
 }
