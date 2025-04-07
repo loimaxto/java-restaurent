@@ -28,7 +28,6 @@ public class NguyenLieuGUI extends JFrame {
     private final JTextField txtDonVi = new JTextField();
     private final JTextField txtSoLuong = new JTextField();
     private final JTextField txtSearch = new JTextField();
-    private Image backgroundImage;
 
     public NguyenLieuGUI() {
         initComponents();
@@ -41,31 +40,14 @@ public class NguyenLieuGUI extends JFrame {
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setLocationRelativeTo(null);
 
-        try {
-            backgroundImage = new ImageIcon("image/LoginUI/background-image.jpg").getImage();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Could not load background image");
-            backgroundImage = null;
-        }
-
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10)) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-                }
-            }
-        };
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(new EmptyBorder(15, 15, 15, 15));
-        mainPanel.setOpaque(false);
+        mainPanel.setBackground(Color.WHITE);
 
         JPanel searchPanel = createSearchPanel();
         configureTable();
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(new SoftBevelBorder(BevelBorder.LOWERED));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
         JPanel inputPanel = createInputPanel();
         JPanel buttonPanel = createButtonPanel();
@@ -74,7 +56,7 @@ public class NguyenLieuGUI extends JFrame {
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         
         JPanel bottomPanel = new JPanel(new BorderLayout(10, 10));
-        bottomPanel.setOpaque(false);
+        bottomPanel.setBackground(Color.WHITE);
         bottomPanel.add(inputPanel, BorderLayout.CENTER);
         bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
         
@@ -85,15 +67,18 @@ public class NguyenLieuGUI extends JFrame {
 
     private JPanel createSearchPanel() {
         JPanel searchPanel = new JPanel(new BorderLayout(10, 10));
-        searchPanel.setOpaque(false);
+        searchPanel.setBackground(Color.WHITE);
         
         JLabel searchLabel = new JLabel("Tìm kiếm:");
-        styleLabel(searchLabel);
+        searchLabel.setFont(new Font("Arial", Font.BOLD, 14));
         
-        txtSearch.setOpaque(false);
-        styleTextField(txtSearch);
+        txtSearch.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtSearch.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         
-        JButton btnSearch = createButton("Tìm", "image/Search-icon.png");
+        JButton btnSearch = new JButton("Tìm");
+        btnSearch.setFont(new Font("Arial", Font.BOLD, 14));
+        btnSearch.setBackground(new Color(240, 240, 240));
+        btnSearch.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         btnSearch.addActionListener(e -> searchNguyenLieu());
         
         searchPanel.add(searchLabel, BorderLayout.WEST);
@@ -104,26 +89,21 @@ public class NguyenLieuGUI extends JFrame {
     }
 
     private void configureTable() {
-        table.setOpaque(false);
         table.setFillsViewportHeight(true);
-        table.setShowGrid(false);
-        table.setIntercellSpacing(new Dimension(0, 0));
+        table.setShowGrid(true);
+        table.setGridColor(Color.LIGHT_GRAY);
         table.setRowHeight(30);
         
         JTableHeader header = table.getTableHeader();
-        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        header.setBackground(new Color(70, 130, 180, 200));
-        header.setForeground(Color.WHITE);
-        header.setOpaque(false);
+        header.setFont(new Font("Arial", Font.BOLD, 14));
+        header.setBackground(Color.LIGHT_GRAY);
         
         DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value,
                     boolean isSelected, boolean hasFocus, int row, int column) {
                 super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-                setOpaque(false);
-                setBackground(isSelected ? new Color(100, 150, 200, 150) : new Color(255, 255, 255, 150));
-                setForeground(isSelected ? Color.WHITE : Color.BLACK);
+                setBackground(isSelected ? new Color(200, 200, 255) : Color.WHITE);
                 setBorder(new EmptyBorder(0, 5, 0, 5));
                 return this;
             }
@@ -135,87 +115,64 @@ public class NguyenLieuGUI extends JFrame {
     }
 
     private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        inputPanel.setOpaque(false);
-        inputPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+    JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+    inputPanel.setBackground(Color.WHITE);
+    inputPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
 
-        addInputField(inputPanel, "ID:", txtId);
-        txtId.setEditable(false);
-        addInputField(inputPanel, "Tên nguyên liệu:", txtTen);
-        addInputField(inputPanel, "Đơn vị:", txtDonVi);
-        addInputField(inputPanel, "Số lượng:", txtSoLuong);
+    // Changed: Make ID field editable but disable it visually
+    addInputField(inputPanel, "ID:", txtId);
+    txtId.setEditable(true);  // Changed from false to true
+    txtId.setEnabled(false);  // Visual indication it can't be edited directly
+    txtId.setBackground(new Color(240, 240, 240)); // Gray background to show it's disabled
+    
+    addInputField(inputPanel, "Tên nguyên liệu:", txtTen);
+    addInputField(inputPanel, "Đơn vị:", txtDonVi);
+    addInputField(inputPanel, "Số lượng:", txtSoLuong);
 
-        return inputPanel;
-    }
+    // Add row selection listener to populate fields when a row is selected
+    table.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            int selectedRow = table.getSelectedRow();
+            txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
+            txtTen.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtDonVi.setText(tableModel.getValueAt(selectedRow, 2).toString());
+            txtSoLuong.setText(tableModel.getValueAt(selectedRow, 3).toString());
+        }
+    });
+
+    return inputPanel;
+}
 
     private void addInputField(JPanel panel, String labelText, JTextField field) {
         JLabel label = new JLabel(labelText);
-        styleLabel(label);
+        label.setFont(new Font("Arial", Font.BOLD, 14));
         panel.add(label);
         
-        styleTextField(field);
+        field.setFont(new Font("Arial", Font.PLAIN, 14));
+        field.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         panel.add(field);
     }
 
     private JPanel createButtonPanel() {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        buttonPanel.setOpaque(false);
+        buttonPanel.setBackground(Color.WHITE);
         
-        buttonPanel.add(createButton("Thêm", "image/add-icon.png", e -> addNguyenLieu()));
-        buttonPanel.add(createButton("Cập nhật", "image/check-icon.png", e -> updateNguyenLieu()));
-        buttonPanel.add(createButton("Xóa", "image/delete-icon.png", e -> deleteNguyenLieu()));
-        buttonPanel.add(createButton("Làm mới", "image/Refresh-icon.png", e -> clearForm()));
-        buttonPanel.add(createButton("Xuất Excel", "image/excel-icon.png", e -> exportToExcel()));
+        buttonPanel.add(createButton("Thêm", e -> addNguyenLieu()));
+        buttonPanel.add(createButton("Cập nhật", e -> updateNguyenLieu()));
+        buttonPanel.add(createButton("Xóa", e -> deleteNguyenLieu()));
+        buttonPanel.add(createButton("Làm mới", e -> clearForm()));
+        buttonPanel.add(createButton("Xuất Excel", e -> exportToExcel()));
         
         return buttonPanel;
     }
 
-    private JButton createButton(String text, String iconPath) {
-        return createButton(text, iconPath, null);
-    }
-
-    private JButton createButton(String text, String iconPath, ActionListener listener) {
+    private JButton createButton(String text, ActionListener listener) {
         JButton button = new JButton(text);
-        
-        try {
-            java.net.URL imgURL = getClass().getResource("/" + iconPath);
-            if (imgURL != null) {
-                button.setIcon(new ImageIcon(imgURL));
-            } else {
-                System.err.println("Couldn't find icon: " + iconPath);
-            }
-        } catch (Exception e) {
-            System.err.println("Error loading icon: " + e.getMessage());
-        }
-        
-        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        button.setForeground(Color.WHITE);
-        button.setBackground(new Color(70, 130, 180, 200));
-        button.setOpaque(true);
-        button.setBorder(new CompoundBorder(
-            new LineBorder(new Color(255, 255, 255, 100)), 
-            new EmptyBorder(5, 15, 5, 15)
-        ));
-        button.setFocusPainted(false);
+        button.setFont(new Font("Arial", Font.BOLD, 14));
+        button.setBackground(new Color(240, 240, 240));
+        button.setBorder(BorderFactory.createLineBorder(Color.GRAY));
         button.addActionListener(listener);
-        
         return button;
-    }
-
-    private void styleLabel(JLabel label) {
-        label.setFont(new Font("Segoe UI", Font.BOLD, 14));
-        label.setForeground(Color.WHITE);
-    }
-
-    private void styleTextField(JTextField field) {
-        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        field.setForeground(Color.BLACK);
-        field.setOpaque(true);
-        field.setBackground(new Color(255, 255, 255, 180));
-        field.setBorder(new CompoundBorder(
-            new LineBorder(new Color(200, 200, 200, 150), 1),
-            new EmptyBorder(5, 10, 5, 10)
-        ));
     }
 
     private void loadDataToTable() {
@@ -284,26 +241,32 @@ public class NguyenLieuGUI extends JFrame {
     }
 
     private void deleteNguyenLieu() {
-        try {
-            int id = Integer.parseInt(txtId.getText().trim());
-            
-            int confirm = JOptionPane.showConfirmDialog(this, 
-                "Bạn có chắc chắn muốn xóa nguyên liệu này?", "Xác nhận xóa", 
-                JOptionPane.YES_NO_OPTION);
-            
-            if (confirm == JOptionPane.YES_OPTION) {
-                if (nguyenLieuBUS.deleteNguyenLieu(id)) {
-                    JOptionPane.showMessageDialog(this, "Xóa thành công");
-                    loadDataToTable();
-                    clearForm();
-                } else {
-                    JOptionPane.showMessageDialog(this, "Xóa thất bại");
-                }
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn một nguyên liệu để xóa");
-        }
+    int selectedRow = table.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Vui lòng chọn một nguyên liệu để xóa", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
     }
+
+    try {
+        int id = Integer.parseInt(txtId.getText().trim());
+        
+        int confirm = JOptionPane.showConfirmDialog(this, 
+            "Bạn có chắc chắn muốn xóa nguyên liệu này?", "Xác nhận xóa", 
+            JOptionPane.YES_NO_OPTION);
+        
+        if (confirm == JOptionPane.YES_OPTION) {
+            if (nguyenLieuBUS.deleteNguyenLieu(id)) {
+                JOptionPane.showMessageDialog(this, "Xóa thành công");
+                loadDataToTable();
+                clearForm();
+            } else {
+                JOptionPane.showMessageDialog(this, "Xóa thất bại");
+            }
+        }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi: ID không hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    }
+}
 
     private void searchNguyenLieu() {
         String name = txtSearch.getText().trim();
