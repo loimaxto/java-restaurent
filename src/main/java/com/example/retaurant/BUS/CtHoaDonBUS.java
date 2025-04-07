@@ -45,8 +45,9 @@ public class CtHoaDonBUS {
             throw new IllegalArgumentException("CtHoaDonDTO cannot be null.");
         }
         try {
-            return ctHoaDonDAO.updateCtHoaDon(ctHoaDon);
+            return ctHoaDonDAO.updateCtHoaDonThemMonVaoHoaDon(ctHoaDon);
         } catch (SQLException e) {
+            e.printStackTrace();
             System.err.println("Error updating CtHoaDon: " + e.getMessage());
             return false; // Or throw, log, etc.
         }

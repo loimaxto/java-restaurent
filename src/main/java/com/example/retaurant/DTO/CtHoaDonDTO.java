@@ -13,17 +13,23 @@ public class CtHoaDonDTO {
     private Integer spdId;
     private Integer soLuong;
     private Integer giaTaiLucDat;
+    private Integer tongTienCt;
 
-    public CtHoaDonDTO() {
-    }
-
+    
+    
     public CtHoaDonDTO(Integer hdId, Integer spdId, Integer soLuong, Integer giaTaiLucDat) {
         this.hdId = hdId;
         this.spdId = spdId;
         this.soLuong = soLuong;
         this.giaTaiLucDat = giaTaiLucDat;
     }
-
+    public CtHoaDonDTO(Integer hdId, Integer spdId, Integer soLuong, Integer giaTaiLucDat,Integer tongTienCt) {
+        this.hdId = hdId;
+        this.spdId = spdId;
+        this.soLuong = soLuong;
+        this.giaTaiLucDat = giaTaiLucDat;
+        this.tongTienCt = tongTienCt;
+    }
     public Integer getHdId() {
         return hdId;
     }
@@ -55,7 +61,15 @@ public class CtHoaDonDTO {
     public void setGiaTaiLucDat(Integer giaTaiLucDat) {
         this.giaTaiLucDat = giaTaiLucDat;
     }
+    public Integer getTongTienCt() {
+        return tongTienCt;
+    }
 
+    public void setTongTienCt(Integer tongTienCt) {
+        this.tongTienCt = tongTienCt;
+    }
+    public CtHoaDonDTO() {
+    }
     @Override
     public String toString() {
         return "CtHoaDonDTO{" +
