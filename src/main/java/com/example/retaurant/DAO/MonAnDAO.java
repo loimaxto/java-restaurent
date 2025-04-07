@@ -90,9 +90,11 @@ public class MonAnDAO {
     }
     
     public boolean deleteMonAn(int spId) throws SQLException {
-        String sql = "DELETE FROM mon_an WHERE sp_id = ?";
+        String sql = "UPDATE mon_an SET trang_thai = ? WHERE sp_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, spId);
+            statement.setInt(1, 0);
+            statement.setInt(2, spId);
+
             return statement.executeUpdate() > 0;
         }
     }
