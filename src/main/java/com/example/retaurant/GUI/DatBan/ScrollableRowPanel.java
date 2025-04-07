@@ -12,13 +12,13 @@ public class ScrollableRowPanel extends JPanel {
     private JScrollPane scrollPane;
     private BanDTO dtoBan;
     private HoaDonDTO dtoHoaDon;
-    private List itemListPanel;
+    private ArrayList<OrderItemPn> dsSpPanel;
     public ScrollableRowPanel() {
         initComponent();
     }
 
     private void initComponent() {
-        itemListPanel = new List();
+        dsSpPanel = new ArrayList<OrderItemPn>();
         setLayout(new BorderLayout());
 
         // FlowLayout with vertical stacking
@@ -35,16 +35,14 @@ public class ScrollableRowPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
     }
 
-    public void addRowPanel(JPanel rowPanel) {
+    public void addRowPanel(OrderItemPn rowPanel) {
         // Insert new row at the top by adding at index 0
         contentPanel.add(rowPanel, 0);
-
-        // Adjust panel height dynamically
+        dsSpPanel.add(rowPanel);
+        
         int newHeight = contentPanel.getComponentCount() * rowPanel.getPreferredSize().height + 20;
         contentPanel.setPreferredSize(new Dimension(300, newHeight));
-
         
-
         // Scroll to top to make new item fully visible
         SwingUtilities.invokeLater(() -> {
             JViewport viewport = scrollPane.getViewport();
@@ -62,7 +60,9 @@ public class ScrollableRowPanel extends JPanel {
     public BanDTO getBanDTO() {
         return dtoBan;
     }
-
+    public ArrayList<OrderItemPn> getOrderItemPns() {
+        return dsSpPanel;
+    }
     public void removeAllChildPanels() {
         contentPanel.removeAll();
         contentPanel.setPreferredSize(new Dimension(300, 0));

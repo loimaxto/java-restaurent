@@ -7,6 +7,7 @@
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
+import com.example.retaurant.GUI.KhachHang.KhachHangPanel;
 import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
 
 import java.awt.*;
@@ -24,6 +25,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
+    private KhachHangPanel khachHangPanel = new KhachHangPanel();
     
     public DashboardFrame() {
         initComponents();
@@ -35,6 +37,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         // add panel moi cho phần chuyển trang
         currentPanel.add(datBanPN,btnDatBan.getActionCommand());
         currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
+        currentPanel.add(khachHangPanel,btnKhachHang.getActionCommand());
         
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
@@ -56,13 +59,11 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
-        btnNhanVien.setSelected(true);
         btnDangXuat.addActionListener(e -> handleLogout());
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
             
         cardLayout.show(currentPanel, btnDatBan.getActionCommand());
         
-        btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnKhuyenMai.addActionListener(e -> switchPanel(btnKhuyenMai.getActionCommand()));
         updateNavigateButton();
     }
