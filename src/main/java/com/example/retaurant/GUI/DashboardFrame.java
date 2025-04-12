@@ -1,14 +1,17 @@
+package com.example.retaurant.GUI;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
 
+import com.example.retaurant.DTO.NhanVien;
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
-
+import com.example.retaurant.GUI.NhanVien.QuanLyNhanVienGUI;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +27,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
-    
+    private QuanLyNhanVienGUI nhanvienPN = new QuanLyNhanVienGUI();
     public DashboardFrame() {
         initComponents();
         currentPanel.removeAll();
@@ -35,7 +38,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         // add panel moi cho phần chuyển trang
         currentPanel.add(datBanPN,btnDatBan.getActionCommand());
         currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
-        
+        currentPanel.add(nhanvienPN,btnNhanVien.getActionCommand());
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
         buttonGroup.add(btnDatBan);
@@ -56,7 +59,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
-        btnNhanVien.setSelected(true);
         btnDangXuat.addActionListener(e -> handleLogout());
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
             
