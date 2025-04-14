@@ -6,8 +6,6 @@ package com.example.retaurant.Main;
 
 import com.example.retaurant.utils.DBConnection;
 import com.example.retaurant.GUI.DangNhap.DangNhapGUI;
-import com.example.retaurant.GUI.NguyenLieu.NguyenLieuGUI;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -40,12 +38,5 @@ public class Main {
             System.err.println("Error setting look and feel: " + ex.getMessage());
         }
     }
+}   
     
-    // Add a method to show the NguyenLieuGUI (typically called after successful login)
-    public static void showNguyenLieuGUI() {
-        SwingUtilities.invokeLater(() -> {
-            NguyenLieuGUI nguyenLieuGUI = new NguyenLieuGUI();
-            nguyenLieuGUI.setVisible(true);
-        });
-    }
-}
