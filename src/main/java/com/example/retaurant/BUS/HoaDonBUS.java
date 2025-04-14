@@ -36,8 +36,8 @@ public class HoaDonBUS {
             return null; 
         }
     }
-    public int addDefaultHoaDon(int tableId) {
-        return hoaDonDAO.addDefaultHoaDon(tableId);
+    public int addDefaultHoaDon(int tableId, int creatorId) {
+        return hoaDonDAO.addDefaultHoaDon(tableId,creatorId);
     }
     public int addBill(HoaDonDTO bill) {
         try {

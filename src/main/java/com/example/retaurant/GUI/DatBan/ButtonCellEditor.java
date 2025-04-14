@@ -56,10 +56,16 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
                 int currentIdBan = getBanIdTuTenBan(tenBan.toString());
                 datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
-                //cai hoa moi tao va cap nhat id hoa don cho ban hiện tại
-                datBanPN.setHoaDonForListScrollItemPN(busHoaDon.getBillById(currentBanDTO.getIdHoaDonHienTai()));
+                //lay hoa moi tao va cap nhat id hoa don cho ban hiện tại
+                HoaDonDTO hoaDonDTO = busHoaDon.getBillById(currentBanDTO.getIdHoaDonHienTai());
+                datBanPN.setHoaDonForListScrollItemPN(hoaDonDTO);
                 datBanPN.setBanForListScrollItemPN(currentBanDTO);
                 datBanPN.renderMonAnTrongHoaDon();
+                datBanPN.clearCustomerInforForTable();
+                if (hoaDonDTO.getKhId() != null) {
+                    System.out.println(hoaDonDTO.toString());
+                    datBanPN.updateCustomerInforForTable(hoaDonDTO.getKhId());
+                }
             }
         });
         return button;
@@ -73,7 +79,7 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
                 Object tenBan = tableModel.getValueAt(currentRow, 0);
                 int currentIdBan = getBanIdTuTenBan(tenBan.toString());
                 datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
-                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan);
+                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan,datBanPN.getCreatorId());
 
                 // lay id ban nut duoc nhan và cập nhật hóa đơn của bàn
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
