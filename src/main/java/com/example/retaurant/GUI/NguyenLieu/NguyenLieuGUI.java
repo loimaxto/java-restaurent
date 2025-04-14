@@ -175,7 +175,7 @@ public class NguyenLieuGUI extends JFrame {
         return button;
     }
 
-    private void loadDataToTable() {
+    public void loadDataToTable() {
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         tableModel.setRowCount(0);
         
