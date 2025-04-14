@@ -11,15 +11,25 @@ package com.example.retaurant.DTO;
 public class CustomerDTO {
     private Integer khId; // Keep khId as int for auto-incremented primary key
     private String sdt;
+    private String hoKh;
     private String tenKh;
 
     public CustomerDTO() {
     }
 
-    public CustomerDTO(Integer khId, String sdt, String tenKh) {
+    public CustomerDTO(Integer khId, String sdt, String tenKh, String hoKh) {
         this.khId = khId;
         this.sdt = sdt;
         this.tenKh = tenKh;
+        this.hoKh = hoKh;
+    }
+
+    public String getHoKh() {
+        return hoKh;
+    }
+
+    public void setHoKh(String hoKh) {
+        this.hoKh = hoKh;
     }
 
     public Integer getKhId() {

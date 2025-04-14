@@ -61,7 +61,7 @@ public class SearchAndPayment {
         JPopupMenu popupMenu = new JPopupMenu();
 
         if (searchResults.isEmpty()) {
-            JMenuItem noResultsItem = new JMenuItem("No results found.");
+            JMenuItem noResultsItem = new JMenuItem("Không có món ");
             noResultsItem.setEnabled(false); // Disable the item so it can't be clicked
             popupMenu.add(noResultsItem);
 
@@ -72,7 +72,7 @@ public class SearchAndPayment {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         selectedItems.add(result);
-                        JOptionPane.showMessageDialog(frame, "Added: " + result);
+                        JOptionPane.showMessageDialog(frame, "thêm " + result);
                         popupMenu.setVisible(false);
                     }
                 });
