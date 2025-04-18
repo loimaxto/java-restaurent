@@ -9,6 +9,7 @@ package com.example.retaurant.DAO;
  * @author light
  */
 import com.example.retaurant.DTO.HoaDonDTO;
+import com.example.retaurant.DTO.HoaDonDTO2;
 import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -38,12 +39,33 @@ public class HoaDonDAO {
         }
     }
 
-    public List<HoaDonDTO> getAllBills() throws SQLException {
-        String sql = "SELECT * FROM hoa_don";
-        List<HoaDonDTO> bills = new ArrayList<>();
-        try (Statement statement = connection.createStatement(); ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                bills.add(mapResultSetToBillDTO(resultSet));
+    public List<HoaDonDTO2> getAllBills() throws SQLException {
+        String sql = "SELECT * FROM hoa_don "
+                + "INNER JOIN nhan_vien  ON hoa_don.nguoi_lap_id = nhan_vien.nv_id "
+                + "INNER JOIN khach_hang ON khach_hang.kh_id = hoa_don.kh_id "
+                + "ORDER BY hoa_don.hd_id DESC";
+        List<HoaDonDTO2> bills = new ArrayList<>();
+        try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
+            while (rs.next()) {
+                HoaDonDTO2 hd2 = new HoaDonDTO2();
+                hd2.setHdId(rs.getInt("hd_id"));
+                hd2.setThoiGian(rs.getTimestamp("thoi_gian"));
+                hd2.setGhiChu(rs.getByte("ghi_chu"));
+                Object tongGiaObj = rs.getObject("tong_gia");
+                hd2.setTongGia(tongGiaObj != null ? ((Number) tongGiaObj).intValue() : null);
+                Object khIdObj = rs.getObject("kh_id");
+                hd2.setKhId(khIdObj != null ? ((Number) khIdObj).intValue() : null);
+                Object banIdObj = rs.getObject("ban_id");
+                hd2.setBanId(banIdObj != null ? ((Number) banIdObj).intValue() : null);
+                Object nguoiLapIdObj = rs.getObject("nguoi_lap_id");
+                hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
+                Object kmIdObj = rs.getObject("km_id");
+                hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
+                hd2.setTenKh(rs.getString("ho_kh"));
+                hd2.setHoKh(rs.getString("ten_kh"));
+                hd2.setHoTenNv(rs.getString("ho_ten"));
+                hd2.setSdt(rs.getString("sdt"));
+                bills.add(hd2);
             }
             return bills;
         }

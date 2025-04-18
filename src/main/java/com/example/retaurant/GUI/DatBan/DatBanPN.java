@@ -63,7 +63,6 @@ public class DatBanPN extends javax.swing.JPanel {
         busCustomer = new CustomerBUS();
         initComponents();
         intStyle();
-
     }
 
     public void intStyle() {
