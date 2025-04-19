@@ -20,9 +20,6 @@ public class ButtonCellRenderer extends JPanel implements TableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 5));
-//        panel.add(new JButton("Chi tiết"));
-//        panel.add(new JButton("Đặt bàn"));
-//        panel.add(new JButton("Hủy"));
         JButton orderButton = new JButton("Đặt bàn");
         JButton detailButton = new JButton("Chi tiết");
         JButton cancelButton = new JButton("Hủy");

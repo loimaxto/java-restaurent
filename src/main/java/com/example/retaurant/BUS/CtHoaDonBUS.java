@@ -2,6 +2,7 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.CtHoaDonDAO;
 import com.example.retaurant.DTO.CtHoaDonDTO;
+import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -24,7 +25,16 @@ public class CtHoaDonBUS {
             return null; // Or throw, log, etc.
         }
     }
-
+    public List<CtSanPhamThanhToanDTO> getCtSanPhanThanhToanByHdId(int hoadonId) {
+        
+        try {
+            return ctHoaDonDAO.getAllCtHoaDonByHoaDonIdCoTenSp(hoadonId);
+        } catch (SQLException e) {
+            System.err.println("Error getting all CtHoaDons: " + e.getMessage());
+            e.printStackTrace();
+            return null; // Or throw, log, etc.
+        }
+    }
     public boolean addCtHoaDon(CtHoaDonDTO ctHoaDon) {
         if (ctHoaDon == null) {
             throw new IllegalArgumentException("CtHoaDonDTO cannot be null.");
