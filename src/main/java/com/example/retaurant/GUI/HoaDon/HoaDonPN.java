@@ -42,9 +42,8 @@ public class HoaDonPN extends javax.swing.JPanel {
         tableHoaDon.setRowSelectionAllowed(false);
         tableHoaDon.setShowVerticalLines(false);
         TableColumn column = tableHoaDon.getColumnModel().getColumn(4);
-        column.setCellRenderer(new HoaDonTableCellRender());
         column.setCellEditor(new HoaDonTableCellEditor(tableHoaDon, tableModel, this));
-       
+        column.setCellRenderer(new HoaDonTableCellRender());
         renderDataForTable(getHoaDonData());
     }
 
