@@ -155,11 +155,14 @@ public class AddKhachHangPanel extends javax.swing.JFrame {
         newCust.setTenKh(textFieldTen.getText());
         newCust.setSdt(textFieldSdt.getText());
         newCustomerId = busCustomer.addCustomer(newCust);
-        
+        System.out.println(newCustomerId);
         if ( khPanel != null) {
             khPanel.loadDataTable();
         } else if (datBanPN !=null) {
             datBanPN.renderThongTinBan();
+        }
+        if (datBanPN != null) {
+            datBanPN.updateNewInsertKhachHanhForHoaDon(newCustomerId);
         }
         if ( newCustomerId != -1 ){
             closePanel(evt);

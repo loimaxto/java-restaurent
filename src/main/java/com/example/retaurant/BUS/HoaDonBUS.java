@@ -7,6 +7,7 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.HoaDonDAO;
 import com.example.retaurant.DTO.HoaDonDTO;
+import com.example.retaurant.DTO.HoaDonDTO2;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -28,7 +29,7 @@ public class HoaDonBUS {
         }
     }
 
-    public List<HoaDonDTO> getAllBills() {
+    public List<HoaDonDTO2> getBills() {
         try {
             return hoaDonDAO.getAllBills();
         } catch (SQLException e) {
@@ -36,8 +37,8 @@ public class HoaDonBUS {
             return null; 
         }
     }
-    public int addDefaultHoaDon(int tableId) {
-        return hoaDonDAO.addDefaultHoaDon(tableId);
+    public int addDefaultHoaDon(int tableId, int creatorId) {
+        return hoaDonDAO.addDefaultHoaDon(tableId,creatorId);
     }
     public int addBill(HoaDonDTO bill) {
         try {

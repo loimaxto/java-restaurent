@@ -12,6 +12,8 @@ import com.example.retaurant.DTO.CustomerDTO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 public class CustomerDAO {
 
     private Connection connection;
@@ -44,6 +46,22 @@ public class CustomerDAO {
             return customers;
         }
     }
+    public CustomerDTO getCustomerByPhone(String phoneNumber) throws SQLDataException {
+        String sql = "SELECT * FROM khach_hang WHERE sdt = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, phoneNumber);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapResultSetToCustomerDTO(resultSet);
+                }
+                return null;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
     public List<CustomerDTO> getSearchCustomersByPhone(String phoneNumber) throws SQLException {
         String sql = "SELECT * FROM khach_hang WHERE sdt LIKE ?";
         List<CustomerDTO> customers = new ArrayList<>();

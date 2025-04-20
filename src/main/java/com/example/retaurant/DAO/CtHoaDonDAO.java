@@ -23,13 +23,12 @@ public class CtHoaDonDAO {
         this.connection = DBConnection.getConnection();
     }
 
-    
-     public List<CtHoaDonDTO> getAllCtHoaDonByHoaDonId(int hoadonId) throws SQLException {
+    public List<CtHoaDonDTO> getAllCtHoaDonByHoaDonId(int hoadonId) throws SQLException {
         String sql = "SELECT * FROM ct_hoa_don WHERE hd_id = ?"; // Semicolon removed
         List<CtHoaDonDTO> ctHoaDons = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, hoadonId);
-            try(ResultSet resultSet = statement.executeQuery()) { // Executing the prepared statement
+            try (ResultSet resultSet = statement.executeQuery()) { // Executing the prepared statement
                 while (resultSet.next()) {
                     ctHoaDons.add(mapResultSetToCtHoaDonDTO(resultSet));
                 }
@@ -37,22 +36,24 @@ public class CtHoaDonDAO {
             return ctHoaDons;
         }
     }
-    
-     public List<CtHoaDonDTO> getAllCtHoaDonByHoaDonIdCoTenSp(int hoadonId) throws SQLException {
-        String sql = "SELECT * FROM ct_hoa_don WHERE hd_id = ?"; // Semicolon removed
-        List<CtHoaDonDTO> ctHoaDons = new ArrayList<>();
+
+    public List<CtSanPhamThanhToanDTO> getAllCtHoaDonByHoaDonIdCoTenSp(int hoadonId) throws SQLException {
+        String sql = "SELECT * FROM ct_hoa_don\n"
+                + "INNER JOIN mon_an ON ct_hoa_don.spd_id = mon_an.sp_id\n"
+                + "WHERE ct_hoa_don.hd_id = ?";
+        List<CtSanPhamThanhToanDTO> ctHoaDons = new ArrayList<>();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, hoadonId);
-            try(ResultSet resultSet = statement.executeQuery()) { // Executing the prepared statement
-                while (resultSet.next()) {
+            try (ResultSet rs = statement.executeQuery()) { // Executing the prepared statement
+                while (rs.next()) {
                     ctHoaDons.add(
-                    new CtSanPhamThanhToanDTO(
-                            hoadonId,
-                            hoadonId,
-                            hoadonId,
-                            hoadonId,
-                            hoadonId,
-                            sql)
+                            new CtSanPhamThanhToanDTO(
+                                    rs.getInt("hd_id"),
+                                    rs.getInt("spd_id"),
+                                    rs.getInt("so_luong"),
+                                    rs.getInt("gia_tai_luc_dat"),
+                                    rs.getInt("tong_tien_ct"),
+                                    rs.getString("ten_sp"))
                     );
                 }
             }
@@ -82,7 +83,7 @@ public class CtHoaDonDAO {
             } else {
                 statement.setNull(4, Types.INTEGER);
             }
-             if (ctHoaDon.getTongTienCt()!= null) {
+            if (ctHoaDon.getTongTienCt() != null) {
                 statement.setInt(5, ctHoaDon.getTongTienCt());
             } else {
                 statement.setNull(5, Types.INTEGER);
@@ -94,18 +95,18 @@ public class CtHoaDonDAO {
     public boolean updateCtHoaDonThemMonVaoHoaDon(CtHoaDonDTO ctHoaDon) throws SQLException {
         String sql = "UPDATE ct_hoa_don SET so_luong = ?, gia_tai_luc_dat = ?,gia_tai_luc_dat =? WHERE hd_id = ? AND spd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setInt(1, ctHoaDon.getSoLuong());
-                if (ctHoaDon.getGiaTaiLucDat()!= null) {
-                    statement.setInt(2, ctHoaDon.getGiaTaiLucDat());
-                    statement.setInt(3, ctHoaDon.getGiaTaiLucDat()*ctHoaDon.getSoLuong());
-                } else {
-                    statement.setNull(2, Types.INTEGER);
-                    statement.setNull(3, Types.INTEGER);
-                }
-                
-                statement.setInt(4, ctHoaDon.getHdId());
-                statement.setInt(5, ctHoaDon.getSpdId());
-               
+            statement.setInt(1, ctHoaDon.getSoLuong());
+            if (ctHoaDon.getGiaTaiLucDat() != null) {
+                statement.setInt(2, ctHoaDon.getGiaTaiLucDat());
+                statement.setInt(3, ctHoaDon.getGiaTaiLucDat() * ctHoaDon.getSoLuong());
+            } else {
+                statement.setNull(2, Types.INTEGER);
+                statement.setNull(3, Types.INTEGER);
+            }
+
+            statement.setInt(4, ctHoaDon.getHdId());
+            statement.setInt(5, ctHoaDon.getSpdId());
+
             return statement.executeUpdate() > 0;
         }
     }
@@ -129,10 +130,10 @@ public class CtHoaDonDAO {
 
     private CtHoaDonDTO mapResultSetToCtHoaDonDTO(ResultSet resultSet) throws SQLException {
         CtHoaDonDTO ctHoaDon = new CtHoaDonDTO();
-        ctHoaDon.setHdId( resultSet.getInt("hd_id"));
-        ctHoaDon.setSpdId( resultSet.getInt("spd_id"));
-        ctHoaDon.setSoLuong( resultSet.getInt("so_luong"));
-        ctHoaDon.setGiaTaiLucDat( resultSet.getInt("gia_tai_luc_dat"));
+        ctHoaDon.setHdId(resultSet.getInt("hd_id"));
+        ctHoaDon.setSpdId(resultSet.getInt("spd_id"));
+        ctHoaDon.setSoLuong(resultSet.getInt("so_luong"));
+        ctHoaDon.setGiaTaiLucDat(resultSet.getInt("gia_tai_luc_dat"));
         ctHoaDon.setTongTienCt(resultSet.getInt("tong_tien_ct"));
         return ctHoaDon;
     }
