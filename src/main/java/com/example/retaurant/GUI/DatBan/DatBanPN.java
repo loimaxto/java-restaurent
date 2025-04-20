@@ -6,16 +6,12 @@ package com.example.retaurant.GUI.DatBan;
 
 import com.example.retaurant.BUS.BanBUS;
 import com.example.retaurant.BUS.CtHoaDonBUS;
-import com.example.retaurant.BUS.CustomerBUS;
 import com.example.retaurant.BUS.HoaDonBUS;
 import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.CtHoaDonDTO;
-import com.example.retaurant.DTO.CustomerDTO;
 import com.example.retaurant.DTO.HoaDonDTO;
 import com.example.retaurant.DTO.MonAnDTO;
-import com.example.retaurant.GUI.KhachHang.AddKhachHangPanel;
-import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.utils.RemoveVn;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -46,23 +42,21 @@ public class DatBanPN extends javax.swing.JPanel {
     private BanBUS busBan;
     private HoaDonBUS busHoaDon;
     private CtHoaDonBUS busCtHoaDon;
-    private CustomerBUS busCustomer;
     static private MonAnBUS busMonAn;
     MyTableModel model;
     private ScrollableRowPanel scrollableRowPanel;
     private Timer searchTimer;
 
     private List<MonAnDTO> searchResults;
-    private int currentUserId ;
+
     public DatBanPN() {
-        currentUserId = 2;
         busBan = new BanBUS();
         busHoaDon = new HoaDonBUS();
         busCtHoaDon = new CtHoaDonBUS();
         busMonAn = new MonAnBUS();
-        busCustomer = new CustomerBUS();
         initComponents();
         intStyle();
+
     }
 
     public void intStyle() {
@@ -206,8 +200,8 @@ public class DatBanPN extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         tenKhLabel = new javax.swing.JLabel();
-        txtFieldSdt = new javax.swing.JTextField();
-        btnInsertKhForHoaDon = new javax.swing.JButton();
+        textFieldTimKh = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         textFieldTenKh = new javax.swing.JTextField();
         sdtTextField = new javax.swing.JLabel();
         textFieldsdt = new javax.swing.JTextField();
@@ -240,20 +234,11 @@ public class DatBanPN extends javax.swing.JPanel {
 
         tenKhLabel.setText("Tên khách hàng");
 
-        btnInsertKhForHoaDon.setText("Thêm số điện thoại");
-        btnInsertKhForHoaDon.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInsertKhForHoaDonActionPerformed(evt);
-            }
-        });
-
-        textFieldTenKh.setEditable(false);
+        jButton1.setText("Tìm kiếm");
 
         sdtTextField.setText("Số điện thoại");
 
-        textFieldsdt.setEditable(false);
-
-        btnThemKh.setText("Thêm khách hàng mới");
+        btnThemKh.setText("Thêm khách hàng");
         btnThemKh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnThemKhActionPerformed(evt);
@@ -272,16 +257,16 @@ public class DatBanPN extends javax.swing.JPanel {
                         .addGap(34, 34, 34)
                         .addComponent(textFieldTenKh))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtFieldSdt, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(textFieldTimKh, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnInsertKhForHoaDon)))
+                        .addComponent(jButton1)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(77, 77, 77)
                         .addComponent(sdtTextField)
                         .addGap(30, 30, 30)
                         .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap(42, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnThemKh)
@@ -292,8 +277,8 @@ public class DatBanPN extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(10, 10, 10)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFieldSdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnInsertKhForHoaDon)
+                    .addComponent(textFieldTimKh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1)
                     .addComponent(btnThemKh))
                 .addGap(15, 15, 15)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -431,63 +416,11 @@ public class DatBanPN extends javax.swing.JPanel {
 
     private void btnThemKhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemKhActionPerformed
         // TODO add your handling code here:
-        if ( scrollableRowPanel.getHoaDonDTO().getKhId() != null ) {
-            new MyDialog("Hóa đơn đã có khách hàng", WIDTH);
-            return ;
-        }
-        AddKhachHangPanel addPanel = new AddKhachHangPanel();
-        addPanel.setDatBanPn(this);
-        addPanel.setVisible(true);
     }//GEN-LAST:event_btnThemKhActionPerformed
-
-    private void btnInsertKhForHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertKhForHoaDonActionPerformed
-        String sdt = txtFieldSdt.getText();
-        CustomerDTO cust = busCustomer.getCustomerByPhone(sdt);
-        HoaDonDTO hoaDonDto = scrollableRowPanel.getHoaDonDTO();
-        System.out.println("scroll"+ hoaDonDto.toString());
-        if (cust != null && hoaDonDto !=null ) {
-            hoaDonDto.setKhId(cust.getKhId());
-            System.out.println(hoaDonDto.toString());
-            busHoaDon.updateBill(hoaDonDto);
-            updateCustomerInforForTable(cust.getKhId());
-        } else if (hoaDonDto == null) {
-            new MyDialog("Chưa chọn hóa đơn thêm khách hàng", 0);
-        } else if (cust ==null) {
-            new MyDialog("Không tìm thấy khách hành này", 0);
-        }
-    }//GEN-LAST:event_btnInsertKhForHoaDonActionPerformed
-    public void updateNewInsertKhachHanhForHoaDon(int khId) {
-        CustomerDTO cust = busCustomer.getCustomerById(khId);
-        HoaDonDTO hoaDonDto = scrollableRowPanel.getHoaDonDTO();
-        if (cust != null && hoaDonDto !=null && hoaDonDto.getKhId() ==null) {
-            hoaDonDto.setKhId(cust.getKhId());
-            busHoaDon.updateBill(hoaDonDto);
-            updateCustomerInforForTable(cust.getKhId());
-        } else if (hoaDonDto == null) {
-            new MyDialog("Chưa chọn hóa đơn thêm khách hàng", 0);
-            return;
-        } else if (hoaDonDto.getKhId() != null){
-             new MyDialog("Hóa đơn đã có khách hàng", 0);
-            return;
-        }
-    }
-    public void updateCustomerInforForTable(Integer custId) {
-        CustomerDTO cust = busCustomer.getCustomerById(custId);
-        System.out.println(cust.toString());
-        textFieldTenKh.setText(cust.getHoKh() + " " + cust.getTenKh());
-        textFieldsdt.setText(cust.getSdt());
-    }
-    public void clearCustomerInforForTable() {
-        textFieldTenKh.setText("");
-        textFieldsdt.setText("");
-    }
-    
     public JPanel getListItemJPanel() {
         return bodyPN;
     }
-    public int getCreatorId() {
-        return this.currentUserId;
-    }
+
     public JLabel getTenBanLabel() {
         return tenBanLb;
     }
@@ -520,10 +453,10 @@ public class DatBanPN extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bodyPN;
-    private javax.swing.JButton btnInsertKhForHoaDon;
     private javax.swing.JButton btnPay;
     private javax.swing.JButton btnThemKh;
     private javax.swing.JPanel headerPN;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -542,7 +475,7 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JLabel tenBanLb;
     private javax.swing.JLabel tenKhLabel;
     private javax.swing.JTextField textFieldTenKh;
+    private javax.swing.JTextField textFieldTimKh;
     private javax.swing.JTextField textFieldsdt;
-    private javax.swing.JTextField txtFieldSdt;
     // End of variables declaration//GEN-END:variables
 }

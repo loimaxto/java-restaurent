@@ -10,7 +10,6 @@ import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.utils.DBConnection;
 import com.example.retaurant.utils.Validation;
 import java.sql.Connection;
-import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,18 +47,6 @@ public class CustomerBUS {
             return null;
         }
     }
-    public CustomerDTO getCustomerByPhone(String phone) {
-        try {
-            if (!Validation.isValidPhone(phone)) {
-              new  MyDialog("Nhập sai định dạng số điện thoại!",0);
-              return null;
-            }
-            return daoCustomer.getCustomerByPhone(phone);
-        } catch (SQLDataException ex) {
-            Logger.getLogger(CustomerBUS.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
     public CustomerDTO getCustomerById(int id ) {
         try {
             return daoCustomer.getCustomerById(id);
@@ -70,15 +57,8 @@ public class CustomerBUS {
     }
     public int addCustomer(CustomerDTO cust) {
         try {
-            
-            if( !isValidateCustomer(cust,true)) { 
-                System.out.println("valie err");
-                return -1;
-            }   else {
-                return daoCustomer.addCustomer(cust);
-            }
-            
-           
+            if( isValidateCustomer(cust,true)) return daoCustomer.addCustomer(cust);
+            return -1;
         } catch (SQLException ex) {
             ex.printStackTrace();
             Logger.getLogger(CustomerBUS.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,36 +97,33 @@ public class CustomerBUS {
             dialog = new MyDialog(errMessage, 1);
             return false;
         }
-        if ( !Validation.isValidPhone(cust.getSdt())) {
-            errMessage = "Điện thoại phải có 9 số";
-            dialog = new MyDialog(errMessage, 0);
-            return false;
-        }
+//        if ( !Validation.isValidPhone(cust.getSdt())) {
+//            errMessage = "Điện thoại phải có 9 số";
+//            dialog = new MyDialog(errMessage, 0);
+//            return false;
+//        }
          
         try {
-            Integer existCustomerId = daoCustomer.getIdOfExistPhone(cust.getSdt());
-            if (existCustomerId != null && isAddAction){
-                System.out.println(existCustomerId);
+            Integer exitPhoneId = daoCustomer.getIdOfExistPhone(cust.getSdt());
+            if (exitPhoneId != null && isAddAction){
+                System.out.println(exitPhoneId);
                 errMessage = "Điện thoại thêm bị trùng";
                 dialog = new MyDialog(errMessage, 1);
                 return false;
-            } else if ( existCustomerId != null && existCustomerId != cust.getKhId() && !isAddAction ){
-                System.out.println(existCustomerId);
+            } else if ( exitPhoneId != cust.getKhId() && !isAddAction ){
+                System.out.println(exitPhoneId);
                 errMessage = "Điện thoại sửa bị trùng với sdt khác";
                 dialog = new MyDialog(errMessage, 1);
                 return false;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            Logger.getLogger(CustomerBUS.class.getName()).log(Level.SEVERE, null, e);
-            return false;
+        } catch (SQLException ex) {
+            Logger.getLogger(CustomerBUS.class.getName()).log(Level.SEVERE, null, ex);
         }    
         return true;
     }
-//    public static void main(String[] args) {
-//        CustomerDTO t = new CustomerDTO(6, "123123111", "w", "t");
-//        CustomerBUS bus = new CustomerBUS();
-////        System.out.println("update: " + bus.updateCustomer(t));
-//        System.out.println("add" + bus.addCustomer(t));
-//    }
+    public static void main(String[] args) {
+        CustomerDTO t = new CustomerDTO(3, "1234567890", "w", "t");
+        CustomerBUS bus = new CustomerBUS();
+        System.out.println("update: " + bus.updateCustomer(t));
+    }
 }
