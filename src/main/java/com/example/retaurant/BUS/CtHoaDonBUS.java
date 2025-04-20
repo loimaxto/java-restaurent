@@ -36,13 +36,8 @@ public class CtHoaDonBUS {
         }
     }
     public boolean addCtHoaDon(CtHoaDonDTO ctHoaDon) {
-        if (ctHoaDon == null) {
-            throw new IllegalArgumentException("CtHoaDonDTO cannot be null.");
-        }
-        if (ctHoaDon.getHdId() == null || ctHoaDon.getSpdId() == null ) {
-            throw new IllegalArgumentException("All fields in CtHoaDonDTO must be set.");
-        }
         try {
+            ctHoaDon.setTongTienCt(ctHoaDon.getSoLuong()*ctHoaDon.getGiaTaiLucDat());
             return ctHoaDonDAO.addCtHoaDon(ctHoaDon);
         } catch (SQLException e) {
             System.err.println("Error adding CtHoaDon: " + e.getMessage());
@@ -51,10 +46,8 @@ public class CtHoaDonBUS {
     }
 
     public boolean updateCtHoaDon(CtHoaDonDTO ctHoaDon) {
-        if (ctHoaDon == null) {
-            throw new IllegalArgumentException("CtHoaDonDTO cannot be null.");
-        }
         try {
+            ctHoaDon.setTongTienCt(ctHoaDon.getSoLuong()*ctHoaDon.getGiaTaiLucDat());
             return ctHoaDonDAO.updateCtHoaDonThemMonVaoHoaDon(ctHoaDon);
         } catch (SQLException e) {
             e.printStackTrace();
