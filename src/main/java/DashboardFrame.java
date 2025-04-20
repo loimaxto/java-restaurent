@@ -1,14 +1,20 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
+import com.example.retaurant.GUI.HoaDon.HoaDonPN;
 import com.example.retaurant.GUI.KhachHang.KhachHangPanel;
 import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
+import com.example.retaurant.GUI.MonAnPN;
 import com.example.retaurant.GUI.NguyenLieu.NguyenLieuGUI;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.lang.reflect.Method;
 
 /**
  *
@@ -17,25 +23,29 @@ import java.lang.reflect.Method;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
-    
+
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
     private KhachHangPanel khachHangPanel = new KhachHangPanel();
-    private NguyenLieuGUI nguyenLieuPN = new NguyenLieuGUI();
-    
+    private MonAnPN monAnPN = new MonAnPN();
+    private HoaDonPN hoaDonPN = new HoaDonPN();
+    private NguyenLieuGUI nguyenLieuGUI = new NguyenLieuGUI();
+
     public DashboardFrame() {
         initComponents();
         currentPanel.removeAll();
 
         cardLayout = new CardLayout();
         currentPanel.setLayout(cardLayout);
-        
+
         // add panel moi cho phần chuyển trang
-        currentPanel.add(datBanPN,btnDatBan.getActionCommand());
-        currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
-        currentPanel.add(khachHangPanel,btnKhachHang.getActionCommand());
-        currentPanel.add(nguyenLieuPN, btnNguyenLieu.getActionCommand());
+        currentPanel.add(datBanPN, btnDatBan.getActionCommand());
+        currentPanel.add(khuyenMaiPN, btnKhuyenMai.getActionCommand());
+        currentPanel.add(khachHangPanel, btnKhachHang.getActionCommand());
+        currentPanel.add(monAnPN, btnMonAn.getActionCommand());
+        currentPanel.add(hoaDonPN, btnHoaDon.getActionCommand());
+        currentPanel.add(nguyenLieuGUI, btnNguyenLieu.getActionCommand());
         
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
@@ -50,21 +60,19 @@ public class DashboardFrame extends javax.swing.JFrame {
         buttonGroup.add(btnThongKe);
 
         //them sự kiện chuyển trang
-        btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnDatBan.setSelected(true);
+        btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
-        btnNguyenLieu.addActionListener(e -> {
-            switchPanel(btnNguyenLieu.getActionCommand());  // Consistent
-            nguyenLieuPN.loadDataToTable();
-        });
-        btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
-        btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
+        btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
+        btnHoaDon.addActionListener(e -> switchPanel(btnHoaDon.getActionCommand()));
+//         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
+//         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
         btnDangXuat.addActionListener(e -> handleLogout());
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
-            
+
         cardLayout.show(currentPanel, btnDatBan.getActionCommand());
-        
+
         btnKhuyenMai.addActionListener(e -> switchPanel(btnKhuyenMai.getActionCommand()));
         updateNavigateButton();
     }
@@ -78,28 +86,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         }
     }
 
-    public void disableAllNavButtons() {
-        // Get all components from the panel
-        Component[] components = navigationPanel.getComponents();
-        for (Component component : components) {
-            if (component instanceof JToggleButton) {
-                JToggleButton button = (JToggleButton) component;
-                button.setEnabled(false); // Disable the button
-            }
-        }
-    }
-
-    public void enableAllNavButtons() {
-        Component[] components = navigationPanel.getComponents();
-
-        for (Component component : components) {
-            if (component instanceof JToggleButton) {
-                JToggleButton button = (JToggleButton) component;
-                button.setEnabled(true); // Disable the button
-            }
-        }
-    }
-
     private void switchPanel(String panelName) {
         updateNavigateButton();
         cardLayout.show(currentPanel, panelName);
@@ -107,7 +93,7 @@ public class DashboardFrame extends javax.swing.JFrame {
 
     private void handleLogout() {
         this.dispose();
-//        new AuthFrame().setVisible(true);
+        //        new AuthFrame().setVisible(true);
     }
 
     private void updateNavigateButton() {
@@ -208,65 +194,40 @@ public class DashboardFrame extends javax.swing.JFrame {
         navigationPanel.setLayout(new java.awt.GridLayout(11, 1));
 
         btnDatBan.setText("Đặt bàn");
-        btnDatBan.setActionCommand("DeThi");
-        btnDatBan.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDatBanActionPerformed(evt);
-            }
-        });
         navigationPanel.add(btnDatBan);
 
         btnKhachHang.setText("Khách hàng");
         navigationPanel.add(btnKhachHang);
 
         btnMonAn.setText("Món ăn");
-        btnMonAn.setActionCommand("CauHoi");
-        btnMonAn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnMonAnActionPerformed(evt);
-            }
-        });
         navigationPanel.add(btnMonAn);
 
         btnNguyenLieu.setText("Nguyên liệu");
-        btnNguyenLieu.setActionCommand("CauHoi");
-        btnNguyenLieu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnNguyenLieuActionPerformed(evt);
-            }
-        });
         navigationPanel.add(btnNguyenLieu);
 
         btnCungCap.setText("Nhà cung cấp");
-        btnCungCap.setActionCommand("ThongKe");
         navigationPanel.add(btnCungCap);
 
         btnNhanVien.setText("Nhân viên");
-        btnNhanVien.setActionCommand("ThongKe");
         navigationPanel.add(btnNhanVien);
 
         btnHoaDon.setText("Hóa đơn");
         btnHoaDon.setToolTipText("");
-        btnHoaDon.setActionCommand("ThongKe");
         navigationPanel.add(btnHoaDon);
 
         btnThongKe.setText("Thống kê");
         btnThongKe.setToolTipText("");
-        btnThongKe.setActionCommand("ThongKe");
         navigationPanel.add(btnThongKe);
 
         btnKhuyenMai.setText("Khuyến mãi");
         btnKhuyenMai.setToolTipText("");
-        btnKhuyenMai.setActionCommand("ThongKe");
         navigationPanel.add(btnKhuyenMai);
 
         btnTaiKhoan.setText("Tài Khoản");
         btnTaiKhoan.setToolTipText("");
-        btnTaiKhoan.setActionCommand("ThongKe");
         navigationPanel.add(btnTaiKhoan);
 
         btnDangXuat.setText("Đăng xuất");
-        btnDangXuat.setActionCommand("DangXuat");
         btnDangXuat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDangXuatActionPerformed(evt);
@@ -307,91 +268,14 @@ public class DashboardFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void refreshNguyenLieuData() {
-        try {
-            // Try to call loadDataToTable if it exists
-            nguyenLieuPN.getClass().getMethod("loadDataToTable").invoke(nguyenLieuPN);
-        } catch (Exception e) {
-            // If method doesn't exist or fails, just show the panel without refreshing
-            System.err.println("Could not refresh Nguyen Lieu data: " + e.getMessage());
-        }
-    }
-
-    private void btnDatBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDatBanActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDatBanActionPerformed
-
-    private void btnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangXuatActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnDangXuatActionPerformed
-
-    private void btnMonAnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMonAnActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnMonAnActionPerformed
-
-    private void btnNguyenLieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNguyenLieuActionPerformed
-        switchPanel("NguyenLieu");
-        refreshNguyenLieuData();
-    }//GEN-LAST:event_btnNguyenLieuActionPerformed
-
-    private void navBtnThiActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_navBtnThiActionPerformed
-        // TODO add your handling code here:
-    }// GEN-LAST:event_navBtnThiActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
-        // (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the default
-         * look and feel.
-         * For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : 
-                    javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            System.err.println("Error setting look and feel: " + ex.getMessage());
-        }
-    
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            DashboardFrame frame = new DashboardFrame();
-            frame.setVisible(true);
-        });
-    }
-                   
- 
-     private void btnDatBanActionPerformed(java.awt.event.ActionEvent evt) {                                          
+     private void btnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDangXuatActionPerformed
          // TODO add your handling code here:
-     }                                         
- 
-     private void btnDangXuatActionPerformed(java.awt.event.ActionEvent evt) {                                            
-         // TODO add your handling code here:
-     }                                           
- 
-     private void btnMonAnActionPerformed(java.awt.event.ActionEvent evt) {                                         
-         // TODO add your handling code here:
-     }                                        
- 
-     private void btnNguyenLieuActionPerformed(java.awt.event.ActionEvent evt) {                                              
-         switchPanel("NguyenLieu");
-         refreshNguyenLieuData();
-     }                                             
- 
+     }//GEN-LAST:event_btnDangXuatActionPerformed
+
      private void navBtnThiActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_navBtnThiActionPerformed
          // TODO add your handling code here:
      }// GEN-LAST:event_navBtnThiActionPerformed
- 
+
      /**
       * @param args the command line arguments
       */
@@ -431,7 +315,7 @@ public class DashboardFrame extends javax.swing.JFrame {
                      null, ex);
          }
          // </editor-fold>
- 
+
          /* Create and display the form */
          java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
@@ -439,29 +323,28 @@ public class DashboardFrame extends javax.swing.JFrame {
              }
          });
      }
-     
-     // Variables declaration - do not modify                     
-     private javax.swing.JToggleButton btnCungCap;
-     private javax.swing.JToggleButton btnDangXuat;
-     private javax.swing.JToggleButton btnDatBan;
-     private javax.swing.JToggleButton btnHoaDon;
-     private javax.swing.JToggleButton btnKhachHang;
-     private javax.swing.JToggleButton btnKhuyenMai;
-     private javax.swing.JToggleButton btnMonAn;
-     private javax.swing.JToggleButton btnNguyenLieu;
-     private javax.swing.JToggleButton btnNhanVien;
-     private javax.swing.JToggleButton btnTaiKhoan;
-     private javax.swing.JToggleButton btnThongKe;
-     private javax.swing.ButtonGroup buttonGroup;
-     private java.awt.CardLayout cardLayout;
-     private javax.swing.JPanel currentPanel;
-     private javax.swing.JPanel examplePanel1;
-     private javax.swing.JLabel jLabel2;
-     private javax.swing.JLabel jLabel7;
-     private javax.swing.JPanel jPanel4;
-     private javax.swing.JToggleButton navBtnUserInfo;
-     private javax.swing.JPanel navigationPanel;
-     private javax.swing.JPanel sidePanel;
-     // End of variables declaration                   
- }
- 
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnCungCap;
+    private javax.swing.JToggleButton btnDangXuat;
+    private javax.swing.JToggleButton btnDatBan;
+    private javax.swing.JToggleButton btnHoaDon;
+    private javax.swing.JToggleButton btnKhachHang;
+    private javax.swing.JToggleButton btnKhuyenMai;
+    private javax.swing.JToggleButton btnMonAn;
+    private javax.swing.JToggleButton btnNguyenLieu;
+    private javax.swing.JToggleButton btnNhanVien;
+    private javax.swing.JToggleButton btnTaiKhoan;
+    private javax.swing.JToggleButton btnThongKe;
+    private javax.swing.ButtonGroup buttonGroup;
+    private java.awt.CardLayout cardLayout;
+    private javax.swing.JPanel currentPanel;
+    private javax.swing.JPanel examplePanel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JToggleButton navBtnUserInfo;
+    private javax.swing.JPanel navigationPanel;
+    private javax.swing.JPanel sidePanel;
+    // End of variables declaration//GEN-END:variables
+}

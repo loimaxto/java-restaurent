@@ -26,7 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,7 +44,6 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     private CtHoaDonBUS busCtHoaDonBUS;
     private ArrayList<CtSanPhamThanhToanDTO> ctSpList;
     private HoaDonPN parentPn;
-    private JScrollPane scrollPane;
 
     public ChiTietHoaDonModal(HoaDonPN hdPn, HoaDonDTO2 hddto) {
         busCtHoaDonBUS = new CtHoaDonBUS();
@@ -63,6 +64,12 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         List<Object[]> data = new ArrayList<>();
         for (CtSanPhamThanhToanDTO item : ctSpList) {
             data.add(new Object[]{item.getTenSp(), item.getSoLuong(), item.getGiaTaiLucDat(), item.getTongTienCt()});
+        }
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        for (int i = 0; i < tableSanPhamItem.getColumnCount(); i++) {
+            tableSanPhamItem.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
         DefaultTableModel model = new DefaultTableModel(convertListToArray(data),columnNames);
         tableSanPhamItem.setModel(model);

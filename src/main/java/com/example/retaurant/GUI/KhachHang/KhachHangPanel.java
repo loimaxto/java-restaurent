@@ -8,6 +8,7 @@ import com.example.retaurant.BUS.CustomerBUS;
 import com.example.retaurant.DTO.CustomerDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.MyCustom.MyDialog;
+import java.awt.Dialog;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.JFrame;
@@ -23,14 +24,16 @@ public class KhachHangPanel extends javax.swing.JPanel {
     DefaultTableModel model = new DefaultTableModel();
     CustomerBUS busCustomer = new CustomerBUS();
     MyDialog dialog;
+
     public KhachHangPanel() {
         initComponents();
 
         loadDataTable();
     }
-    public void loadSearchDataTable(){
+
+    public void loadSearchDataTable() {
         String keyword = txtFieldSearch.getText();
-        List<CustomerDTO> list = busCustomer.getSearchCustomersByPhone(keyword);     
+        List<CustomerDTO> list = busCustomer.getSearchCustomersByPhone(keyword);
         model.setRowCount(0);
         Vector header = new Vector();
         header.add("Id");
@@ -40,7 +43,7 @@ public class KhachHangPanel extends javax.swing.JPanel {
         if (model.getRowCount() == 0) {
             model = new DefaultTableModel(header, 0);
         }
-        
+
         for (CustomerDTO cust : list) {
             Vector row = new Vector();
             row.add(cust.getKhId());
@@ -51,6 +54,7 @@ public class KhachHangPanel extends javax.swing.JPanel {
         }
         tableKh.setModel(model);
     }
+
     public void loadDataTable() {
         model.setRowCount(0);
         Vector header = new Vector();
@@ -194,6 +198,9 @@ public class KhachHangPanel extends javax.swing.JPanel {
     private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
         AddKhachHangPanel addPanel = new AddKhachHangPanel();
+        addPanel.setLocationRelativeTo(this); // Center relative to the parent
+        addPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line
+        addPanel.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         addPanel.setKhPanel(this);
         addPanel.setVisible(true);
     }//GEN-LAST:event_btnThemActionPerformed
@@ -203,12 +210,16 @@ public class KhachHangPanel extends javax.swing.JPanel {
         int selectedRow = tableKh.getSelectedRow();
         if (selectedRow != -1) {
             System.out.println("Selected row: " + selectedRow);
-            int id =(int) tableKh.getValueAt(selectedRow, 0);
+            int id = (int) tableKh.getValueAt(selectedRow, 0);
             String hoKh = (String) tableKh.getValueAt(selectedRow, 1);
             String tenKh = (String) tableKh.getValueAt(selectedRow, 2);
             String sdt = (String) tableKh.getValueAt(selectedRow, 3);
-            CustomerDTO cust = new CustomerDTO(id,sdt,tenKh, hoKh);
+            CustomerDTO cust = new CustomerDTO(id, sdt, tenKh, hoKh);
             SuaKhPanel suaPn = new SuaKhPanel(cust);
+            suaPn.setLocationRelativeTo(this); // Center relative to the parent
+            suaPn.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line
+            suaPn.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
+
             suaPn.setKhPanel(this);
             suaPn.setVisible(true);
             loadDataTable();
@@ -223,7 +234,7 @@ public class KhachHangPanel extends javax.swing.JPanel {
         int selectedRow = tableKh.getSelectedRow();
         if (selectedRow != -1) {
             System.out.println("Selected row: " + selectedRow);
-            int id =(int) tableKh.getValueAt(selectedRow, 0);
+            int id = (int) tableKh.getValueAt(selectedRow, 0);
             busCustomer.delateCustomer(id);
             loadDataTable();
         } else {
