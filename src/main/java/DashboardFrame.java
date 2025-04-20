@@ -24,7 +24,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
     private KhachHangPanel khachHangPanel = new KhachHangPanel();
     private HoaDonPN hoaDonPN = new HoaDonPN();
-//    private NguyenLieuGUI nguyenLieuPN = new NguyenLieuGUI();
+    private NguyenLieuGUI nguyenLieuPN = new NguyenLieuGUI();
     
     public DashboardFrame() {
         initComponents();
@@ -38,7 +38,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
         currentPanel.add(khachHangPanel,btnKhachHang.getActionCommand());
         currentPanel.add(hoaDonPN, btnHoaDon.getActionCommand());
-//        currentPanel.add(nguyenLieuPN, btnNguyenLieu.getActionCommand());
+        currentPanel.add(nguyenLieuPN, btnNguyenLieu.getActionCommand());
         
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
@@ -57,7 +57,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnDatBan.setSelected(true);
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
-//        btnNguyenLieu.addActionListener(e -> {switchPanel(btnNguyenLieu.getActionCommand());  });
+        btnNguyenLieu.addActionListener(e -> {switchPanel(btnNguyenLieu.getActionCommand());  });
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
         btnHoaDon.addActionListener(examplePanel1->switchPanel(btnHoaDon.getActionCommand()));
