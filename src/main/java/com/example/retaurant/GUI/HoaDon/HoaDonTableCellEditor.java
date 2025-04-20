@@ -37,9 +37,7 @@ public class HoaDonTableCellEditor extends AbstractCellEditor implements TableCe
     private JButton createChiTietBtn() {
         JButton button = new JButton("Chi tiết");
         button.addActionListener(e -> {
-             System.out.println("asd");
             HoaDonDTO2 hdDto = tableModel.getHoaDonDTO(currentRow);
-            System.out.println(hdDto.toString());
             ChiTietHoaDonModal cthdm = new ChiTietHoaDonModal(hdPn, hdDto);
             cthdm.setLocationRelativeTo(hdPn); // Center relative to the parent
             cthdm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line

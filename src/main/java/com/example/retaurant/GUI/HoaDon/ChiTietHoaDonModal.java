@@ -44,7 +44,6 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     private CtHoaDonBUS busCtHoaDonBUS;
     private ArrayList<CtSanPhamThanhToanDTO> ctSpList;
     private HoaDonPN parentPn;
-    private JScrollPane scrollPane;
 
     public ChiTietHoaDonModal(HoaDonPN hdPn, HoaDonDTO2 hddto) {
         busCtHoaDonBUS = new CtHoaDonBUS();
