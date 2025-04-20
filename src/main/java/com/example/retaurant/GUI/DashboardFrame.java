@@ -4,8 +4,6 @@ package com.example.retaurant.GUI;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
-
 import com.example.retaurant.DTO.NhanVien;
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
@@ -23,22 +21,23 @@ import java.util.Arrays;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
-    
+
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
     private QuanLyNhanVienGUI nhanvienPN = new QuanLyNhanVienGUI();
+
     public DashboardFrame() {
         initComponents();
         currentPanel.removeAll();
 
         cardLayout = new CardLayout();
         currentPanel.setLayout(cardLayout);
-        
+
         // add panel moi cho phần chuyển trang
-        currentPanel.add(datBanPN,btnDatBan.getActionCommand());
-        currentPanel.add(khuyenMaiPN,btnKhuyenMai.getActionCommand());
-        currentPanel.add(nhanvienPN,btnNhanVien.getActionCommand());
+        currentPanel.add(datBanPN, btnDatBan.getActionCommand());
+        currentPanel.add(khuyenMaiPN, btnKhuyenMai.getActionCommand());
+        currentPanel.add(nhanvienPN, btnNhanVien.getActionCommand());
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
         buttonGroup.add(btnDatBan);
@@ -61,9 +60,9 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
         btnDangXuat.addActionListener(e -> handleLogout());
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));
-            
+
         cardLayout.show(currentPanel, btnDatBan.getActionCommand());
-        
+
         btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnKhuyenMai.addActionListener(e -> switchPanel(btnKhuyenMai.getActionCommand()));
         updateNavigateButton();
@@ -74,7 +73,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         this.user = user;
         if (user != null) {
             navBtnUserInfo.setText(user.getUserName());
-
         }
     }
 
@@ -374,7 +372,7 @@ public class DashboardFrame extends javax.swing.JFrame {
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnCungCap;
     private javax.swing.JToggleButton btnDangXuat;

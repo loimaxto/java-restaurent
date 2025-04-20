@@ -171,8 +171,8 @@ public class QuanLyNhanVienGUI extends JPanel {
         Dimension lblSize = lblMa.getPreferredSize();
         lblMa.setPreferredSize(lblSize);
         lblHoTen.setPreferredSize(lblSize);
-        lblMaTaiKhoan.setPreferredSize(lblSize);
         lblGioiTinh.setPreferredSize(lblSize);
+        lblMaTaiKhoan.setPreferredSize(lblSize);
         lblChucVu.setPreferredSize(lblSize);
         cmbGioiTinh.setPreferredSize(txtChucVu.getPreferredSize());
 
