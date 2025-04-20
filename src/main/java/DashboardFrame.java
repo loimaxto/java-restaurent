@@ -4,6 +4,7 @@ import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.GUI.HoaDon.HoaDonPN;
 import com.example.retaurant.GUI.KhachHang.KhachHangPanel;
 import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
+import com.example.retaurant.GUI.MonAnPN;
 import com.example.retaurant.GUI.NguyenLieu.NguyenLieuGUI;
 
 import java.awt.*;
@@ -25,6 +26,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     private KhachHangPanel khachHangPanel = new KhachHangPanel();
     private HoaDonPN hoaDonPN = new HoaDonPN();
     private NguyenLieuGUI nguyenLieuPN = new NguyenLieuGUI();
+    private MonAnPN monAnPN = new MonAnPN();
     
     public DashboardFrame() {
         initComponents();
@@ -39,6 +41,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         currentPanel.add(khachHangPanel,btnKhachHang.getActionCommand());
         currentPanel.add(hoaDonPN, btnHoaDon.getActionCommand());
         currentPanel.add(nguyenLieuPN, btnNguyenLieu.getActionCommand());
+        currentPanel.add(monAnPN,btnMonAn);
         
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
@@ -314,21 +317,7 @@ public class DashboardFrame extends javax.swing.JFrame {
 
     private void btnNguyenLieuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNguyenLieuActionPerformed
     }//GEN-LAST:event_btnNguyenLieuActionPerformed
-
- 
-     /**
-      * @param args the command line arguments
-      */
      public static void main(String args[]) {
-         /* Set the Nimbus look and feel */
-         // <editor-fold defaultstate="collapsed" desc=" Look and feel setting code
-         // (optional) ">
-         /*
-          * If Nimbus (introduced in Java SE 6) is not available, stay with the default
-          * look and feel.
-          * For details see
-          * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-          */
          try {
              for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager
                      .getInstalledLookAndFeels()) {
@@ -354,9 +343,6 @@ public class DashboardFrame extends javax.swing.JFrame {
                      java.util.logging.Level.SEVERE,
                      null, ex);
          }
-         // </editor-fold>
- 
-         /* Create and display the form */
          java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
                  new DashboardFrame().setVisible(true);
