@@ -14,6 +14,8 @@ import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HoaDonDAO {
 
@@ -39,7 +41,46 @@ public class HoaDonDAO {
         }
     }
 
-    public List<HoaDonDTO2> getAllBills() throws SQLException {
+    public HoaDonDTO2 getBillDTO2ById(int hdId) {
+        String sql = "SELECT * FROM hoa_don "
+                + "INNER JOIN nhan_vien  ON hoa_don.nguoi_lap_id = nhan_vien.nv_id "
+                + "INNER JOIN khach_hang ON khach_hang.kh_id = hoa_don.kh_id "
+                + "WHERE hoa_don.hd_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, hdId);
+            try (ResultSet rs = statement.executeQuery()) {
+                if (rs.next()) {
+                    HoaDonDTO2 hd2 = new HoaDonDTO2();
+                    hd2.setHdId(rs.getInt("hd_id"));
+                    hd2.setThoiGian(rs.getTimestamp("thoi_gian"));
+                    hd2.setGhiChu(rs.getByte("ghi_chu"));
+                    Object tongGiaObj = rs.getObject("tong_gia");
+                    hd2.setTongGia(tongGiaObj != null ? ((Number) tongGiaObj).intValue() : null);
+                    Object khIdObj = rs.getObject("kh_id");
+                    hd2.setKhId(khIdObj != null ? ((Number) khIdObj).intValue() : null);
+                    Object banIdObj = rs.getObject("ban_id");
+                    hd2.setBanId(banIdObj != null ? ((Number) banIdObj).intValue() : null);
+                    Object nguoiLapIdObj = rs.getObject("nguoi_lap_id");
+                    hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
+                    Object kmIdObj = rs.getObject("km_id");
+                    hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
+                    hd2.setTenKh(rs.getString("ho_kh"));
+                    hd2.setHoKh(rs.getString("ten_kh"));
+                    hd2.setHoTenNv(rs.getString("ho_ten"));
+                    hd2.setSdt(rs.getString("sdt"));
+                    
+                    return hd2;
+                }
+                return null;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(HoaDonDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return null;
+    }
+
+    public List<HoaDonDTO2> getAllBills() {
         String sql = "SELECT * FROM hoa_don "
                 + "INNER JOIN nhan_vien  ON hoa_don.nguoi_lap_id = nhan_vien.nv_id "
                 + "INNER JOIN khach_hang ON khach_hang.kh_id = hoa_don.kh_id "
@@ -68,7 +109,10 @@ public class HoaDonDAO {
                 bills.add(hd2);
             }
             return bills;
+        } catch (SQLException ex) {
+            Logger.getLogger(HoaDonDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
     public int addBill(HoaDonDTO bill) throws SQLException {
@@ -113,7 +157,7 @@ public class HoaDonDAO {
         }
     }
 
-    public boolean updateBill(HoaDonDTO bill) throws SQLException {
+    public boolean updateBill(HoaDonDTO bill)  {
         String sql = "UPDATE hoa_don SET thoi_gian = ?, ghi_chu = ?, tong_gia = ?, kh_id = ?, ban_id = ?, nguoi_lap_id = ?, km_id = ? WHERE hd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -130,7 +174,11 @@ public class HoaDonDAO {
 
             statement.setInt(8, bill.getHdId());
             return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Logger.getLogger(HoaDonDAO.class.getName()).log(Level.SEVERE, null, e);
         }
+        return false;
     }
 
     // Helper method to set integer parameters, handling nulls

@@ -12,7 +12,6 @@ public class HoaDonTableCellEditor extends AbstractCellEditor implements TableCe
     private JButton detailButton;
     private int currentRow;
     private HoaDonTableModel tableModel;
-    private JTable table;
     private HoaDonPN hdPn;
     public HoaDonTableCellEditor(JTable table, HoaDonTableModel tableModel, HoaDonPN hoaDonPN) {
         this.tableModel = tableModel;
@@ -24,7 +23,6 @@ public class HoaDonTableCellEditor extends AbstractCellEditor implements TableCe
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         this.currentRow = row;
-        this.table = table;
         panel.removeAll(); // Clear previous buttons
 
         detailButton = createChiTietBtn();
@@ -38,7 +36,7 @@ public class HoaDonTableCellEditor extends AbstractCellEditor implements TableCe
         JButton button = new JButton("Chi tiết");
         button.addActionListener(e -> {
             HoaDonDTO2 hdDto = tableModel.getHoaDonDTO(currentRow);
-            ChiTietHoaDonModal cthdm = new ChiTietHoaDonModal(hdPn, hdDto);
+            ChiTietHoaDonModal cthdm = new ChiTietHoaDonModal( hdDto,false);
             cthdm.setLocationRelativeTo(hdPn); // Center relative to the parent
             cthdm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line
             cthdm.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
