@@ -51,7 +51,7 @@ public class NguyenLieuDAO {
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, nguyenLieu.getTenNl());
             statement.setString(2, nguyenLieu.getDonVi());
-            statement.setInt(3, nguyenLieu.getSoLuong());
+            statement.setFloat(3, nguyenLieu.getSoLuong());
             
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
@@ -73,7 +73,7 @@ public class NguyenLieuDAO {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, nguyenLieu.getTenNl());
             statement.setString(2, nguyenLieu.getDonVi());
-            statement.setInt(3, nguyenLieu.getSoLuong());
+            statement.setFloat(3, nguyenLieu.getSoLuong());
             statement.setInt(4, nguyenLieu.getNlId());
 
             return statement.executeUpdate() > 0;
@@ -107,7 +107,7 @@ public class NguyenLieuDAO {
         nguyenLieu.setNlId(resultSet.getInt("nl_id"));
         nguyenLieu.setTenNl(resultSet.getString("ten_nl"));
         nguyenLieu.setDonVi(resultSet.getString("don_vi"));
-        nguyenLieu.setSoLuong(resultSet.getInt("so_luong"));
+        nguyenLieu.setSoLuong(resultSet.getFloat("so_luong"));
         return nguyenLieu;
     }
 }

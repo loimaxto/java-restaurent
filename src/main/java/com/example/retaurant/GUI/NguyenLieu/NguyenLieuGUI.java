@@ -2,6 +2,9 @@ package com.example.retaurant.GUI.NguyenLieu;
 
 import com.example.retaurant.BUS.NguyenLieuBUS;
 import com.example.retaurant.DTO.NguyenLieuDTO;
+import com.example.retaurant.GUI.PhieuNhap.PhieuNhapGUI;
+import com.example.retaurant.utils.DBConnection;
+
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row;
@@ -16,6 +19,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Connection;
 import java.util.List;
 
 public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
@@ -26,10 +30,9 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
     private final JTextField txtId = new JTextField();
     private final JTextField txtTen = new JTextField();
     private final JTextField txtDonVi = new JTextField();
-    private final JTextField txtSoLuong = new JTextField();
     private final JTextField txtSearch = new JTextField();
 
-    public NguyenLieuGUI() { // Changed constructor name
+    public NguyenLieuGUI() {
         initComponents();
         loadDataToTable();
     }
@@ -120,7 +123,6 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
 
         addInputField(inputPanel, "Tên nguyên liệu:", txtTen);
         addInputField(inputPanel, "Đơn vị:", txtDonVi);
-        addInputField(inputPanel, "Số lượng:", txtSoLuong);
 
         // Add row selection listener to populate fields when a row is selected
         table.getSelectionModel().addListSelectionListener(e -> {
@@ -129,7 +131,6 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
                 txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
                 txtTen.setText(tableModel.getValueAt(selectedRow, 1).toString());
                 txtDonVi.setText(tableModel.getValueAt(selectedRow, 2).toString());
-                txtSoLuong.setText(tableModel.getValueAt(selectedRow, 3).toString());
             }
         });
 
@@ -155,6 +156,9 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         buttonPanel.add(createButton("Xóa", e -> deleteNguyenLieu()));
         buttonPanel.add(createButton("Làm mới", e -> clearForm()));
         buttonPanel.add(createButton("Xuất Excel", e -> exportToExcel()));
+        JButton btnNhap = createButton("Nhập", e -> showPhieuNhapGUI());
+        btnNhap.setBackground(new Color(100, 200, 100)); // Green color for import button
+        buttonPanel.add(btnNhap);
 
         return buttonPanel;
     }
@@ -188,14 +192,13 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         try {
             String ten = txtTen.getText().trim();
             String donVi = txtDonVi.getText().trim();
-            int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
 
             if (ten.isEmpty() || donVi.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
                 return;
             }
 
-            NguyenLieuDTO nl = new NguyenLieuDTO(0, ten, donVi, soLuong);
+            NguyenLieuDTO nl = new NguyenLieuDTO(0, ten, donVi, (float) 0);
             if (nguyenLieuBUS.addNguyenLieu(nl)) {
                 JOptionPane.showMessageDialog(this, "Thêm thành công");
                 loadDataToTable();
@@ -213,14 +216,15 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
             int id = Integer.parseInt(txtId.getText().trim());
             String ten = txtTen.getText().trim();
             String donVi = txtDonVi.getText().trim();
-            int soLuong = Integer.parseInt(txtSoLuong.getText().trim());
 
             if (ten.isEmpty() || donVi.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
                 return;
             }
+            
+            Float currentQuantity = nguyenLieuBUS.getNguyenLieuById(id).getSoLuong();
 
-            NguyenLieuDTO nl = new NguyenLieuDTO(id, ten, donVi, soLuong);
+            NguyenLieuDTO nl = new NguyenLieuDTO(id, ten, donVi, currentQuantity);
             if (nguyenLieuBUS.updateNguyenLieu(nl)) {
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công");
                 loadDataToTable();
@@ -282,7 +286,6 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         txtId.setText("");
         txtTen.setText("");
         txtDonVi.setText("");
-        txtSoLuong.setText("");
     }
 
     private void exportToExcel() {
@@ -356,5 +359,18 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
             frame.setVisible(true);
         });
     }
+    private void showPhieuNhapGUI() {
+    // You'll need to pass the database connection to the PhieuNhapGUI
+    // This assumes you have access to the connection in your NguyenLieuGUI
+    // If not, you'll need to modify how you get the connection
+    Connection connection = DBConnection.getConnection(); // Replace with your actual connection method
+    JFrame frame = new JFrame("Quản lý Phiếu Nhập");
+    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    frame.getContentPane().add(new PhieuNhapGUI(connection)); // Replace with your actual connection
+    frame.pack();
+    frame.setSize(1000, 600);
+    frame.setLocationRelativeTo(null);
+    frame.setVisible(true);
+}
     // Removed the main method as this is now a JPanel
 }
