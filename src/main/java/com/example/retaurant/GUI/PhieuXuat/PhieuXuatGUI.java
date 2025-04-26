@@ -1,11 +1,10 @@
-package com.example.retaurant.GUI.PhieuNhap;
+package com.example.retaurant.GUI.PhieuXuat;
 
-import com.example.retaurant.BUS.PhieuNhapBUS;
+import com.example.retaurant.BUS.PhieuXuatBUS;
 import com.example.retaurant.BUS.NguyenLieuBUS;
-import com.example.retaurant.DTO.ChiTietPhieuNhapDTO;
+import com.example.retaurant.DTO.CTPhieuXuatDTO;
 import com.example.retaurant.DTO.NguyenLieuDTO;
-import com.example.retaurant.DTO.NhaCungCapDTO;
-import com.example.retaurant.DTO.PhieuNhapDTO;
+import com.example.retaurant.DTO.PhieuXuatDTO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -13,28 +12,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
-public class PhieuNhapGUI extends JPanel {
-    // Business layer components
-    private PhieuNhapBUS phieuNhapBUS;
+public class PhieuXuatGUI extends JPanel {
+    private PhieuXuatBUS phieuXuatBUS;
     private NguyenLieuBUS nguyenLieuBUS;
     
-    // Table models
     private DefaultTableModel tableModel;
     private DefaultTableModel chiTietModel;
     
-    // UI components
     private JTable table;
     private JTable chiTietTable;
     private JComboBox<NguyenLieuDTO> cbNguyenLieu;
-    private JComboBox<NhaCungCapDTO> cbNhaCungCap;
     private JTextField txtSoLuong;
-    private JTextField txtDonGia;
     private JTextArea txtGhiChu;
-    private List<ChiTietPhieuNhapDTO> chiTietList;
+    private List<CTPhieuXuatDTO> chiTietList;
     
     // Search components
     private JComboBox<String> cbSearchColumn;
@@ -44,58 +39,52 @@ public class PhieuNhapGUI extends JPanel {
     private JButton btnAdvancedSearch;
     private JButton btnClearSearch;
 
-    public PhieuNhapGUI(Connection connection) {
-        this.phieuNhapBUS = new PhieuNhapBUS(connection);
+    public PhieuXuatGUI(Connection connection) {
+        this.phieuXuatBUS = new PhieuXuatBUS(connection);
         this.nguyenLieuBUS = new NguyenLieuBUS();
         this.chiTietList = new ArrayList<>();
         initComponents();
         loadDataToTable();
         loadNguyenLieuComboBox();
-        loadNhaCungCapComboBox();
     }
 
     private void initComponents() {
-        // Main panel setup
         this.setLayout(new BorderLayout());
         this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Create main split pane for resizable layout
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        mainSplitPane.setDividerLocation(600); // Initial position at 600px
-        mainSplitPane.setResizeWeight(0.6); // Maintain 60/30 ratio
-        mainSplitPane.setOneTouchExpandable(true);
+        mainSplitPane.setDividerLocation(600);
+        mainSplitPane.setResizeWeight(0.6);
 
-        // LEFT PANEL (60% width) - Search and Main Table
+        // LEFT PANEL - Search and Main Table
         JPanel leftPanel = new JPanel(new BorderLayout(10, 10));
         
-        // 1. Search Panel (top of left panel)
+        // Search Panel
         JPanel searchPanel = createSearchPanel();
         leftPanel.add(searchPanel, BorderLayout.NORTH);
         
-        // 2. Main Table (center of left panel)
+        // Main Table
         JScrollPane tableScrollPane = createMainTable();
         leftPanel.add(tableScrollPane, BorderLayout.CENTER);
 
-        // RIGHT PANEL (30% width) - Receipt Information
+        // RIGHT PANEL - Detail Information
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
         rightPanel.add(createDetailPanel(), BorderLayout.CENTER);
 
-        // Add both panels to split pane
         mainSplitPane.setLeftComponent(leftPanel);
         mainSplitPane.setRightComponent(rightPanel);
 
         // Bottom buttons panel
         JPanel bottomPanel = createBottomPanel();
         
-        // Final layout assembly
         this.add(mainSplitPane, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private JPanel createSearchPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm phiếu nhập"));
-        panel.setPreferredSize(new Dimension(600, 180));
+        panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm phiếu xuất"));
+        panel.setPreferredSize(new Dimension(600, 150));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -106,8 +95,8 @@ public class PhieuNhapGUI extends JPanel {
         panel.add(new JLabel("Trường dữ liệu:"), gbc);
         
         gbc.gridx = 1;
-        cbSearchColumn = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
-        cbSearchColumn.setPreferredSize(new Dimension(200, 25));
+        cbSearchColumn = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
+        cbSearchColumn.setPreferredSize(new Dimension(150, 25));
         panel.add(cbSearchColumn, gbc);
         
         // Operator selection
@@ -116,7 +105,7 @@ public class PhieuNhapGUI extends JPanel {
         
         gbc.gridx = 1;
         cbSearchOperator = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        cbSearchOperator.setPreferredSize(new Dimension(200, 25));
+        cbSearchOperator.setPreferredSize(new Dimension(150, 25));
         panel.add(cbSearchOperator, gbc);
         
         // Value input
@@ -125,7 +114,7 @@ public class PhieuNhapGUI extends JPanel {
         
         gbc.gridx = 1;
         txtSearchValue = new JTextField();
-        txtSearchValue.setPreferredSize(new Dimension(200, 25));
+        txtSearchValue.setPreferredSize(new Dimension(150, 25));
         panel.add(txtSearchValue, gbc);
         
         // Search buttons
@@ -135,7 +124,7 @@ public class PhieuNhapGUI extends JPanel {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         
         btnSearch = new JButton("Tìm kiếm");
-        btnSearch.addActionListener(e -> searchPhieuNhap());
+        btnSearch.addActionListener(e -> searchPhieuXuat());
         buttonPanel.add(btnSearch);
         
         btnAdvancedSearch = new JButton("Tìm kiếm nâng cao");
@@ -156,34 +145,35 @@ public class PhieuNhapGUI extends JPanel {
 
     private JScrollPane createMainTable() {
         tableModel = new DefaultTableModel(
-            new Object[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"}, 0);
+            new Object[]{"Mã PX", "Ngày xuất", "Người xuất"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         table = new JTable(tableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
-        // Add selection listener
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
-                int pnId = (int) tableModel.getValueAt(table.getSelectedRow(), 0);
-                showChiTietPhieuNhap(pnId);
+                int pxId = (int) tableModel.getValueAt(table.getSelectedRow(), 0);
+                showChiTietPhieuXuat(pxId);
             }
         });
         
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(600, 300));
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách phiếu nhập"));
+        scrollPane.setBorder(BorderFactory.createTitledBorder("Danh sách phiếu xuất"));
         return scrollPane;
     }
 
     private JPanel createDetailPanel() {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
-        panel.setBorder(BorderFactory.createTitledBorder("Thông tin phiếu nhập"));
+        panel.setBorder(BorderFactory.createTitledBorder("Thông tin phiếu xuất"));
         
         // Input fields panel
         JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        
-        cbNhaCungCap = new JComboBox<>();
-        inputPanel.add(new JLabel("Nhà cung cấp:"));
-        inputPanel.add(cbNhaCungCap);
         
         inputPanel.add(new JLabel("Nguyên liệu:"));
         cbNguyenLieu = new JComboBox<>();
@@ -193,19 +183,20 @@ public class PhieuNhapGUI extends JPanel {
         txtSoLuong = new JTextField();
         inputPanel.add(txtSoLuong);
         
-        inputPanel.add(new JLabel("Đơn giá:"));
-        txtDonGia = new JTextField();
-        inputPanel.add(txtDonGia);
-        
         JButton btnAdd = new JButton("Thêm vào phiếu");
-        btnAdd.addActionListener(e -> addToPhieuNhap());
+        btnAdd.addActionListener(e -> addToPhieuXuat());
         inputPanel.add(btnAdd);
         
         panel.add(inputPanel, BorderLayout.NORTH);
         
         // Detail table
         chiTietModel = new DefaultTableModel(
-            new Object[]{"Tên NL", "Đơn vị", "Số lượng", "Đơn giá", "Thành tiền"}, 0);
+            new Object[]{"Tên NL", "Đơn vị", "Số lượng"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         chiTietTable = new JTable(chiTietModel);
         JScrollPane chiTietScroll = new JScrollPane(chiTietTable);
         chiTietScroll.setPreferredSize(new Dimension(280, 200));
@@ -215,6 +206,7 @@ public class PhieuNhapGUI extends JPanel {
         JPanel ghiChuPanel = new JPanel(new BorderLayout());
         ghiChuPanel.setBorder(BorderFactory.createTitledBorder("Ghi chú"));
         txtGhiChu = new JTextArea(3, 20);
+        txtGhiChu.setLineWrap(true);
         ghiChuPanel.add(new JScrollPane(txtGhiChu));
         panel.add(ghiChuPanel, BorderLayout.SOUTH);
         
@@ -224,8 +216,8 @@ public class PhieuNhapGUI extends JPanel {
     private JPanel createBottomPanel() {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 10));
         
-        JButton btnCreate = new JButton("Tạo phiếu nhập");
-        btnCreate.addActionListener(e -> createPhieuNhap());
+        JButton btnCreate = new JButton("Tạo phiếu xuất");
+        btnCreate.addActionListener(e -> createPhieuXuat());
         panel.add(btnCreate);
         
         JButton btnRefresh = new JButton("Làm mới");
@@ -235,8 +227,7 @@ public class PhieuNhapGUI extends JPanel {
         return panel;
     }
 
-    // BUSINESS LOGIC METHODS (unchanged from original)
-    private void searchPhieuNhap() {
+    private void searchPhieuXuat() {
         String column = (String) cbSearchColumn.getSelectedItem();
         String operator = (String) cbSearchOperator.getSelectedItem();
         String value = txtSearchValue.getText().trim();
@@ -248,28 +239,15 @@ public class PhieuNhapGUI extends JPanel {
         
         String fieldName = "";
         switch (column) {
-            case "Mã PN": fieldName = "pn_id"; break;
-            case "Ngày nhập": fieldName = "ngay_nhap"; break;
-            case "Nhà cung cấp": fieldName = "ncc_id"; break;
-            case "Người nhập": fieldName = "nguoi_nhap_id"; break;
-            case "Tổng tiền": fieldName = "tong_tien"; break;
+            case "Mã PX": fieldName = "px_id"; break;
+            case "Ngày xuất": fieldName = "ngay_xuat"; break;
+            case "Người xuất": fieldName = "nguoi_xuat_id"; break;
         }
         
         String condition = fieldName + " " + operator + " ?";
-        List<PhieuNhapDTO> searchResults = phieuNhapBUS.searchPhieuNhap(condition, new String[]{value});
+        List<PhieuXuatDTO> searchResults = phieuXuatBUS.searchPhieuXuat(condition, new String[]{value});
         
-        tableModel.setRowCount(0);
-        if (searchResults != null) {
-            for (PhieuNhapDTO pn : searchResults) {
-                tableModel.addRow(new Object[]{
-                    pn.getPnId(),
-                    pn.getNgayNhap(),
-                    getNhaCungCapName(pn.getNccId()),
-                    getNhanVienName(pn.getNguoiNhapId()),
-                    pn.getTongTien()
-                });
-            }
-        }
+        updateTableWithResults(searchResults);
     }
 
     private void showAdvancedSearchDialog() {
@@ -287,7 +265,7 @@ public class PhieuNhapGUI extends JPanel {
         panel.add(new JLabel("Trường 1:"), gbc);
         
         gbc.gridx = 1;
-        JComboBox<String> cbField1 = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
+        JComboBox<String> cbField1 = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
         panel.add(cbField1, gbc);
         
         gbc.gridx = 2;
@@ -311,7 +289,7 @@ public class PhieuNhapGUI extends JPanel {
         panel.add(new JLabel("Trường 2:"), gbc);
         
         gbc.gridx = 1;
-        JComboBox<String> cbField2 = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
+        JComboBox<String> cbField2 = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
         panel.add(cbField2, gbc);
         
         gbc.gridx = 2;
@@ -328,34 +306,35 @@ public class PhieuNhapGUI extends JPanel {
         gbc.fill = GridBagConstraints.CENTER;
         JButton btnSearch = new JButton("Tìm kiếm");
         btnSearch.addActionListener(e -> {
-            String fieldName1 = getFieldName((String) cbField1.getSelectedItem());
+            Map<String, String> filters = new HashMap<>();
+            
+            // Add first condition
+            String field1 = getFieldName((String) cbField1.getSelectedItem());
             String operator1 = (String) cbOperator1.getSelectedItem();
             String value1 = txtValue1.getText().trim();
+            if (!value1.isEmpty()) {
+                filters.put(field1, operator1 + " " + value1);
+            }
             
+            // Add logical operator
             String logicOp = (String) cbLogicOp.getSelectedItem();
+            filters.put("logic", logicOp);
             
-            String fieldName2 = getFieldName((String) cbField2.getSelectedItem());
+            // Add second condition
+            String field2 = getFieldName((String) cbField2.getSelectedItem());
             String operator2 = (String) cbOperator2.getSelectedItem();
             String value2 = txtValue2.getText().trim();
-            
-            String condition = fieldName1 + " " + operator1 + " ? " + logicOp + " " + 
-                             fieldName2 + " " + operator2 + " ?";
-            
-            List<PhieuNhapDTO> searchResults = phieuNhapBUS.searchPhieuNhap(condition, new String[]{value1, value2});
-            
-            tableModel.setRowCount(0);
-            if (searchResults != null) {
-                for (PhieuNhapDTO pn : searchResults) {
-                    tableModel.addRow(new Object[]{
-                        pn.getPnId(),
-                        pn.getNgayNhap(),
-                        getNhaCungCapName(pn.getNccId()),
-                        getNhanVienName(pn.getNguoiNhapId()),
-                        pn.getTongTien()
-                    });
-                }
+            if (!value2.isEmpty()) {
+                filters.put(field2, operator2 + " " + value2);
             }
-            dialog.dispose();
+            
+            try {
+                List<PhieuXuatDTO> searchResults = phieuXuatBUS.advancedSearch(filters);
+                updateTableWithResults(searchResults);
+                dialog.dispose();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
         });
         panel.add(btnSearch, gbc);
         
@@ -364,50 +343,31 @@ public class PhieuNhapGUI extends JPanel {
         dialog.setVisible(true);
     }
 
-    private String getFieldName(String displayName) {
-        switch (displayName) {
-            case "Mã PN": return "pn_id";
-            case "Ngày nhập": return "ngay_nhap";
-            case "Nhà cung cấp": return "ncc_id";
-            case "Người nhập": return "nguoi_nhap_id";
-            case "Tổng tiền": return "tong_tien";
-            default: return "";
-        }
-    }
-
-    private void loadDataToTable() {
+    private void updateTableWithResults(List<PhieuXuatDTO> results) {
         tableModel.setRowCount(0);
-        List<PhieuNhapDTO> list = phieuNhapBUS.getAllPhieuNhap();
-        if (list != null) {
-            for (PhieuNhapDTO pn : list) {
+        if (results != null) {
+            for (PhieuXuatDTO px : results) {
                 tableModel.addRow(new Object[]{
-                    pn.getPnId(),
-                    pn.getNgayNhap(),
-                    getNhaCungCapName(pn.getNccId()),
-                    getNhanVienName(pn.getNguoiNhapId()),
-                    pn.getTongTien()
+                    px.getPxId(),
+                    px.getNgayXuat(),
+                    getNhanVienName(px.getNguoiXuatId())
                 });
             }
         }
     }
 
-    private String getNhaCungCapName(int nccId) {
-        List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
-        if (list != null) {
-            for (NhaCungCapDTO ncc : list) {
-                if (ncc.getNcc_id() == nccId) {
-                    return ncc.getTen_ncc();
-                }
-            }
-        }
-        return "Unknown";
+    private void loadDataToTable() {
+        List<PhieuXuatDTO> list = phieuXuatBUS.getAllPhieuXuat();
+        updateTableWithResults(list);
     }
 
     private String getNhanVienName(int nvId) {
+        // In a real application, you would look this up from your database
         return "NV " + nvId;
     }
 
     private void loadNguyenLieuComboBox() {
+        cbNguyenLieu.removeAllItems();
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         if (list != null) {
             for (NguyenLieuDTO nl : list) {
@@ -416,115 +376,90 @@ public class PhieuNhapGUI extends JPanel {
         }
     }
 
-    private void loadNhaCungCapComboBox() {
-        List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
-        if (list != null) {
-            for (NhaCungCapDTO ncc : list) {
-                cbNhaCungCap.addItem(ncc);
-            }
-        }
-    }
-
-    private void addToPhieuNhap() {
+    private void addToPhieuXuat() {
         try {
             NguyenLieuDTO selectedNL = (NguyenLieuDTO) cbNguyenLieu.getSelectedItem();
-            long soLuong = Long.parseLong(txtSoLuong.getText());
-            long donGia = Long.parseLong(txtDonGia.getText());
+            float soLuong = Float.parseFloat(txtSoLuong.getText());
             
-            if (selectedNL == null || soLuong <= 0 || donGia <= 0) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin hợp lệ");
+            if (selectedNL == null || soLuong <= 0) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin hợp lệ", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 return;
             }
             
-            ChiTietPhieuNhapDTO chiTiet = new ChiTietPhieuNhapDTO();
+            // Check if enough quantity is available
+            if (selectedNL.getSoLuong() < soLuong) {
+                JOptionPane.showMessageDialog(this, 
+                    "Không đủ nguyên liệu. Số lượng hiện có: " + selectedNL.getSoLuong(), 
+                    "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            CTPhieuXuatDTO chiTiet = new CTPhieuXuatDTO();
             chiTiet.setNlId(selectedNL.getNlId());
             chiTiet.setTenSp(selectedNL.getTenNl());
             chiTiet.setSoLuong(soLuong);
-            chiTiet.setDonGiaMoiDonVi(donGia);
-            chiTiet.setTongTien(soLuong * donGia);
+            chiTiet.setDonVi(selectedNL.getDonVi());
             
             chiTietList.add(chiTiet);
             updateChiTietTable();
             
             txtSoLuong.setText("");
-            txtDonGia.setText("");
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số lượng và đơn giá phải là số");
+            JOptionPane.showMessageDialog(this, "Số lượng phải là số", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     private void updateChiTietTable() {
         chiTietModel.setRowCount(0);
-        for (ChiTietPhieuNhapDTO ct : chiTietList) {
+        for (CTPhieuXuatDTO ct : chiTietList) {
             chiTietModel.addRow(new Object[]{
                 ct.getTenSp(),
-                getDonVi(ct.getNlId()),
-                ct.getSoLuong(),
-                ct.getDonGiaMoiDonVi(),
-                ct.getTongTien()
+                ct.getDonVi(),
+                ct.getSoLuong()
             });
         }
     }
 
-    private String getDonVi(int nlId) {
-        List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
-        if (list != null) {
-            for (NguyenLieuDTO nl : list) {
-                if (nl.getNlId() == nlId) {
-                    return nl.getDonVi();
-                }
-            }
-        }
-        return "";
-    }
-
-    private void showChiTietPhieuNhap(int pnId) {
+    private void showChiTietPhieuXuat(int pxId) {
         chiTietModel.setRowCount(0);
-        List<ChiTietPhieuNhapDTO> list = phieuNhapBUS.getChiTietByPhieuNhap(pnId);
+        List<CTPhieuXuatDTO> list = phieuXuatBUS.getChiTietByPhieuXuat(pxId);
         if (list != null) {
-            for (ChiTietPhieuNhapDTO ct : list) {
+            for (CTPhieuXuatDTO ct : list) {
                 chiTietModel.addRow(new Object[]{
                     ct.getTenSp(),
-                    getDonVi(ct.getNlId()),
-                    ct.getSoLuong(),
-                    ct.getDonGiaMoiDonVi(),
-                    ct.getTongTien()
+                    ct.getDonVi(),
+                    ct.getSoLuong()
                 });
             }
         }
     }
 
-    private void createPhieuNhap() {
+    private void createPhieuXuat() {
         if (chiTietList.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu");
+            JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        if (cbNhaCungCap.getSelectedItem() == null) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp");
-            return;
-        }
+        int nguoiXuatId = 2; // Default employee ID - in real app, get from session
         
-        int nguoiNhapId = 2; // Default employee ID
+        PhieuXuatDTO phieuXuat = new PhieuXuatDTO();
+        phieuXuat.setNgayXuat(new Date());
+        phieuXuat.setNguoiXuatId(nguoiXuatId);
         
-        NhaCungCapDTO selectedNCC = (NhaCungCapDTO) cbNhaCungCap.getSelectedItem();
-        
-        PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
-        phieuNhap.setNgayNhap(new Date());
-        phieuNhap.setNccId(selectedNCC.getNcc_id());
-        phieuNhap.setNguoiNhapId(nguoiNhapId);
-        
-        int pnId = phieuNhapBUS.createPhieuNhap(phieuNhap, chiTietList);
-        if (pnId > 0) {
-            for (ChiTietPhieuNhapDTO ct : chiTietList) {
-                nguyenLieuBUS.updateNguyenLieuQuantityNhap(ct.getNlId(), ct.getSoLuong());
+        int pxId = phieuXuatBUS.createPhieuXuat(phieuXuat, chiTietList);
+        if (pxId > 0) {
+            // Update inventory
+            for (CTPhieuXuatDTO ct : chiTietList) {
+                nguyenLieuBUS.updateNguyenLieuQuantityXuat(ct.getNlId(), (long) ct.getSoLuong());
             }
             
-            JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công với mã: " + pnId);
+            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thành công với mã: " + pxId, 
+                "Thành công", JOptionPane.INFORMATION_MESSAGE);
             refreshForm();
             loadDataToTable();
+            loadNguyenLieuComboBox(); // Refresh inventory quantities
         } else {
-            JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại");
+            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -532,5 +467,15 @@ public class PhieuNhapGUI extends JPanel {
         chiTietList.clear();
         chiTietModel.setRowCount(0);
         txtGhiChu.setText("");
+        txtSoLuong.setText("");
+    }
+
+    private String getFieldName(String displayName) {
+        switch (displayName) {
+            case "Mã PX": return "px_id";
+            case "Ngày xuất": return "ngay_xuat";
+            case "Người xuất": return "nguoi_xuat_id";
+            default: return "";
+        }
     }
 }
