@@ -65,7 +65,10 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
         btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
-        btnHoaDon.addActionListener(e -> switchPanel(btnHoaDon.getActionCommand()));
+        btnHoaDon.addActionListener(e ->{ 
+         hoaDonPN.reloadDataPanel();
+         switchPanel(btnHoaDon.getActionCommand());
+        });
 //         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
 //         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
         btnDangXuat.addActionListener(e -> handleLogout());

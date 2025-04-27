@@ -488,10 +488,7 @@ public class DatBanPN extends javax.swing.JPanel {
             new MyDialog("Chọn bàn trước khi thêm khách hàng!", WIDTH);
             return;
         }
-        if (listItemInBillPanel.getHoaDonDTO().getKhId() != null) {
-            new MyDialog("Hóa đơn đã có khách hàng", WIDTH);
-            return;
-        }
+        
         AddKhachHangPanel addPanel = new AddKhachHangPanel();
         addPanel.setLocationRelativeTo(this); // Center relative to the parent
         addPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line
@@ -533,17 +530,14 @@ public class DatBanPN extends javax.swing.JPanel {
     public void updateNewInsertKhachHanhForHoaDon(int khId) {
         CustomerDTO cust = busCustomer.getCustomerById(khId);
         HoaDonDTO hoaDonDto = listItemInBillPanel.getHoaDonDTO();
-        if (cust != null && hoaDonDto != null && hoaDonDto.getKhId() == null) {
+        if (cust != null && hoaDonDto != null ) {
             hoaDonDto.setKhId(cust.getKhId());
             busHoaDon.updateBill(hoaDonDto);
             updateCustomerInforForTable(cust.getKhId());
         } else if (hoaDonDto == null) {
             new MyDialog("Chưa chọn hóa đơn thêm khách hàng", 0);
             return;
-        } else if (hoaDonDto.getKhId() != null) {
-            new MyDialog("Hóa đơn đã có khách hàng", 0);
-            return;
-        }
+        } 
     }
 
     public void resetCurrentHoaDonAndBanAndTable() {

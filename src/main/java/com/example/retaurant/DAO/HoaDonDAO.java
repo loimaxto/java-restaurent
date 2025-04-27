@@ -102,8 +102,8 @@ public class HoaDonDAO {
                 hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
                 Object kmIdObj = rs.getObject("km_id");
                 hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
-                hd2.setTenKh(rs.getString("ho_kh"));
-                hd2.setHoKh(rs.getString("ten_kh"));
+                hd2.setTenKh(rs.getString("ten_kh"));
+                hd2.setHoKh(rs.getString("ho_kh"));
                 hd2.setHoTenNv(rs.getString("ho_ten"));
                 hd2.setSdt(rs.getString("sdt"));
                 bills.add(hd2);

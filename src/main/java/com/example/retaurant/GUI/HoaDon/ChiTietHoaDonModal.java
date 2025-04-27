@@ -12,6 +12,9 @@ import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
 import com.example.retaurant.DTO.HoaDonDTO2;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.MyCustom.MyDialog;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingConstants;
@@ -231,6 +234,11 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     private void btnXacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanActionPerformed
         HoaDonBUS busHoaDon = new HoaDonBUS();
         hdDto.setTongGia(tongTienHoaDon);
+        ZoneId hoChiMinhZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        LocalDateTime now = LocalDateTime.now(hoChiMinhZone);
+        Timestamp currentTimestamp = Timestamp.valueOf(now);
+        hdDto.setThoiGian(currentTimestamp);
+        busHoaDon.updateBill(hdDto);
         if (busHoaDon.updateBill(hdDto)) {
             new MyDialog("Thanh toán thành công !", 0);
             BanBUS busBan = new BanBUS();
