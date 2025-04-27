@@ -44,13 +44,16 @@ public class HoaDonPN extends javax.swing.JPanel {
         TableColumn column = tableHoaDon.getColumnModel().getColumn(4);
         column.setCellEditor(new HoaDonTableCellEditor(tableHoaDon, tableModel, this));
         column.setCellRenderer(new HoaDonTableCellRender());
-        renderDataForTable(getHoaDonData());
+        reloadDataPanel();
     }
-
+    public void reloadDataPanel() {
+        renderDataForTable(getHoaDonData());
+        System.out.println("load data hoa don");
+    }
     public List<HoaDonDTO2> getHoaDonData() {
         return busHoaDon.getBills();
     }
-
+    
     public void renderDataForTable(List<HoaDonDTO2> data) {
         tableModel.resetData();
         for (HoaDonDTO2 item : data) {

@@ -148,7 +148,7 @@
     </Component>
     <Component class="javax.swing.JButton" name="btnXacNhan">
       <Properties>
-        <Property name="text" type="java.lang.String" value="X&#xe1;c nh&#x1ead;n"/>
+        <Property name="text" type="java.lang.String" value="X&#xe1;c  nh&#x1ead;n"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnXacNhanActionPerformed"/>

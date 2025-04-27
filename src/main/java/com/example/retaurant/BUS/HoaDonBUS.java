@@ -28,14 +28,11 @@ public class HoaDonBUS {
             return null;
         }
     }
-
+    public HoaDonDTO2 getBillDTO2ById(Integer hdId) {
+        return hoaDonDAO.getBillDTO2ById(hdId);
+    }
     public List<HoaDonDTO2> getBills() {
-        try {
-            return hoaDonDAO.getAllBills();
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-            return null; 
-        }
+        return hoaDonDAO.getAllBills();
     }
     public int addDefaultHoaDon(int tableId, int creatorId) {
         return hoaDonDAO.addDefaultHoaDon(tableId,creatorId);
@@ -51,12 +48,7 @@ public class HoaDonBUS {
     }
 
     public boolean updateBill(HoaDonDTO bill) {
-        try {
             return hoaDonDAO.updateBill(bill);
-        } catch (SQLException e) {
-            e.printStackTrace(); 
-            return false;
-        }
     }
 
     public boolean deleteBill(Integer hdId) {

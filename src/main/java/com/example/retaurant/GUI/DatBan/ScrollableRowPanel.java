@@ -21,11 +21,8 @@ public class ScrollableRowPanel extends JPanel {
         dsSpPanel = new ArrayList<OrderItemPn>();
         setLayout(new BorderLayout());
 
-        // FlowLayout with vertical stacking
         contentPanel = new JPanel();
         contentPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        
-        // Ensure contentPanel can grow in height
         contentPanel.setPreferredSize(new Dimension(300, 0)); 
 
         scrollPane = new JScrollPane(contentPanel);
@@ -36,14 +33,12 @@ public class ScrollableRowPanel extends JPanel {
     }
 
     public void addRowPanel(OrderItemPn rowPanel) {
-        // Insert new row at the top by adding at index 0
         contentPanel.add(rowPanel, 0);
         dsSpPanel.add(rowPanel);
         
         int newHeight = contentPanel.getComponentCount() * rowPanel.getPreferredSize().height + 20;
         contentPanel.setPreferredSize(new Dimension(300, newHeight));
         
-        // Scroll to top to make new item fully visible
         SwingUtilities.invokeLater(() -> {
             JViewport viewport = scrollPane.getViewport();
             viewport.setViewPosition(new Point(0, 0));

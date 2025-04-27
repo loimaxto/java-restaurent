@@ -4,6 +4,8 @@ import com.example.retaurant.BUS.BanBUS;
 import com.example.retaurant.BUS.HoaDonBUS;
 import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.HoaDonDTO;
+import org.apache.xmlbeans.impl.xb.xsdschema.impl.PublicImpl;
+
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import java.awt.*;
@@ -115,16 +117,18 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
                         options[1]); // Default to "Không đồng ý"
                 if (choice == JOptionPane.YES_OPTION) {
                     busBan.updateBanDangDuocDat(currentBanDTO, null);
-                    // loai bo dto ban,dto hoa don trong panel chứa thông tin hóa đơn
-                    datBanPN.resetThongTinHoaDon();
-                    datBanPN.renderThongTinBan();
-                    stopCellEditing();
+                    resetCurrentHoaDonAndBanAndTable();
                 } 
             }
         });
         return button;
     }
-
+    public void resetCurrentHoaDonAndBanAndTable() {
+        // loai bo dto ban,dto hoa don trong panel chứa thông tin hóa đơn
+        datBanPN.resetThongTinHoaDon();
+        datBanPN.renderThongTinBan();
+        stopCellEditing();
+    }
     public static int getBanIdTuTenBan(String tenBan) {
         if (tenBan == null || tenBan.isEmpty()) {
             return -1;
