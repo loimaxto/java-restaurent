@@ -2,14 +2,17 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.NhaCungCapDAO;
 import com.example.retaurant.DTO.NhaCungCapDTO;
+import com.example.retaurant.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 public class NhaCungCapBUS {
     private NhaCungCapDAO nhaCungCapDAO;
+    private Connection connection;
 
-    public NhaCungCapBUS(Connection connection) {
+    public NhaCungCapBUS() {
+        this.connection = DBConnection.getConnection();
         this.nhaCungCapDAO = new NhaCungCapDAO(connection);
     }
 

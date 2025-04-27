@@ -16,26 +16,13 @@ public class NhaCungCapPanel extends JPanel {
     private JButton btnThem, btnSua, btnXoa, btnTimKiem, btnLamMoi, btnTimKiemNangCao;
     private NhaCungCapBUS nhaCungCapBUS;
     private int selectedNCCId = -1;
-    private Connection connection;
 
     public NhaCungCapPanel() {
-        initializeDatabaseConnection();
+        this.nhaCungCapBUS = new NhaCungCapBUS();
         initComponents();
         loadDataToTable();
     }
 
-    private void initializeDatabaseConnection() {
-        try {
-            String url = "jdbc:mysql://localhost:3306/java";
-            String username = "root";
-            String password = "";
-            connection = DriverManager.getConnection(url, username, password);
-            this.nhaCungCapBUS = new NhaCungCapBUS(connection);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Không thể kết nối đến cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void initComponents() {
         setLayout(new BorderLayout(10, 10));

@@ -44,8 +44,8 @@ public class PhieuNhapGUI extends JPanel {
     private JButton btnAdvancedSearch;
     private JButton btnClearSearch;
 
-    public PhieuNhapGUI(Connection connection) {
-        this.phieuNhapBUS = new PhieuNhapBUS(connection);
+    public PhieuNhapGUI() {
+        this.phieuNhapBUS = new PhieuNhapBUS();
         this.nguyenLieuBUS = new NguyenLieuBUS();
         this.chiTietList = new ArrayList<>();
         initComponents();

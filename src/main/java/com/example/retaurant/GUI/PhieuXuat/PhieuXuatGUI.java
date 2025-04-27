@@ -39,8 +39,8 @@ public class PhieuXuatGUI extends JPanel {
     private JButton btnAdvancedSearch;
     private JButton btnClearSearch;
 
-    public PhieuXuatGUI(Connection connection) {
-        this.phieuXuatBUS = new PhieuXuatBUS(connection);
+    public PhieuXuatGUI() {
+        this.phieuXuatBUS = new PhieuXuatBUS();
         this.nguyenLieuBUS = new NguyenLieuBUS();
         this.chiTietList = new ArrayList<>();
         initComponents();

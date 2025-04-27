@@ -4,6 +4,7 @@ import com.example.retaurant.DTO.PhieuNhapDTO;
 import com.example.retaurant.DTO.ChiTietPhieuNhapDTO;
 import com.example.retaurant.DTO.NhaCungCapDTO;
 import com.example.retaurant.DAO.PhieuNhapDAO;
+import com.example.retaurant.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,8 +18,8 @@ public class PhieuNhapBUS {
     private PhieuNhapDAO phieuNhapDAO;
     private Connection connection;
 
-    public PhieuNhapBUS(Connection connection) {
-        this.connection = connection;
+    public PhieuNhapBUS() {
+        this.connection = DBConnection.getConnection();
         this.phieuNhapDAO = new PhieuNhapDAO(connection);
     }
 

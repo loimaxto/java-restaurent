@@ -3,6 +3,7 @@ package com.example.retaurant.BUS;
 import com.example.retaurant.DTO.CTPhieuXuatDTO;
 import com.example.retaurant.DTO.PhieuXuatDTO;
 import com.example.retaurant.DAO.PhieuXuatDAO;
+import com.example.retaurant.utils.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +17,8 @@ public class PhieuXuatBUS {
     private PhieuXuatDAO phieuXuatDAO;
     private Connection connection;
 
-    public PhieuXuatBUS(Connection connection) {
-        this.connection = connection;
+    public PhieuXuatBUS() {
+        this.connection = DBConnection.getConnection();
         this.phieuXuatDAO = new PhieuXuatDAO(connection);
     }
 

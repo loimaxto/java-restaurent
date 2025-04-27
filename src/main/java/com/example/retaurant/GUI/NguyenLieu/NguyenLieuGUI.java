@@ -361,10 +361,9 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
     }
     private void showPhieuNhapGUI() {
     
-    Connection connection = DBConnection.getConnection(); // Replace with your actual connection method
     JFrame frame = new JFrame("Quản lý Phiếu Nhập");
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.getContentPane().add(new PhieuNhapGUI(connection)); // Replace with your actual connection
+    frame.getContentPane().add(new PhieuNhapGUI()); // Replace with your actual connection
     frame.pack();
     frame.setSize(1000, 600);
     frame.setLocationRelativeTo(null);
@@ -372,10 +371,9 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
 }
     private void showPhieuXuatGUI() {
     
-    Connection connection = DBConnection.getConnection(); // Replace with your actual connection method
     JFrame frame = new JFrame("Quản lý Phiếu Xuất");
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.getContentPane().add(new PhieuXuatGUI(connection)); // Replace with your actual connection
+    frame.getContentPane().add(new PhieuXuatGUI()); // Replace with your actual connection
     frame.pack();
     frame.setSize(1000, 600);
     frame.setLocationRelativeTo(null);
