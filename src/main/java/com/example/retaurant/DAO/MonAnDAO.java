@@ -92,15 +92,14 @@ public class MonAnDAO {
     }
 
     public boolean updateMonAn(MonAnDTO monAn) throws SQLException {
-        String sql = "UPDATE mon_an SET ten_sp = ?, gia_sp = ?, trang_thai = ? WHERE sp_id = ?";
+        String sql = "UPDATE mon_an SET ten_sp = ?, gia_thanh = ?, trang_thai = ? WHERE sp_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, monAn.getTenSp());
             statement.setInt(2, monAn.getGiaSp());
             statement.setInt(3, monAn.getTrangThai());
             statement.setInt(4, monAn.getSpId());
 
-            int affectedRows = statement.executeUpdate();
-            return affectedRows > 0;
+            return statement.executeUpdate() > 0;
         }
     }
 
