@@ -24,7 +24,7 @@ public class KhachHangPanel extends javax.swing.JPanel {
     DefaultTableModel model = new DefaultTableModel();
     CustomerBUS busCustomer = new CustomerBUS();
     MyDialog dialog;
-
+    
     public KhachHangPanel() {
         initComponents();
 
