@@ -88,23 +88,6 @@ public class NguyenLieuDAO {
         }
     }
     
-    public boolean updateNguyenLieuQuantityNhap(int nlId, long quantityToAdd) throws SQLException {
-    String sql = "UPDATE nguyen_lieu SET so_luong = so_luong + ? WHERE nl_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setLong(1, quantityToAdd);
-        statement.setInt(2, nlId);
-        return statement.executeUpdate() > 0;
-        }
-    }
-    public boolean updateNguyenLieuQuantityXuat(int nlId, long quantityToSubtract) throws SQLException {
-    String sql = "UPDATE nguyen_lieu SET so_luong = so_luong - ? WHERE nl_id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setLong(1, quantityToSubtract);
-        statement.setInt(2, nlId);
-        return statement.executeUpdate() > 0;
-        }
-    }
-
     public List<NguyenLieuDTO> searchNguyenLieuByName(String name) throws SQLException {
         String sql = "SELECT * FROM nguyen_lieu WHERE ten_nl LIKE ?";
         List<NguyenLieuDTO> dsNguyenLieu = new ArrayList<>();
