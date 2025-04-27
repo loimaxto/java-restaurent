@@ -3,7 +3,6 @@ package com.example.retaurant.GUI.NguyenLieu;
 import com.example.retaurant.BUS.NguyenLieuBUS;
 import com.example.retaurant.DTO.NguyenLieuDTO;
 import com.example.retaurant.GUI.PhieuNhap.PhieuNhapGUI;
-import com.example.retaurant.GUI.PhieuXuat.PhieuXuatGUI;
 import com.example.retaurant.utils.DBConnection;
 
 import org.apache.poi.ss.usermodel.Workbook;
@@ -156,9 +155,10 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         buttonPanel.add(createButton("Cập nhật", e -> updateNguyenLieu()));
         buttonPanel.add(createButton("Xóa", e -> deleteNguyenLieu()));
         buttonPanel.add(createButton("Làm mới", e -> clearForm()));
-        buttonPanel.add(createButton("Excel", e -> exportToExcel()));
-        buttonPanel.add(createButton("Nhập", e -> showPhieuNhapGUI()));
-        buttonPanel.add(createButton("Xuất", e -> showPhieuXuatGUI()));
+        buttonPanel.add(createButton("Xuất Excel", e -> exportToExcel()));
+        JButton btnNhap = createButton("Nhập", e -> showPhieuNhapGUI());
+        btnNhap.setBackground(new Color(100, 200, 100)); // Green color for import button
+        buttonPanel.add(btnNhap);
 
         return buttonPanel;
     }
@@ -360,22 +360,13 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         });
     }
     private void showPhieuNhapGUI() {
-    
+    // You'll need to pass the database connection to the PhieuNhapGUI
+    // This assumes you have access to the connection in your NguyenLieuGUI
+    // If not, you'll need to modify how you get the connection
     Connection connection = DBConnection.getConnection(); // Replace with your actual connection method
     JFrame frame = new JFrame("Quản lý Phiếu Nhập");
     frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     frame.getContentPane().add(new PhieuNhapGUI(connection)); // Replace with your actual connection
-    frame.pack();
-    frame.setSize(1000, 600);
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-}
-    private void showPhieuXuatGUI() {
-    
-    Connection connection = DBConnection.getConnection(); // Replace with your actual connection method
-    JFrame frame = new JFrame("Quản lý Phiếu Xuất");
-    frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    frame.getContentPane().add(new PhieuXuatGUI(connection)); // Replace with your actual connection
     frame.pack();
     frame.setSize(1000, 600);
     frame.setLocationRelativeTo(null);

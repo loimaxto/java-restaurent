@@ -15,14 +15,14 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class NguyenLieuBUS {
-
+    
     private Connection connection = DBConnection.getConnection();
     private NguyenLieuDAO nguyenLieuDAO;
-
+    
     public NguyenLieuBUS() {
         nguyenLieuDAO = new NguyenLieuDAO(connection);
     }
-
+    
     public List<NguyenLieuDTO> getAllNguyenLieu() {
         try {
             return nguyenLieuDAO.getAllNguyenLieu();
@@ -40,7 +40,7 @@ public class NguyenLieuBUS {
             return null;
         }
     }
-
+    
     public boolean addNguyenLieu(NguyenLieuDTO nguyenLieu) {
         try {
             return nguyenLieuDAO.addNguyenLieu(nguyenLieu) > 0;
@@ -49,7 +49,7 @@ public class NguyenLieuBUS {
             return false;
         }
     }
-
+    
     public boolean updateNguyenLieu(NguyenLieuDTO nguyenLieu) {
         try {
             return nguyenLieuDAO.updateNguyenLieu(nguyenLieu);
@@ -58,7 +58,7 @@ public class NguyenLieuBUS {
             return false;
         }
     }
-
+    
     public boolean deleteNguyenLieu(int nlId) {
         try {
             return nguyenLieuDAO.deleteNguyenLieu(nlId);
@@ -67,7 +67,7 @@ public class NguyenLieuBUS {
             return false;
         }
     }
-
+    
     public List<NguyenLieuDTO> searchNguyenLieuByName(String name) {
         try {
             return nguyenLieuDAO.searchNguyenLieuByName(name);
@@ -76,35 +76,17 @@ public class NguyenLieuBUS {
             return null;
         }
     }
-
-    // ✅ NEW METHOD: Update inventory quantity
-    public boolean updateNguyenLieuQuantityNhap(int nlId, long quantity) {
-        try {
-            return nguyenLieuDAO.updateNguyenLieuQuantityNhap(nlId, quantity);
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi cập nhật số lượng nguyên liệu: " + e.getMessage());
-            return false;
-        }
-    }
-    public boolean updateNguyenLieuQuantityXuat(int nlId, long quantity) {
-        try {
-            return nguyenLieuDAO.updateNguyenLieuQuantityXuat(nlId, quantity);
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi cập nhật số lượng nguyên liệu: " + e.getMessage());
-            return false;
-        }
-    }
-
+    
     public static void main(String[] args) {
         NguyenLieuBUS nguyenLieuBUS = new NguyenLieuBUS();
         List<NguyenLieuDTO> dsNguyenLieu = nguyenLieuBUS.getAllNguyenLieu();
-
+        
         if (dsNguyenLieu != null) {
             for (NguyenLieuDTO nl : dsNguyenLieu) {
-                System.out.println("ID: " + nl.getNlId() +
-                                   ", Tên nguyên liệu: " + nl.getTenNl() +
-                                   ", Đơn vị: " + nl.getDonVi() +
-                                   ", Số lượng: " + nl.getSoLuong());
+                System.out.println("ID: " + nl.getNlId() + 
+                                 ", Tên nguyên liệu: " + nl.getTenNl() + 
+                                 ", Đơn vị: " + nl.getDonVi() + 
+                                 ", Số lượng: " + nl.getSoLuong());
             }
         } else {
             System.out.println("Không thể lấy danh sách nguyên liệu");
