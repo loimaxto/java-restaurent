@@ -84,7 +84,7 @@ public class MonAnBUS {
     
     public static void main(String[] args) {
         MonAnBUS monAnBUS = new MonAnBUS();
-        List<MonAnDTO> dsMonAn = monAnBUS.searchMonAnByName("a");
+        List<MonAnDTO> dsMonAn = monAnBUS.getAllMonAn();
         for (MonAnDTO monAn : dsMonAn) {
             System.out.println("ID: " + monAn.getSpId() + ", Tên món ăn: " + monAn.getTenSp() + ", Gia : " + monAn.getGiaSp() + ", Trang thái: " + monAn.getTrangThai());        
         }
