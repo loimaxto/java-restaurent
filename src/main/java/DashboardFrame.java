@@ -3,14 +3,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 
-
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.GUI.HoaDon.HoaDonPN;
 import com.example.retaurant.GUI.KhachHang.KhachHangPanel;
 import com.example.retaurant.GUI.KhuyenMai.KhuyenMaiPN;
-import com.example.retaurant.GUI.MonAn.MonAnPannel;
+import com.example.retaurant.GUI.MonAnPN;
 import com.example.retaurant.GUI.NguyenLieu.NguyenLieuGUI;
 import com.example.retaurant.GUI.NhaCungCap.NhaCungCapPanel;
 
@@ -30,7 +29,7 @@ public class DashboardFrame extends javax.swing.JFrame {
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
     private KhachHangPanel khachHangPanel = new KhachHangPanel();
-    private MonAnPannel monAnPN = new MonAnPannel();
+    private MonAnPN monAnPN = new MonAnPN();
     private HoaDonPN hoaDonPN = new HoaDonPN();
     private NguyenLieuGUI nguyenLieuGUI = new NguyenLieuGUI();
     private NhaCungCapPanel nhaCungCapPanel = new NhaCungCapPanel();
