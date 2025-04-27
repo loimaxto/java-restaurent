@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Vector;
 
 public class HoaDonTableModel extends AbstractTableModel {
-    private final String[] columnNames = {"Id","Thời gian", "Người tạo", "Khách hàng","Hành động"};
-    private final List<HoaDonDTO2> hoaDonList;
-    private final List<Object[]> data;
-    
+    private final String[] columnNames = {"Id", "Thời gian", "Người tạo", "Khách hàng", "Hành động"};
+    private List<HoaDonDTO2> hoaDonList;
+    private List<Object[]> data;
+
     public HoaDonTableModel() {
         hoaDonList = new ArrayList<>();
         data = new ArrayList<>();
@@ -30,7 +30,7 @@ public class HoaDonTableModel extends AbstractTableModel {
             hd.getHdId(),
             hd.getThoiGian(),
             hd.getHoTenNv(),
-            hd.getHoKh()+hd.getTenKh(),
+            hd.getHoKh()+" "+ hd.getTenKh(),
             "btn"
         });
     }
@@ -49,7 +49,8 @@ public class HoaDonTableModel extends AbstractTableModel {
 //    }
     
     public void resetData() {
-        hoaDonList.clear();  
+        hoaDonList.clear(); 
+        this.data.clear();
         fireTableDataChanged(); 
     }
    @Override

@@ -4,30 +4,20 @@
  */
 package com.example.retaurant.GUI.HoaDon;
 
+import com.example.retaurant.BUS.BanBUS;
 import com.example.retaurant.BUS.CtHoaDonBUS;
-import com.example.retaurant.GUI.KhachHang.*;
-import com.example.retaurant.BUS.CustomerBUS;
+import com.example.retaurant.BUS.HoaDonBUS;
+import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
-import com.example.retaurant.DTO.CustomerDTO;
 import com.example.retaurant.DTO.HoaDonDTO2;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Window;
+import com.example.retaurant.MyCustom.MyDialog;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
@@ -40,24 +30,38 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     /**
      * Creates new form AddKhachHangPanel
      */
+    private DatBanPN datBanPN;
     private HoaDonDTO2 hdDto;
     private CtHoaDonBUS busCtHoaDonBUS;
     private ArrayList<CtSanPhamThanhToanDTO> ctSpList;
-    private HoaDonPN parentPn;
-
-    public ChiTietHoaDonModal(HoaDonPN hdPn, HoaDonDTO2 hddto) {
+    private boolean isThanhToan ;
+    private int tongTienHoaDon = 0;
+    
+    public ChiTietHoaDonModal(HoaDonDTO2 hddto, boolean isThanhToan) {
         busCtHoaDonBUS = new CtHoaDonBUS();
         this.ctSpList = (ArrayList<CtSanPhamThanhToanDTO>) busCtHoaDonBUS.getCtSanPhanThanhToanByHdId(hddto.getHdId());
-        this.parentPn = hdPn;
         this.hdDto = hddto;
+        this.isThanhToan = isThanhToan;
         initComponents();
         labelHoTenKh.setText(hdDto.getHoKh() + hdDto.getTenKh());
         labelNvTen.setText(hdDto.getHoTenNv());
         labelSdtKh.setText(hdDto.getSdt());
         labelTongTien.setText(hdDto.getTongGia() == null ? "Chưa thanh toán" : String.valueOf(hdDto.getTongGia()));
         renderChiTietSpHoaDon();
-    }
 
+        btnXacNhan.setVisible(isThanhToan);
+        if (isThanhToan == true) {
+            tongTienHoaDon = 0;
+            for (CtSanPhamThanhToanDTO item : ctSpList) {
+                tongTienHoaDon += item.getTongTienCt();
+            }
+            labelTongTien.setText(String.valueOf(tongTienHoaDon));
+        }
+    }
+    public void setDatBanPn(DatBanPN dbpn) {
+        this.datBanPN = dbpn;
+    }
+    
     private void renderChiTietSpHoaDon() {
         String[] columnNames = {"Tên sản phẩm", "Số lượng", "Giá", "Tổng"};
 
@@ -67,14 +71,14 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         }
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         for (int i = 0; i < tableSanPhamItem.getColumnCount(); i++) {
             tableSanPhamItem.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
         }
-        DefaultTableModel model = new DefaultTableModel(convertListToArray(data),columnNames);
+        DefaultTableModel model = new DefaultTableModel(convertListToArray(data), columnNames);
         tableSanPhamItem.setModel(model);
     }
-    
+
     private static Object[][] convertListToArray(List<Object[]> list) {
         Object[][] array = new Object[list.size()][];
         for (int i = 0; i < list.size(); i++) {
@@ -124,7 +128,7 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
             }
         });
 
-        btnXacNhan.setText("Xác nhận");
+        btnXacNhan.setText("Xác  nhận");
         btnXacNhan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnXacNhanActionPerformed(evt);
@@ -224,10 +228,26 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+        dispose();
     }//GEN-LAST:event_btnHuyActionPerformed
 
     private void btnXacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanActionPerformed
-        // TODO add your handling code here:
+        HoaDonBUS busHoaDon = new HoaDonBUS();
+        hdDto.setTongGia(tongTienHoaDon);
+        ZoneId hoChiMinhZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        LocalDateTime now = LocalDateTime.now(hoChiMinhZone);
+        Timestamp currentTimestamp = Timestamp.valueOf(now);
+        hdDto.setThoiGian(currentTimestamp);
+        busHoaDon.updateBill(hdDto);
+        if (busHoaDon.updateBill(hdDto)) {
+            new MyDialog("Thanh toán thành công !", 0);
+            BanBUS busBan = new BanBUS();
+            BanDTO currentBanDTO = datBanPN.getCurrentBanDTO();
+            busBan.updateBanDangDuocDat(currentBanDTO, currentBanDTO.getIdHoaDonHienTai());
+            datBanPN.resetCurrentHoaDonAndBanAndTable();
+            dispose();
+        }
+        
     }//GEN-LAST:event_btnXacNhanActionPerformed
     /**
      * @param args the command line arguments

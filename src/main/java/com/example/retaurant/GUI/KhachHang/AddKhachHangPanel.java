@@ -16,7 +16,7 @@ import javax.swing.SwingUtilities;
  *
  * @author light
  */
-public class AddKhachHangPanel extends javax.swing.JFrame {
+    public class AddKhachHangPanel extends javax.swing.JFrame {
 
     /**
      * Creates new form AddKhachHangPanel
