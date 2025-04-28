@@ -3,16 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.example.retaurant.GUI.DangNhap;
+
 import com.example.retaurant.Main.Main;
 import com.example.retaurant.MyCustom.ImagePanel;
 import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.BUS.DangNhapBUS;
 import com.example.retaurant.DTO.TaiKhoan;
+import com.example.retaurant.BUS.UserBUS;
+import com.example.retaurant.DTO.UserDTO;
+import com.example.retaurant.GUI.DashboardFrame;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class DangNhapGUI extends JFrame{
+public class DangNhapGUI extends JFrame {
+
     private Image backgroundImage;
 
     public DangNhapGUI() {
@@ -221,14 +226,16 @@ public class DangNhapGUI extends JFrame{
     }
 
     private void xuLyDangNhap() {
+
         DangNhapBUS dangNhapBUS = new DangNhapBUS();
         TaiKhoan tk = dangNhapBUS.getTaiKhoanDangNhap(txtUser.getText(),
                 txtPassword.getText(), ckbRemember.isSelected());
-        if (tk != null) {
+        try {
             this.dispose();
-            MainQuanLyGUI gui = new MainQuanLyGUI();
-            this.dispose();
-            gui.showWindow();
+            new DashboardFrame().setVisible(true);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
         }
     }
 

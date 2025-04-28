@@ -1,3 +1,5 @@
+package com.example.retaurant.GUI;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -89,7 +91,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         this.user = user;
         if (user != null) {
             navBtnUserInfo.setText(user.getUserName());
-
         }
     }
 
