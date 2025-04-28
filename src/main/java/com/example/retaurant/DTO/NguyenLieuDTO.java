@@ -9,12 +9,12 @@ public class NguyenLieuDTO {
     private Integer nlId;
     private String tenNl;
     private String donVi;
-    private Integer soLuong;
+    private Float soLuong;
 
     public NguyenLieuDTO() {
     }
 
-    public NguyenLieuDTO(Integer nlId, String tenNl, String donVi, Integer soLuong) {
+    public NguyenLieuDTO(Integer nlId, String tenNl, String donVi, Float soLuong) {
         this.nlId = nlId;
         this.tenNl = tenNl;
         this.donVi = donVi;
@@ -45,11 +45,11 @@ public class NguyenLieuDTO {
         this.donVi = donVi;
     }
 
-    public Integer getSoLuong() {
+    public Float getSoLuong() {
         return soLuong;
     }
 
-    public void setSoLuong(Integer soLuong) {
+    public void setSoLuong(Float soLuong) {
         this.soLuong = soLuong;
     }
     

@@ -51,7 +51,7 @@ public class NguyenLieuDAO {
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, nguyenLieu.getTenNl());
             statement.setString(2, nguyenLieu.getDonVi());
-            statement.setInt(3, nguyenLieu.getSoLuong());
+            statement.setFloat(3, nguyenLieu.getSoLuong());
             
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
@@ -73,7 +73,7 @@ public class NguyenLieuDAO {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, nguyenLieu.getTenNl());
             statement.setString(2, nguyenLieu.getDonVi());
-            statement.setInt(3, nguyenLieu.getSoLuong());
+            statement.setFloat(3, nguyenLieu.getSoLuong());
             statement.setInt(4, nguyenLieu.getNlId());
 
             return statement.executeUpdate() > 0;
@@ -88,6 +88,23 @@ public class NguyenLieuDAO {
         }
     }
     
+    public boolean updateNguyenLieuQuantityNhap(int nlId, long quantityToAdd) throws SQLException {
+    String sql = "UPDATE nguyen_lieu SET so_luong = so_luong + ? WHERE nl_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setLong(1, quantityToAdd);
+        statement.setInt(2, nlId);
+        return statement.executeUpdate() > 0;
+        }
+    }
+    public boolean updateNguyenLieuQuantityXuat(int nlId, long quantityToSubtract) throws SQLException {
+    String sql = "UPDATE nguyen_lieu SET so_luong = so_luong - ? WHERE nl_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setLong(1, quantityToSubtract);
+        statement.setInt(2, nlId);
+        return statement.executeUpdate() > 0;
+        }
+    }
+
     public List<NguyenLieuDTO> searchNguyenLieuByName(String name) throws SQLException {
         String sql = "SELECT * FROM nguyen_lieu WHERE ten_nl LIKE ?";
         List<NguyenLieuDTO> dsNguyenLieu = new ArrayList<>();
@@ -107,7 +124,7 @@ public class NguyenLieuDAO {
         nguyenLieu.setNlId(resultSet.getInt("nl_id"));
         nguyenLieu.setTenNl(resultSet.getString("ten_nl"));
         nguyenLieu.setDonVi(resultSet.getString("don_vi"));
-        nguyenLieu.setSoLuong(resultSet.getInt("so_luong"));
+        nguyenLieu.setSoLuong(resultSet.getFloat("so_luong"));
         return nguyenLieu;
     }
 }

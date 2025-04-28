@@ -4,22 +4,39 @@
  */
 package com.example.retaurant.Main;
 
-import com.example.retaurant.utils.DBConnection ;
-import com.example.retaurant.GUI.DangNhap.DangNhapGUI ;
-import javax.swing.SwingUtilities;
+import com.example.retaurant.utils.DBConnection;
+import com.example.retaurant.GUI.DangNhap.DangNhapGUI;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 public class Main {
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            DangNhapGUI af = new DangNhapGUI();
-            af.setVisible(true);
-            System.out.println(af.getSize());
-        });
-//        DBConnection.getConnection();
-//        changLNF("Nimbus");
-//        DangNhapGUI login = new DangNhapGUI();
-//        login.showWindow();
+        // Initialize database connection
+        DBConnection.getConnection();
+        
+        // Set look and feel
+        changLNF("Nimbus");
+        
+        // Show login window
+        DangNhapGUI login = new DangNhapGUI();
+        login.showWindow();
+        
+        // After successful login, you would typically show the main application window
+        // which would include access to NguyenLieuGUI
     }
 
     public static void changLNF(String nameLNF) {
+        try {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+                if (nameLNF.equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException | InstantiationException | 
+                IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            System.err.println("Error setting look and feel: " + ex.getMessage());
+        }
     }
-}
+}   
+    
