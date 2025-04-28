@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -54,8 +55,17 @@ public class MonAnBUS {
     }
     
     
-    public boolean addMonAn(MonAnDTO monAn) {
+    public boolean addMonAn(MonAnDTO monAn) {      
         try {
+            if(monAn.getGiaSp()<=0){
+            return false;
+        }
+        List<MonAnDTO> danhSach = getAllMonAn();
+        for (MonAnDTO mon : danhSach) {
+            if(monAn.getSpId()== mon.getSpId()||monAn.getSpId()<0){
+                return false;
+            }
+        }
             return monAnDAO.addMonAn(monAn) > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,7 +94,7 @@ public class MonAnBUS {
     
     public static void main(String[] args) {
         MonAnBUS monAnBUS = new MonAnBUS();
-        List<MonAnDTO> dsMonAn = monAnBUS.searchMonAnByName("a");
+        List<MonAnDTO> dsMonAn = monAnBUS.getAllMonAn();
         for (MonAnDTO monAn : dsMonAn) {
             System.out.println("ID: " + monAn.getSpId() + ", Tên món ăn: " + monAn.getTenSp() + ", Gia : " + monAn.getGiaSp() + ", Trang thái: " + monAn.getTrangThai());        
         }
