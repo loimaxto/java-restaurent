@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.example.retaurant.DAO;
+
 import com.example.retaurant.DTO.NhanVien;
 import com.example.retaurant.BUS.NhanVienBUS;
 import com.example.retaurant.utils.DBConnection;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
  * @author ASUS
  */
 public class NhanVienDAO {
+
     public ArrayList<NhanVien> getDanhSachNhanVien() {
         Connection conn = DBConnection.getConnection();
 
@@ -76,26 +78,20 @@ public class NhanVienDAO {
     }
 
     public boolean updateNhanVien(NhanVien nv) {
-        Connection conn = DBConnection.getConnection();
-
-        if (conn == null) {
-            System.out.println("Lỗi kết nối cơ sở dữ liệu!");
+        String sql = "UPDATE nhan_vien SET ho_ten = ?, gioi_tinh = ?, chuc_vu = ?, tk_id = ? WHERE nv_id = ?";
+        try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nv.getHoTen());
+            stmt.setString(2, nv.getGioiTinh());
+            stmt.setString(3, nv.getChucVu());
+            stmt.setInt(4, nv.getMaTaiKhoan());
+            stmt.setInt(5, nv.getMaNhanvien());
+            System.out.println("SQL Query: " + stmt);
+            int rowsUpdated = stmt.executeUpdate();
+            return rowsUpdated > 0;
+        } catch (SQLException e) {
+            e.printStackTrace(); // <<< In chi tiết lỗi SQL ở đây
             return false;
         }
-        boolean result = false;
-        try {
-            String sql = "UPDATE nhanvien SET ho_ten=?, gioi_tinh=?, chuc_vu=?, tk_id=? WHERE nv_id=?";
-            PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setString(1, nv.getHoTen());
-            pre.setString(2, nv.getGioiTinh());
-            pre.setString(3, nv.getChucVu());
-            pre.setInt(4, nv.getMaTaiKhoan());
-            pre.setInt(5, nv.getMaNhanvien());
-            result = pre.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            return false;
-        }
-        return result;
     }
 
     public boolean deleteNhanVien(int maNV) {
@@ -118,16 +114,18 @@ public class NhanVienDAO {
     }
 
     public boolean themNhanVien(NhanVien nv) {
+        System.out.println("dao them nv");
         Connection conn = DBConnection.getConnection();
-
+        System.out.println(nv.toString());
         if (conn == null) {
             System.out.println("Lỗi kết nối cơ sở dữ liệu!");
             return false;
         }
         boolean result = false;
         try {
-            String sql = "INSERT INTO NhanVien(ho_ten, gioi_tinh, chuc_vu, tk_id) " +
-                    "VALUES(?, ?, ?, ?)";
+            String sql = "INSERT INTO nhan_vien (ho_ten, gioi_tinh, chuc_vu, tk_id) "
+                    + "VALUES(?, ?, ?, ?)";
+
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, nv.getHoTen());
             pre.setString(2, nv.getGioiTinh());
@@ -135,6 +133,7 @@ public class NhanVienDAO {
             pre.setInt(4, nv.getMaTaiKhoan());
             result = pre.executeUpdate() > 0;
         } catch (SQLException ex) {
+            ex.printStackTrace();
             return false;
         }
         return result;
@@ -148,9 +147,9 @@ public class NhanVienDAO {
             return false;
         }
         try {
-            String sql = "DELETE * FROM nhanvien; " +
-                    "INSERT INTO nhan_vien(ho_ten, gioi_tinh, chuc_vu, tk_id) " +
-                    "VALUES(?, ?, ?, ?)";
+            String sql = "DELETE * FROM nhanvien; "
+                    + "INSERT INTO nhan_vien(ho_ten, gioi_tinh, chuc_vu, tk_id) "
+                    + "VALUES(?, ?, ?, ?)";
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setString(1, nv.getHoTen());
             pre.setString(2, nv.getGioiTinh());
