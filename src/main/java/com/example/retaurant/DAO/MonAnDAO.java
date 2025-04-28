@@ -69,11 +69,12 @@ public class MonAnDAO {
 }
 
     public int addMonAn(MonAnDTO monAn) throws SQLException {
-        String sql = "INSERT INTO mon_an (ten_sp, gia_sp, trang_thai) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO mon_an (sp_id,ten_sp, gia_sp, trang_thai) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, monAn.getTenSp());
-            statement.setInt(2, monAn.getGiaSp());
-            statement.setInt(3, monAn.getTrangThai());
+            statement.setString(2, monAn.getTenSp());
+            statement.setInt(3, monAn.getGiaSp());
+            statement.setInt(4, monAn.getTrangThai());
+            statement.setInt(1, monAn.getSpId());
 
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
@@ -92,14 +93,15 @@ public class MonAnDAO {
     }
 
     public boolean updateMonAn(MonAnDTO monAn) throws SQLException {
-        String sql = "UPDATE mon_an SET ten_sp = ?, gia_thanh = ?, trang_thai = ? WHERE sp_id = ?";
+        String sql = "UPDATE mon_an SET ten_sp = ?, gia_sp = ?, trang_thai = ? WHERE sp_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, monAn.getTenSp());
             statement.setInt(2, monAn.getGiaSp());
             statement.setInt(3, monAn.getTrangThai());
             statement.setInt(4, monAn.getSpId());
 
-            return statement.executeUpdate() > 0;
+            int affectedRows = statement.executeUpdate();
+            return affectedRows > 0;
         }
     }
 
