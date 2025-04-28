@@ -205,7 +205,7 @@ public class DatBanPN extends javax.swing.JPanel {
         int hoadonId = listItemInBillPanel.getHoaDonDTO().getHdId();
         ArrayList<CtHoaDonDTO> listMonAn = (ArrayList) busCtHoaDon.getAllCtHoaDonsByHoaDonId(hoadonId);
         if (listMonAn == null) {
-            System.out.println("khong co san pham" + hoadonId);
+            System.out.println("Không có sản phẩm" + hoadonId);
             listItemInBillPanel.addEmptyLabel();
             return;
         };
@@ -509,7 +509,7 @@ public class DatBanPN extends javax.swing.JPanel {
         } else if (hoaDonDto == null) {
             new MyDialog("Chưa chọn hóa đơn thêm khách hàng", 0);
         } else if (cust == null) {
-            new MyDialog("Không tìm thấy khách hành này", 0);
+            new MyDialog("Không tìm thấy khách hàng này", 0);
         }
     }//GEN-LAST:event_btnInsertKhForHoaDonActionPerformed
 
