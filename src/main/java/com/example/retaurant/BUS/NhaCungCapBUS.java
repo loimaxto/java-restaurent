@@ -28,12 +28,22 @@ public class NhaCungCapBUS {
 
     // Add new supplier
     public boolean addNhaCungCap(NhaCungCapDTO ncc) throws SQLException {
-        String validationError = validateNhaCungCap(ncc);
-        if (validationError != null) {
-            throw new IllegalArgumentException(validationError);
-        }
-        return nhaCungCapDAO.addNhaCungCap(ncc);
+    // Check if ID already exists
+    if (ncc.getNcc_id() <= 0) {
+        throw new IllegalArgumentException("ID phải là số nguyên dương");
     }
+    
+    if (nhaCungCapDAO.getNhaCungCapById(ncc.getNcc_id()) != null) {
+        throw new IllegalArgumentException("ID đã tồn tại");
+    }
+    
+    String validationError = validateNhaCungCap(ncc);
+    if (validationError != null) {
+        throw new IllegalArgumentException(validationError);
+    }
+    
+    return nhaCungCapDAO.addNhaCungCap(ncc);
+}
 
     // Update supplier
     public boolean updateNhaCungCap(NhaCungCapDTO ncc) throws SQLException {

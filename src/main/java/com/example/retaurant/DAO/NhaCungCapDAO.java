@@ -55,26 +55,17 @@ public class NhaCungCapDAO {
 
     // Add new supplier
     public boolean addNhaCungCap(NhaCungCapDTO ncc) throws SQLException {
-        String sql = "INSERT INTO nha_cung_cap (ten_ncc, sdt, dchi) VALUES (?, ?, ?)";
+    String sql = "INSERT INTO nha_cung_cap (ncc_id, ten_ncc, sdt, dchi) VALUES (?, ?, ?, ?)";
+    
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setInt(1, ncc.getNcc_id());
+        stmt.setString(2, ncc.getTen_ncc());
+        stmt.setString(3, ncc.getSdt());
+        stmt.setString(4, ncc.getDchi());
         
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setString(1, ncc.getTen_ncc());
-            stmt.setString(2, ncc.getSdt());
-            stmt.setString(3, ncc.getDchi());
-            
-            int affectedRows = stmt.executeUpdate();
-            
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        ncc.setNcc_id(generatedKeys.getInt(1));
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return stmt.executeUpdate() > 0;
     }
+}
 
     // Update supplier
     public boolean updateNhaCungCap(NhaCungCapDTO ncc) throws SQLException {
