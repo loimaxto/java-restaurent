@@ -42,13 +42,18 @@ public class NguyenLieuBUS {
     }
 
     public boolean addNguyenLieu(NguyenLieuDTO nguyenLieu) {
-        try {
-            return nguyenLieuDAO.addNguyenLieu(nguyenLieu) > 0;
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi thêm nguyên liệu: " + e.getMessage());
+    try {
+        // Check if ID already exists
+        if (nguyenLieu.getNlId() != null && nguyenLieuDAO.getNguyenLieuById(nguyenLieu.getNlId()) != null) {
+            System.out.println("Lỗi: ID đã tồn tại");
             return false;
         }
+        return nguyenLieuDAO.addNguyenLieu(nguyenLieu) > 0;
+    } catch (SQLException e) {
+        System.out.println("Lỗi khi thêm nguyên liệu: " + e.getMessage());
+        return false;
     }
+}
 
     public boolean updateNguyenLieu(NguyenLieuDTO nguyenLieu) {
         try {

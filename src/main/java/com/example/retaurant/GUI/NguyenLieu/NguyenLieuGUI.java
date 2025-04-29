@@ -110,32 +110,6 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         }
     }
 
-    private JPanel createInputPanel() {
-        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-        inputPanel.setBackground(Color.WHITE);
-        inputPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
-
-        // Changed: Make ID field editable but disable it visually
-        addInputField(inputPanel, "ID:", txtId);
-        txtId.setEditable(true);  // Changed from false to true
-        txtId.setEnabled(false);  // Visual indication it can't be edited directly
-        txtId.setBackground(new Color(240, 240, 240)); // Gray background to show it's disabled
-
-        addInputField(inputPanel, "Tên nguyên liệu:", txtTen);
-        addInputField(inputPanel, "Đơn vị:", txtDonVi);
-
-        // Add row selection listener to populate fields when a row is selected
-        table.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
-                int selectedRow = table.getSelectedRow();
-                txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
-                txtTen.setText(tableModel.getValueAt(selectedRow, 1).toString());
-                txtDonVi.setText(tableModel.getValueAt(selectedRow, 2).toString());
-            }
-        });
-
-        return inputPanel;
-    }
 
     private void addInputField(JPanel panel, String labelText, JTextField field) {
         JLabel label = new JLabel(labelText);
@@ -188,27 +162,69 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
     }
 
     private void addNguyenLieu() {
-        try {
-            String ten = txtTen.getText().trim();
-            String donVi = txtDonVi.getText().trim();
+    try {
+        String idText = txtId.getText().trim();
+        String ten = txtTen.getText().trim();
+        String donVi = txtDonVi.getText().trim();
 
-            if (ten.isEmpty() || donVi.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
-                return;
-            }
-
-            NguyenLieuDTO nl = new NguyenLieuDTO(0, ten, donVi, (float) 0);
-            if (nguyenLieuBUS.addNguyenLieu(nl)) {
-                JOptionPane.showMessageDialog(this, "Thêm thành công");
-                loadDataToTable();
-                clearForm();
-            } else {
-                JOptionPane.showMessageDialog(this, "Thêm thất bại");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Số lượng phải là số nguyên");
+        if (idText.isEmpty() || ten.isEmpty() || donVi.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin");
+            return;
         }
+
+        int id;
+        try {
+            id = Integer.parseInt(idText);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID phải là số nguyên");
+            return;
+        }
+
+        // Check if ID is positive
+        if (id <= 0) {
+            JOptionPane.showMessageDialog(this, "ID phải là số nguyên dương");
+            return;
+        }
+
+        NguyenLieuDTO nl = new NguyenLieuDTO(id, ten, donVi, 0f);
+        if (nguyenLieuBUS.addNguyenLieu(nl)) {
+            JOptionPane.showMessageDialog(this, "Thêm thành công");
+            loadDataToTable();
+            clearForm();
+        } else {
+            JOptionPane.showMessageDialog(this, "Thêm thất bại - ID có thể đã tồn tại");
+        }
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
     }
+}
+
+// Update the createInputPanel method to enable ID field
+private JPanel createInputPanel() {
+    JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+    inputPanel.setBackground(Color.WHITE);
+    inputPanel.setBorder(new EmptyBorder(10, 0, 10, 0));
+
+    addInputField(inputPanel, "ID:", txtId);
+    txtId.setEditable(true);
+    txtId.setEnabled(true);
+    txtId.setBackground(Color.WHITE);
+
+    addInputField(inputPanel, "Tên nguyên liệu:", txtTen);
+    addInputField(inputPanel, "Đơn vị:", txtDonVi);
+
+    // Add row selection listener to populate fields when a row is selected
+    table.getSelectionModel().addListSelectionListener(e -> {
+        if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
+            int selectedRow = table.getSelectedRow();
+            txtId.setText(tableModel.getValueAt(selectedRow, 0).toString());
+            txtTen.setText(tableModel.getValueAt(selectedRow, 1).toString());
+            txtDonVi.setText(tableModel.getValueAt(selectedRow, 2).toString());
+        }
+    });
+
+    return inputPanel;
+}
 
     private void updateNguyenLieu() {
         try {

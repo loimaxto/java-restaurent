@@ -47,26 +47,21 @@ public class NguyenLieuDAO {
     }
     
     public int addNguyenLieu(NguyenLieuDTO nguyenLieu) throws SQLException {
-        String sql = "INSERT INTO nguyen_lieu (ten_nl, don_vi, so_luong) VALUES (?, ?, ?)";
-        try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, nguyenLieu.getTenNl());
-            statement.setString(2, nguyenLieu.getDonVi());
-            statement.setFloat(3, nguyenLieu.getSoLuong());
-            
-            int affectedRows = statement.executeUpdate();
-            if (affectedRows > 0) {
-                try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        return generatedKeys.getInt(1);
-                    } else {
-                        throw new SQLException("Failed to retrieve generated key.");
-                    }
-                }
-            } else {
-                throw new SQLException("Failed to insert nguyen lieu, no rows affected.");
-            }
+    String sql = "INSERT INTO nguyen_lieu (nl_id, ten_nl, don_vi, so_luong) VALUES (?, ?, ?, ?)";
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setInt(1, nguyenLieu.getNlId());
+        statement.setString(2, nguyenLieu.getTenNl());
+        statement.setString(3, nguyenLieu.getDonVi());
+        statement.setFloat(4, nguyenLieu.getSoLuong());
+        
+        int affectedRows = statement.executeUpdate();
+        if (affectedRows > 0) {
+            return nguyenLieu.getNlId();
+        } else {
+            throw new SQLException("Failed to insert nguyen lieu, no rows affected.");
         }
     }
+}
     
     public boolean updateNguyenLieu(NguyenLieuDTO nguyenLieu) throws SQLException {
         String sql = "UPDATE nguyen_lieu SET ten_nl = ?, don_vi = ?, so_luong = ? WHERE nl_id = ?";
