@@ -26,6 +26,15 @@ public class PhieuXuatBUS {
         try {
             connection.setAutoCommit(false);
             
+            // Validate ID is provided and unique
+            if (phieuXuat.getPxId() <= 0) {
+                throw new SQLException("ID must be a positive number");
+            }
+            
+            if (phieuXuatDAO.isIdExists(phieuXuat.getPxId())) {
+                throw new SQLException("ID already exists");
+            }
+            
             int pxId = phieuXuatDAO.createPhieuXuat(phieuXuat);
             
             for (CTPhieuXuatDTO chiTiet : chiTietList) {
@@ -76,32 +85,51 @@ public class PhieuXuatBUS {
             return null;
         }
     }
-    public List<PhieuXuatDTO> searchPhieuXuat(String condition, String[] values) {
+
+    public boolean isIdExists(int pxId) {
         try {
-            String sql = "SELECT * FROM phieu_xuat WHERE " + condition;
-            List<PhieuXuatDTO> results = new ArrayList<>();
-            
-            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-                for (int i = 0; i < values.length; i++) {
-                    stmt.setString(i + 1, values[i]);
-                }
-                
-                try (ResultSet rs = stmt.executeQuery()) {
-                    while (rs.next()) {
-                        PhieuXuatDTO px = new PhieuXuatDTO(
-                            rs.getInt("px_id"),
-                            rs.getTimestamp("ngay_xuat"),
-                            rs.getInt("nguoi_xuat_id")
-                        );
-                        results.add(px);
-                    }
-                }
-            }
-            return results;
+            return phieuXuatDAO.isIdExists(pxId);
         } catch (SQLException e) {
             e.printStackTrace();
-            return null;
+            return false;
         }
+    }
+
+    public List<PhieuXuatDTO> searchPhieuXuat(String condition, String[] values) {
+        List<PhieuXuatDTO> results = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("SELECT * FROM phieu_xuat WHERE ");
+        
+        sql.append(condition);
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < values.length; i++) {
+                if (condition.contains("ngay_xuat")) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    java.util.Date date = sdf.parse(values[i]);
+                    stmt.setDate(i + 1, new java.sql.Date(date.getTime()));
+                } else if (condition.contains("px_id") || condition.contains("nguoi_xuat_id")) {
+                    stmt.setInt(i + 1, Integer.parseInt(values[i]));
+                } else {
+                    stmt.setString(i + 1, values[i]);
+                }
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    PhieuXuatDTO px = new PhieuXuatDTO(
+                        rs.getInt("px_id"),
+                        rs.getTimestamp("ngay_xuat"),
+                        rs.getInt("nguoi_xuat_id")
+                    );
+                    results.add(px);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return results;
     }
 
     public List<PhieuXuatDTO> advancedSearch(Map<String, String> filters) throws SQLException {

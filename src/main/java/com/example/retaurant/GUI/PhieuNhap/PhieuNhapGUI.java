@@ -18,25 +18,22 @@ import java.util.Date;
 import java.util.List;
 
 public class PhieuNhapGUI extends JPanel {
-    // Business layer components
     private PhieuNhapBUS phieuNhapBUS;
     private NguyenLieuBUS nguyenLieuBUS;
     
-    // Table models
     private DefaultTableModel tableModel;
     private DefaultTableModel chiTietModel;
     
-    // UI components
     private JTable table;
     private JTable chiTietTable;
     private JComboBox<NguyenLieuDTO> cbNguyenLieu;
     private JComboBox<NhaCungCapDTO> cbNhaCungCap;
     private JTextField txtSoLuong;
     private JTextField txtDonGia;
+    private JTextField txtPhieuNhapId;
     private JTextArea txtGhiChu;
     private List<ChiTietPhieuNhapDTO> chiTietList;
     
-    // Search components
     private JComboBox<String> cbSearchColumn;
     private JComboBox<String> cbSearchOperator;
     private JTextField txtSearchValue;
@@ -55,39 +52,29 @@ public class PhieuNhapGUI extends JPanel {
     }
 
     private void initComponents() {
-        // Main panel setup
         this.setLayout(new BorderLayout());
         this.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        // Create main split pane for resizable layout
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        mainSplitPane.setDividerLocation(600); // Initial position at 600px
-        mainSplitPane.setResizeWeight(0.6); // Maintain 60/30 ratio
+        mainSplitPane.setDividerLocation(600);
+        mainSplitPane.setResizeWeight(0.6);
         mainSplitPane.setOneTouchExpandable(true);
 
-        // LEFT PANEL (60% width) - Search and Main Table
         JPanel leftPanel = new JPanel(new BorderLayout(10, 10));
-        
-        // 1. Search Panel (top of left panel)
         JPanel searchPanel = createSearchPanel();
         leftPanel.add(searchPanel, BorderLayout.NORTH);
         
-        // 2. Main Table (center of left panel)
         JScrollPane tableScrollPane = createMainTable();
         leftPanel.add(tableScrollPane, BorderLayout.CENTER);
 
-        // RIGHT PANEL (30% width) - Receipt Information
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
         rightPanel.add(createDetailPanel(), BorderLayout.CENTER);
 
-        // Add both panels to split pane
         mainSplitPane.setLeftComponent(leftPanel);
         mainSplitPane.setRightComponent(rightPanel);
 
-        // Bottom buttons panel
         JPanel bottomPanel = createBottomPanel();
         
-        // Final layout assembly
         this.add(mainSplitPane, BorderLayout.CENTER);
         this.add(bottomPanel, BorderLayout.SOUTH);
     }
@@ -101,7 +88,6 @@ public class PhieuNhapGUI extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Search field selection
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Trường dữ liệu:"), gbc);
         
@@ -110,7 +96,6 @@ public class PhieuNhapGUI extends JPanel {
         cbSearchColumn.setPreferredSize(new Dimension(200, 25));
         panel.add(cbSearchColumn, gbc);
         
-        // Operator selection
         gbc.gridx = 0; gbc.gridy = 1;
         panel.add(new JLabel("Toán tử:"), gbc);
         
@@ -119,7 +104,6 @@ public class PhieuNhapGUI extends JPanel {
         cbSearchOperator.setPreferredSize(new Dimension(200, 25));
         panel.add(cbSearchOperator, gbc);
         
-        // Value input
         gbc.gridx = 0; gbc.gridy = 2;
         panel.add(new JLabel("Giá trị:"), gbc);
         
@@ -128,7 +112,6 @@ public class PhieuNhapGUI extends JPanel {
         txtSearchValue.setPreferredSize(new Dimension(200, 25));
         panel.add(txtSearchValue, gbc);
         
-        // Search buttons
         gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.CENTER;
@@ -159,7 +142,6 @@ public class PhieuNhapGUI extends JPanel {
             new Object[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"}, 0);
         table = new JTable(tableModel);
         
-        // Add selection listener
         table.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting() && table.getSelectedRow() != -1) {
                 int pnId = (int) tableModel.getValueAt(table.getSelectedRow(), 0);
@@ -177,9 +159,13 @@ public class PhieuNhapGUI extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Thông tin phiếu nhập"));
         
-        // Input fields panel
         JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        
+        // Add ID field
+        inputPanel.add(new JLabel("Mã Phiếu Nhập:"));
+        txtPhieuNhapId = new JTextField();
+        inputPanel.add(txtPhieuNhapId);
         
         cbNhaCungCap = new JComboBox<>();
         inputPanel.add(new JLabel("Nhà cung cấp:"));
@@ -203,7 +189,6 @@ public class PhieuNhapGUI extends JPanel {
         
         panel.add(inputPanel, BorderLayout.NORTH);
         
-        // Detail table
         chiTietModel = new DefaultTableModel(
             new Object[]{"Tên NL", "Đơn vị", "Số lượng", "Đơn giá", "Thành tiền"}, 0);
         chiTietTable = new JTable(chiTietModel);
@@ -211,7 +196,6 @@ public class PhieuNhapGUI extends JPanel {
         chiTietScroll.setPreferredSize(new Dimension(280, 200));
         panel.add(chiTietScroll, BorderLayout.CENTER);
         
-        // Notes panel
         JPanel ghiChuPanel = new JPanel(new BorderLayout());
         ghiChuPanel.setBorder(BorderFactory.createTitledBorder("Ghi chú"));
         txtGhiChu = new JTextArea(3, 20);
@@ -235,7 +219,6 @@ public class PhieuNhapGUI extends JPanel {
         return panel;
     }
 
-    // BUSINESS LOGIC METHODS (unchanged from original)
     private void searchPhieuNhap() {
         String column = (String) cbSearchColumn.getSelectedItem();
         String operator = (String) cbSearchOperator.getSelectedItem();
@@ -282,7 +265,6 @@ public class PhieuNhapGUI extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Field 1
         gbc.gridx = 0; gbc.gridy = 0;
         panel.add(new JLabel("Trường 1:"), gbc);
         
@@ -298,7 +280,6 @@ public class PhieuNhapGUI extends JPanel {
         JTextField txtValue1 = new JTextField(10);
         panel.add(txtValue1, gbc);
         
-        // Logical operator
         gbc.gridx = 0; gbc.gridy = 1;
         panel.add(new JLabel("Toán tử logic:"), gbc);
         
@@ -306,7 +287,6 @@ public class PhieuNhapGUI extends JPanel {
         JComboBox<String> cbLogicOp = new JComboBox<>(new String[]{"AND", "OR", "NOT"});
         panel.add(cbLogicOp, gbc);
         
-        // Field 2
         gbc.gridx = 0; gbc.gridy = 2;
         panel.add(new JLabel("Trường 2:"), gbc);
         
@@ -322,7 +302,6 @@ public class PhieuNhapGUI extends JPanel {
         JTextField txtValue2 = new JTextField(10);
         panel.add(txtValue2, gbc);
         
-        // Search button
         gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.fill = GridBagConstraints.CENTER;
@@ -505,26 +484,42 @@ public class PhieuNhapGUI extends JPanel {
             return;
         }
         
-        int nguoiNhapId = 2; // Default employee ID
-        
-        NhaCungCapDTO selectedNCC = (NhaCungCapDTO) cbNhaCungCap.getSelectedItem();
-        
-        PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
-        phieuNhap.setNgayNhap(new Date());
-        phieuNhap.setNccId(selectedNCC.getNcc_id());
-        phieuNhap.setNguoiNhapId(nguoiNhapId);
-        
-        int pnId = phieuNhapBUS.createPhieuNhap(phieuNhap, chiTietList);
-        if (pnId > 0) {
-            for (ChiTietPhieuNhapDTO ct : chiTietList) {
-                nguyenLieuBUS.updateNguyenLieuQuantityNhap(ct.getNlId(), ct.getSoLuong());
+        try {
+            int pnId = Integer.parseInt(txtPhieuNhapId.getText().trim());
+            if (pnId <= 0) {
+                JOptionPane.showMessageDialog(this, "ID phải là số dương");
+                return;
             }
             
-            JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công với mã: " + pnId);
-            refreshForm();
-            loadDataToTable();
-        } else {
-            JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại");
+            if (phieuNhapBUS.isIdExists(pnId)) {
+                JOptionPane.showMessageDialog(this, "ID đã tồn tại, vui lòng chọn ID khác");
+                return;
+            }
+            
+            int nguoiNhapId = 2; // Default employee ID
+            
+            NhaCungCapDTO selectedNCC = (NhaCungCapDTO) cbNhaCungCap.getSelectedItem();
+            
+            PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
+            phieuNhap.setPnId(pnId);
+            phieuNhap.setNgayNhap(new Date());
+            phieuNhap.setNccId(selectedNCC.getNcc_id());
+            phieuNhap.setNguoiNhapId(nguoiNhapId);
+            
+            int createdId = phieuNhapBUS.createPhieuNhap(phieuNhap, chiTietList);
+            if (createdId > 0) {
+                for (ChiTietPhieuNhapDTO ct : chiTietList) {
+                    nguyenLieuBUS.updateNguyenLieuQuantityNhap(ct.getNlId(), ct.getSoLuong());
+                }
+                
+                JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thành công với mã: " + createdId);
+                refreshForm();
+                loadDataToTable();
+            } else {
+                JOptionPane.showMessageDialog(this, "Tạo phiếu nhập thất bại");
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID phải là số nguyên");
         }
     }
 
@@ -532,5 +527,6 @@ public class PhieuNhapGUI extends JPanel {
         chiTietList.clear();
         chiTietModel.setRowCount(0);
         txtGhiChu.setText("");
+        txtPhieuNhapId.setText("");
     }
 }
