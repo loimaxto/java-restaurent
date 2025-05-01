@@ -14,26 +14,36 @@ public class PhieuNhapDAO {
         this.connection = connection;
     }
 
+    public boolean isIdExists(int pnId) throws SQLException {
+        String sql = "SELECT pn_id FROM phieu_nhap WHERE pn_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, pnId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     public int createPhieuNhap(PhieuNhapDTO phieuNhap) throws SQLException {
-        String sql = "INSERT INTO phieu_nhap (ngay_nhap, ncc_id, nguoi_nhap_id, tong_tien) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setTimestamp(1, new Timestamp(phieuNhap.getNgayNhap().getTime()));
-            stmt.setInt(2, phieuNhap.getNccId());
-            stmt.setInt(3, phieuNhap.getNguoiNhapId());
-            stmt.setLong(4, phieuNhap.getTongTien());
+        // First check if ID exists
+        if (isIdExists(phieuNhap.getPnId())) {
+            throw new SQLException("ID already exists");
+        }
+
+        String sql = "INSERT INTO phieu_nhap (pn_id, ngay_nhap, ncc_id, nguoi_nhap_id, tong_tien) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, phieuNhap.getPnId());
+            stmt.setTimestamp(2, new Timestamp(phieuNhap.getNgayNhap().getTime()));
+            stmt.setInt(3, phieuNhap.getNccId());
+            stmt.setInt(4, phieuNhap.getNguoiNhapId());
+            stmt.setLong(5, phieuNhap.getTongTien());
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Creating phieu nhap failed, no rows affected.");
             }
             
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Creating phieu nhap failed, no ID obtained.");
-                }
-            }
+            return phieuNhap.getPnId();
         }
     }
 

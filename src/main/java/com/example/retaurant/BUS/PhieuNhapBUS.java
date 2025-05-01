@@ -31,6 +31,11 @@ public class PhieuNhapBUS {
             long tongTien = chiTietList.stream().mapToLong(ChiTietPhieuNhapDTO::getTongTien).sum();
             phieuNhap.setTongTien(tongTien);
             
+            // Validate ID is provided
+            if (phieuNhap.getPnId() <= 0) {
+                throw new SQLException("ID must be a positive number");
+            }
+            
             int pnId = phieuNhapDAO.createPhieuNhap(phieuNhap);
             
             for (ChiTietPhieuNhapDTO chiTiet : chiTietList) {
@@ -90,81 +95,88 @@ public class PhieuNhapBUS {
             return null;
         }
     }
-    public List<PhieuNhapDTO> advancedSearch(Map<String, String> filters) throws SQLException {
-    StringBuilder sql = new StringBuilder("SELECT * FROM phieu_nhap WHERE 1=1");
-    List<Object> params = new ArrayList<>();
 
-    for (Map.Entry<String, String> entry : filters.entrySet()) {
-        String field = entry.getKey();
-        String condition = entry.getValue();
-
-        // Skip empty conditions
-        if (condition == null || condition.trim().isEmpty()) {
-            continue;
-        }
-
-        // Parse the condition (format: "operator value")
-        String[] parts = condition.split(" ", 2);
-        if (parts.length != 2) continue;
-
-        String operator = parts[0];
-        String value = parts[1];
-
-        switch (operator.toUpperCase()) {
-            case "AND":
-                sql.append(" AND ");
-                break;
-            case "OR":
-                sql.append(" OR ");
-                break;
-            case "NOT":
-                sql.append(" NOT ");
-                break;
-            default:
-                // Handle comparison operators
-                sql.append(" AND ").append(field).append(" ");
-                switch (operator) {
-                    case ">":
-                    case ">=":
-                    case "<":
-                    case "<=":
-                    case "<>":
-                    case "=":
-                        sql.append(operator).append(" ?");
-                        break;
-                    default:
-                        // Default to equals if operator is invalid
-                        sql.append("= ?");
-                        operator = "=";
-                }
-                params.add(parseValue(field, value));
+    public boolean isIdExists(int pnId) {
+        try {
+            return phieuNhapDAO.isIdExists(pnId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
+    
 
-    sql.append(" ORDER BY ngay_nhap DESC");
+    public List<PhieuNhapDTO> advancedSearch(Map<String, String> filters) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT * FROM phieu_nhap WHERE 1=1");
+        List<Object> params = new ArrayList<>();
 
-    try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-        for (int i = 0; i < params.size(); i++) {
-            stmt.setObject(i + 1, params.get(i));
-        }
+        for (Map.Entry<String, String> entry : filters.entrySet()) {
+            String field = entry.getKey();
+            String condition = entry.getValue();
 
-        List<PhieuNhapDTO> result = new ArrayList<>();
-        try (ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                PhieuNhapDTO pn = new PhieuNhapDTO(
-                    rs.getInt("pn_id"),
-                    rs.getTimestamp("ngay_nhap"),
-                    rs.getInt("ncc_id"),
-                    rs.getInt("nguoi_nhap_id"),
-                    rs.getLong("tong_tien")
-                );
-                result.add(pn);
+            if (condition == null || condition.trim().isEmpty()) {
+                continue;
+            }
+
+            String[] parts = condition.split(" ", 2);
+            if (parts.length != 2) continue;
+
+            String operator = parts[0];
+            String value = parts[1];
+
+            switch (operator.toUpperCase()) {
+                case "AND":
+                    sql.append(" AND ");
+                    break;
+                case "OR":
+                    sql.append(" OR ");
+                    break;
+                case "NOT":
+                    sql.append(" NOT ");
+                    break;
+                default:
+                    sql.append(" AND ").append(field).append(" ");
+                    switch (operator) {
+                        case ">":
+                        case ">=":
+                        case "<":
+                        case "<=":
+                        case "<>":
+                        case "=":
+                            sql.append(operator).append(" ?");
+                            break;
+                        default:
+                            sql.append("= ?");
+                            operator = "=";
+                    }
+                    params.add(parseValue(field, value));
             }
         }
-        return result;
+
+        sql.append(" ORDER BY ngay_nhap DESC");
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                stmt.setObject(i + 1, params.get(i));
+            }
+
+            List<PhieuNhapDTO> result = new ArrayList<>();
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    PhieuNhapDTO pn = new PhieuNhapDTO(
+                        rs.getInt("pn_id"),
+                        rs.getTimestamp("ngay_nhap"),
+                        rs.getInt("ncc_id"),
+                        rs.getInt("nguoi_nhap_id"),
+                        rs.getLong("tong_tien")
+                    );
+                    result.add(pn);
+                }
+            }
+            return result;
+        }
     }
-}
-    public List<PhieuNhapDTO> searchPhieuNhap(String condition, String[] values) {
+       public List<PhieuNhapDTO> searchPhieuNhap(String condition, String[] values) {
     List<PhieuNhapDTO> results = new ArrayList<>();
     StringBuilder sql = new StringBuilder("SELECT * FROM phieu_nhap WHERE ");
 
@@ -195,17 +207,18 @@ public class PhieuNhapBUS {
 }
 
 
-private Object parseValue(String field, String value) {
-    try {
-        if (field.equals("ngay_nhap")) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            return new java.sql.Date(sdf.parse(value).getTime());
-        } else if (field.equals("tong_tien") || field.equals("ncc_id") || field.equals("nguoi_nhap_id")) {
-            return Long.parseLong(value);
+
+    private Object parseValue(String field, String value) {
+        try {
+            if (field.equals("ngay_nhap")) {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                return new java.sql.Date(sdf.parse(value).getTime());
+            } else if (field.equals("tong_tien") || field.equals("ncc_id") || field.equals("nguoi_nhap_id")) {
+                return Long.parseLong(value);
+            }
+        } catch (Exception e) {
+            // Fall through to return string
         }
-    } catch (Exception e) {
-        // Fall through to return string
+        return value;
     }
-    return value;
-}
 }

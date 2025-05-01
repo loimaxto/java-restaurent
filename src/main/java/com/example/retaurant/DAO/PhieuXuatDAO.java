@@ -13,24 +13,34 @@ public class PhieuXuatDAO {
         this.connection = connection;
     }
 
+    public boolean isIdExists(int pxId) throws SQLException {
+        String sql = "SELECT px_id FROM phieu_xuat WHERE px_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, pxId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     public int createPhieuXuat(PhieuXuatDTO phieuXuat) throws SQLException {
-        String sql = "INSERT INTO phieu_xuat (ngay_xuat, nguoi_xuat_id) VALUES (?, ?)";
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            stmt.setTimestamp(1, new Timestamp(phieuXuat.getNgayXuat().getTime()));
-            stmt.setInt(2, phieuXuat.getNguoiXuatId());
+        // First check if ID exists
+        if (isIdExists(phieuXuat.getPxId())) {
+            throw new SQLException("ID already exists");
+        }
+
+        String sql = "INSERT INTO phieu_xuat (px_id, ngay_xuat, nguoi_xuat_id) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, phieuXuat.getPxId());
+            stmt.setTimestamp(2, new Timestamp(phieuXuat.getNgayXuat().getTime()));
+            stmt.setInt(3, phieuXuat.getNguoiXuatId());
             
             int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("Creating phieu xuat failed, no rows affected.");
             }
             
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    return generatedKeys.getInt(1);
-                } else {
-                    throw new SQLException("Creating phieu xuat failed, no ID obtained.");
-                }
-            }
+            return phieuXuat.getPxId();
         }
     }
 

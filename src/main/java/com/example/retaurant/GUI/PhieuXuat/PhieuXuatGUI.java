@@ -30,6 +30,7 @@ public class PhieuXuatGUI extends JPanel {
     private JTextField txtSoLuong;
     private JTextArea txtGhiChu;
     private List<CTPhieuXuatDTO> chiTietList;
+    private JTextField txtPhieuXuatId;
     
     // Search components
     private JComboBox<String> cbSearchColumn;
@@ -174,6 +175,10 @@ public class PhieuXuatGUI extends JPanel {
         // Input fields panel
         JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        
+        inputPanel.add(new JLabel("Mã Phiếu Xuất:"));
+        txtPhieuXuatId = new JTextField();
+        inputPanel.add(txtPhieuXuatId);
         
         inputPanel.add(new JLabel("Nguyên liệu:"));
         cbNguyenLieu = new JComboBox<>();
@@ -435,25 +440,40 @@ public class PhieuXuatGUI extends JPanel {
     }
 
     private void createPhieuXuat() {
-        if (chiTietList.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
+    if (chiTietList.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    try {
+        // Get the ID from the text field
+        int pxId = Integer.parseInt(txtPhieuXuatId.getText().trim());
+        
+        if (pxId <= 0) {
+            JOptionPane.showMessageDialog(this, "ID phải là số dương", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (phieuXuatBUS.isIdExists(pxId)) {
+            JOptionPane.showMessageDialog(this, "ID đã tồn tại, vui lòng chọn ID khác", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
         int nguoiXuatId = 2; // Default employee ID - in real app, get from session
         
         PhieuXuatDTO phieuXuat = new PhieuXuatDTO();
+        phieuXuat.setPxId(pxId); // Set the manual ID
         phieuXuat.setNgayXuat(new Date());
         phieuXuat.setNguoiXuatId(nguoiXuatId);
         
-        int pxId = phieuXuatBUS.createPhieuXuat(phieuXuat, chiTietList);
-        if (pxId > 0) {
+        int createdId = phieuXuatBUS.createPhieuXuat(phieuXuat, chiTietList);
+        if (createdId > 0) {
             // Update inventory
             for (CTPhieuXuatDTO ct : chiTietList) {
                 nguyenLieuBUS.updateNguyenLieuQuantityXuat(ct.getNlId(), (long) ct.getSoLuong());
             }
             
-            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thành công với mã: " + pxId, 
+            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thành công với mã: " + createdId, 
                 "Thành công", JOptionPane.INFORMATION_MESSAGE);
             refreshForm();
             loadDataToTable();
@@ -461,13 +481,17 @@ public class PhieuXuatGUI extends JPanel {
         } else {
             JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "ID phải là số nguyên", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
+}
 
     private void refreshForm() {
         chiTietList.clear();
         chiTietModel.setRowCount(0);
         txtGhiChu.setText("");
         txtSoLuong.setText("");
+        txtPhieuXuatId.setText("");
     }
 
     private String getFieldName(String displayName) {
