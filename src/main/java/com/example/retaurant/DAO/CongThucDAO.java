@@ -40,7 +40,7 @@ public class CongThucDAO {
 
     }
 
-    public List<CongThucDTO> getAllDsCongThuc(Integer monAnId)  {
+    public List<CongThucDTO> getAllDsCongThuc(Integer monAnId) {
         String sql = "SELECT * FROM cong_thuc WHERE sp_id = ?";
         List<CongThucDTO> dscongthuc = new ArrayList<>();
         try (
@@ -53,7 +53,6 @@ public class CongThucDAO {
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
-            Logger.getLogger(CongThucDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return dscongthuc;
     }

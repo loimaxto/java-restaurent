@@ -105,7 +105,7 @@ public class DatBanPN extends javax.swing.JPanel {
                 if (searchTimer != null) {
                     searchTimer.stop();
                 }
-                searchTimer = new Timer(500, new ActionListener() {
+                searchTimer = new Timer(300, new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent evt) {
                         performSearch(searchTextField.getText());
@@ -391,7 +391,7 @@ public class DatBanPN extends javax.swing.JPanel {
 
         searchTextField.setMargin(new java.awt.Insets(2, 6, 2, 10));
         searchTextField.setMaximumSize(new java.awt.Dimension(2147483647, 26));
-        searchTextField.setPreferredSize(new java.awt.Dimension(250, 25));
+        searchTextField.setPreferredSize(new java.awt.Dimension(250, 30));
         jPanel4.add(searchTextField);
 
         leftPanel.add(jPanel4);

@@ -173,15 +173,9 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         NguyenLieuBUS busNguyenLieu = new NguyenLieuBUS();
         List<CongThucDTO> listCongThuc = busCongThuc.getCongThucByMonAn(ctSpDto.getSpdId());
         for (CongThucDTO congThuc: listCongThuc) {
-            
             NguyenLieuDTO currentNguyenLieu = busNguyenLieu.getNguyenLieuById(congThuc.getNlid());
             float soLuongNguyenLieuCapNhat = currentNguyenLieu.getSoLuong() - congThuc.getSoluong()*ctSpDto.getSoLuong();
-            busNguyenLieu.updateSoLuongNguyenLieu(congThuc.getSpid(),soLuongNguyenLieuCapNhat);
-            System.out.println("id món "+ ctSpDto.getSpdId());
-            System.out.println("id nl "+ congThuc.getNlid());
-            System.out.println("hien co: " + currentNguyenLieu.getSoLuong() );
-            System.out.println("se tru: " + congThuc.getSoluong()*ctSpDto.getSoLuong() );
-            System.out.println("tru di: " + soLuongNguyenLieuCapNhat);
+            busNguyenLieu.updateSoLuongNguyenLieu(congThuc.getNlid(),soLuongNguyenLieuCapNhat);
         }
     }
     @SuppressWarnings("unchecked")

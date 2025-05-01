@@ -75,7 +75,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnDatBan.addActionListener(e -> switchPanel(btnDatBan.getActionCommand()));
         btnKhachHang.addActionListener(e -> switchPanel(btnKhachHang.getActionCommand()));
         btnMonAn.addActionListener(e -> switchPanel(btnMonAn.getActionCommand()));
-        btnNguyenLieu.addActionListener(e -> switchPanel(btnNguyenLieu.getActionCommand()));
+        btnNguyenLieu.addActionListener(e ->handleSwitchNguyenLieuPanel());
         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
         btnHoaDon.addActionListener(e ->{ 
          hoaDonPN.reloadDataPanel();
@@ -95,7 +95,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         updateNavigateButton();
     }
-
+    
     public DashboardFrame(UserDTO user) {
         this();
         this.user = user;
@@ -103,7 +103,11 @@ public class DashboardFrame extends javax.swing.JFrame {
             navBtnUserInfo.setText(user.getUserName());
         }
     }
-
+    private void handleSwitchNguyenLieuPanel() {
+        nguyenLieuGUI.loadDataToTable();
+        switchPanel(btnNguyenLieu.getActionCommand());
+        
+    }
     private void switchPanel(String panelName) {
         updateNavigateButton();
         cardLayout.show(currentPanel, panelName);
