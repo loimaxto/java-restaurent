@@ -12,11 +12,27 @@ import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
 import com.example.retaurant.DTO.HoaDonDTO2;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.MyCustom.MyDialog;
+import com.itextpdf.io.font.PdfEncodings;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.element.Table;
+import com.itextpdf.layout.element.Cell;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -34,13 +50,15 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     private HoaDonDTO2 hdDto;
     private CtHoaDonBUS busCtHoaDonBUS;
     private ArrayList<CtSanPhamThanhToanDTO> ctSpList;
-    private boolean isThanhToan ;
+    private boolean isThanhToan;
     private int tongTienHoaDon = 0;
-    
+
     public ChiTietHoaDonModal(HoaDonDTO2 hddto, boolean isThanhToan) {
         busCtHoaDonBUS = new CtHoaDonBUS();
+        //thong tin hoa don
         this.ctSpList = (ArrayList<CtSanPhamThanhToanDTO>) busCtHoaDonBUS.getCtSanPhanThanhToanByHdId(hddto.getHdId());
         this.hdDto = hddto;
+
         this.isThanhToan = isThanhToan;
         initComponents();
         labelHoTenKh.setText(hdDto.getHoKh() + hdDto.getTenKh());
@@ -58,10 +76,11 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
             labelTongTien.setText(String.valueOf(tongTienHoaDon));
         }
     }
+
     public void setDatBanPn(DatBanPN dbpn) {
         this.datBanPN = dbpn;
     }
-    
+
     private void renderChiTietSpHoaDon() {
         String[] columnNames = {"Tên sản phẩm", "Số lượng", "Giá", "Tổng"};
 
@@ -86,6 +105,64 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         }
         return array;
     }
+
+    private void handleExportPDF() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu file");
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            PdfWriter writer = null;
+            try {
+                File fileToSave = fileChooser.getSelectedFile();
+                String dest = fileToSave.getAbsolutePath() + ".pdf"; // Append .pdf extension
+                writer = new PdfWriter(dest);
+                PdfDocument pdfDoc = new PdfDocument(writer);
+                pdfDoc.addNewPage();
+                PdfFont vietnameseFont = PdfFontFactory.createFont(
+                        "src/main/java/com/example/retaurant/resources/DejaVuSans.ttf", PdfEncodings.IDENTITY_H, true);
+
+                Document document = new Document(pdfDoc).setFont(vietnameseFont);
+
+                document.add(new Paragraph(" Hóa đơn").setBold());
+
+                document.add(new Paragraph("Tên khách khàng: " + hdDto.getHoKh() + hdDto.getTenKh()));
+                document.add(new Paragraph("Điện thoại: " + hdDto.getSdt()));
+                document.add(new Paragraph("Nhân viên: " + hdDto.getHoTenNv()));
+                document.add(new Paragraph("Thời gian: " + hdDto.getThoiGian()));
+                String tongTien = hdDto.getTongGia() == null || hdDto.getTongGia() == 0
+                        ? "Chưa thanh toán" : hdDto.getTongGia().toString();
+                document.add(new Paragraph("Thành tiền: " + tongTien).setBold());
+                Table table = new Table(4);
+                table.addHeaderCell(new Cell().add(new Paragraph("Tên sản món").setBold()));
+                table.addHeaderCell(new Cell().add(new Paragraph("Số lượng").setBold()));
+                table.addHeaderCell(new Cell().add(new Paragraph("Giá").setBold()));
+                table.addHeaderCell(new Cell().add(new Paragraph("Tổng").setBold()));
+                for (CtSanPhamThanhToanDTO item : ctSpList) {
+                    table.addCell(new Cell().add(new Paragraph(item.getTenSp())));
+                    table.addCell(new Cell().add(new Paragraph(item.getSoLuong().toString())));
+                    table.addCell(new Cell().add(new Paragraph(item.getGiaTaiLucDat().toString())));
+                    table.addCell(new Cell().add(new Paragraph(item.getTongTienCt().toString())));
+                }
+                document.add(table);
+
+                document.close();
+                System.out.println("PDF lưu file thành công tại: " + dest);
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(ChiTietHoaDonModal.class.getName()).log(Level.SEVERE, null, ex);
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                Logger.getLogger(ChiTietHoaDonModal.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                try {
+                    writer.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(ChiTietHoaDonModal.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else {
+            System.out.println("Save operation cancelled.");
+        }
+    }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -103,6 +180,7 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         labelNvTen = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableSanPhamItem = new javax.swing.JTable();
+        btnXuatHoaDon = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -162,6 +240,13 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tableSanPhamItem);
 
+        btnXuatHoaDon.setText("Xuất hóa đơn");
+        btnXuatHoaDon.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXuatHoaDonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -181,18 +266,21 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
                     .addComponent(labelHoTenKh, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelTongTien, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(93, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(btnXuatHoaDon)
+                        .addGap(11, 11, 11))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnXacNhan)
-                        .addGap(39, 39, 39)
+                        .addGap(52, 52, 52)
                         .addComponent(btnHuy)
-                        .addGap(102, 102, 102))
+                        .addGap(98, 98, 98))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(labelForm, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(142, 142, 142))))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,11 +305,13 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addGap(26, 26, 26)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 368, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnXuatHoaDon)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnHuy)
                     .addComponent(btnXacNhan))
-                .addGap(35, 35, 35))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -247,8 +337,13 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
             datBanPN.resetCurrentHoaDonAndBanAndTable();
             dispose();
         }
-        
+
     }//GEN-LAST:event_btnXacNhanActionPerformed
+
+    private void btnXuatHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatHoaDonActionPerformed
+        handleExportPDF();
+
+    }//GEN-LAST:event_btnXuatHoaDonActionPerformed
     /**
      * @param args the command line arguments
      */
@@ -257,6 +352,7 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnXacNhan;
+    private javax.swing.JButton btnXuatHoaDon;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
