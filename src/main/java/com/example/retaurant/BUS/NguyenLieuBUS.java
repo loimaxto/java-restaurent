@@ -63,7 +63,10 @@ public class NguyenLieuBUS {
             return false;
         }
     }
-
+    public boolean updateSoLuongNguyenLieu(int nlId, float soLuong) {
+        return nguyenLieuDAO.updateNguyenLieu(nlId,soLuong);
+    }
+    
     public boolean deleteNguyenLieu(int nlId) {
         try {
             return nguyenLieuDAO.deleteNguyenLieu(nlId);

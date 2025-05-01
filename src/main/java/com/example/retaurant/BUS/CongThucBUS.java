@@ -41,7 +41,9 @@ public class CongThucBUS {
             throw new SQLException("Error fetching list of recipes", e);
         }
     }
-
+    public List<CongThucDTO> getCongThucByMonAn(int monAnId) {
+            return congThucDAO.getAllDsCongThuc(monAnId);
+    }
     // Thêm một công thức mới
     public int addCongThuc(CongThucDTO congThuc) throws SQLException {
         
@@ -60,12 +62,13 @@ public class CongThucBUS {
         }
     }
 
-    public boolean updateCongThuc(CongThucDTO congThuc) throws SQLException {
+    public boolean updateCongThuc(CongThucDTO congThuc)  {
         try {
             return congThucDAO.updateCongThuc(congThuc);
         } catch (SQLException e) {
-            throw new SQLException("Error updating recipe", e);
+            e.printStackTrace();
         }
+        return false;
     }
     
     public static void main(String[] args) throws SQLException {

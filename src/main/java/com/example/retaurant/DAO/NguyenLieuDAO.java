@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -74,7 +76,18 @@ public class NguyenLieuDAO {
             return statement.executeUpdate() > 0;
         }
     }
-    
+    public boolean updateNguyenLieu(int nguyenLieuId, float soLuong)  {
+        System.out.println("id: " + nguyenLieuId +" / soluong:" +soLuong);
+        String sql = "UPDATE nguyen_lieu SET so_luong = ? WHERE nl_id = ? ";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setFloat(1, soLuong);
+            statement.setInt(2, nguyenLieuId);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
     public boolean deleteNguyenLieu(int nlId) throws SQLException {
         String sql = "DELETE FROM nguyen_lieu WHERE nl_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

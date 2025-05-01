@@ -5,11 +5,16 @@
 package com.example.retaurant.GUI.HoaDon;
 
 import com.example.retaurant.BUS.BanBUS;
+import com.example.retaurant.BUS.CongThucBUS;
 import com.example.retaurant.BUS.CtHoaDonBUS;
 import com.example.retaurant.BUS.HoaDonBUS;
+import com.example.retaurant.BUS.NguyenLieuBUS;
+import com.example.retaurant.DAO.NguyenLieuDAO;
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.DTO.CongThucDTO;
 import com.example.retaurant.DTO.CtSanPhamThanhToanDTO;
 import com.example.retaurant.DTO.HoaDonDTO2;
+import com.example.retaurant.DTO.NguyenLieuDTO;
 import com.example.retaurant.GUI.DatBan.DatBanPN;
 import com.example.retaurant.MyCustom.MyDialog;
 import com.itextpdf.io.font.PdfEncodings;
@@ -161,6 +166,22 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
             }
         } else {
             System.out.println("Save operation cancelled.");
+        }
+    }
+    private void updateSoLuongNguyenLieuByMonAn(CtSanPhamThanhToanDTO ctSpDto){
+        CongThucBUS busCongThuc = new CongThucBUS();
+        NguyenLieuBUS busNguyenLieu = new NguyenLieuBUS();
+        List<CongThucDTO> listCongThuc = busCongThuc.getCongThucByMonAn(ctSpDto.getSpdId());
+        for (CongThucDTO congThuc: listCongThuc) {
+            
+            NguyenLieuDTO currentNguyenLieu = busNguyenLieu.getNguyenLieuById(congThuc.getNlid());
+            float soLuongNguyenLieuCapNhat = currentNguyenLieu.getSoLuong() - congThuc.getSoluong()*ctSpDto.getSoLuong();
+            busNguyenLieu.updateSoLuongNguyenLieu(congThuc.getSpid(),soLuongNguyenLieuCapNhat);
+            System.out.println("id món "+ ctSpDto.getSpdId());
+            System.out.println("id nl "+ congThuc.getNlid());
+            System.out.println("hien co: " + currentNguyenLieu.getSoLuong() );
+            System.out.println("se tru: " + congThuc.getSoluong()*ctSpDto.getSoLuong() );
+            System.out.println("tru di: " + soLuongNguyenLieuCapNhat);
         }
     }
     @SuppressWarnings("unchecked")
@@ -329,6 +350,9 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
         Timestamp currentTimestamp = Timestamp.valueOf(now);
         hdDto.setThoiGian(currentTimestamp);
         busHoaDon.updateBill(hdDto);
+        for (CtSanPhamThanhToanDTO item: ctSpList) {
+            updateSoLuongNguyenLieuByMonAn(item);
+        }
         if (busHoaDon.updateBill(hdDto)) {
             new MyDialog("Thanh toán thành công !", 0);
             BanBUS busBan = new BanBUS();
@@ -337,7 +361,6 @@ public class ChiTietHoaDonModal extends javax.swing.JFrame {
             datBanPN.resetCurrentHoaDonAndBanAndTable();
             dispose();
         }
-
     }//GEN-LAST:event_btnXacNhanActionPerformed
 
     private void btnXuatHoaDonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXuatHoaDonActionPerformed
