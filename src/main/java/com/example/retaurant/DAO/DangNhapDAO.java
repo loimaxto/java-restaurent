@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class DangNhapDAO {
 
     public TaiKhoan dangNhap(TaiKhoan tk) {
-        TaiKhoan tkLogin = null;
+        
         Connection conn = DBConnection.getConnection(); // Kết nối cơ sở dữ liệu
 
         if (conn == null) {
@@ -32,14 +32,15 @@ public class DangNhapDAO {
             pre.setString(2, tk.getMatKhau());
             ResultSet rs = pre.executeQuery();
             if (rs.next()) {
-                tkLogin = tk;
+                TaiKhoan tkLogin = new TaiKhoan();
+                tkLogin.setMaTaiKhoan(rs.getInt("tk_id"));
                 tkLogin.setTenDangNhap(rs.getString("username"));
                 tkLogin.setQuyen(rs.getString("quyen"));
+                return tkLogin;
             }
-            return tkLogin;
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return tk;
+        return null;
     }
 }

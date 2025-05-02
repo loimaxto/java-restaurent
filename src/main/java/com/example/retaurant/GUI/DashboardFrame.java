@@ -6,6 +6,7 @@ package com.example.retaurant.GUI;
  */
 
 
+import com.example.retaurant.DTO.NhanVien;
 import javax.swing.*;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.CongThuc.CongThucPannel;
@@ -29,7 +30,7 @@ import java.util.Arrays;
 public class DashboardFrame extends javax.swing.JFrame {
 
     private UserDTO user;
-
+    private NhanVien currentNhanVien;
     //khai bao cai panel se tao
     private DatBanPN datBanPN = new DatBanPN();
     private KhuyenMaiPN khuyenMaiPN = new KhuyenMaiPN();
@@ -95,7 +96,17 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         updateNavigateButton();
     }
-    
+    public void setNvDto(NhanVien nvDto) {
+        this.currentNhanVien = nvDto;
+        datBanPN.setCurrentNvId(this.currentNhanVien.getMaNhanvien());
+    }
+    public DashboardFrame(NhanVien nvDto){
+        this();
+        this.currentNhanVien = nvDto;
+        if (currentNhanVien != null) {
+            navBtnUserInfo.setText(currentNhanVien.getHoTen());
+        }
+    }
     public DashboardFrame(UserDTO user) {
         this();
         this.user = user;

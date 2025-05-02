@@ -63,10 +63,10 @@ public class DatBanPN extends javax.swing.JPanel {
     private Timer searchTimer;
 
     private List<MonAnDTO> searchResults;
-    private int currentUserId;
+    private int currentNvId;
     ButtonCellEditor btnCellEditor;
     public DatBanPN() {
-        currentUserId = 2;
+        currentNvId = 2;
         busBan = new BanBUS();
         busHoaDon = new HoaDonBUS();
         busCtHoaDon = new CtHoaDonBUS();
@@ -81,7 +81,9 @@ public class DatBanPN extends javax.swing.JPanel {
 //        ImageUtil.setIcont(btnKhModal, "/image/three-dots-vertical-svgrepo-com.svg", WIDTH, HEIGHT);
         intStyle();
     }
-
+    public void setCurrentNvId(int nvId) {
+        this.currentNvId = nvId;
+    }
     public void intStyle() {
         model = new MyTableModel();
         table.setModel(model);
@@ -561,7 +563,7 @@ public class DatBanPN extends javax.swing.JPanel {
     }
 
     public int getCreatorId() {
-        return this.currentUserId;
+        return this.currentNvId;
     }
 
     public BanDTO getCurrentBanDTO() {

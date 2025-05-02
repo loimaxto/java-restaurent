@@ -21,7 +21,9 @@ public class NhanVienBUS {
     public void docDanhSach() {
         this.listNhanVien = nvDAO.getDanhSachNhanVien();
     }
-
+    public NhanVien getNhanVienByTaiKhoanId(int tkId) {
+        return nvDAO.getNhanVienBYMaTaiKhoanNhanVien(tkId);
+    }
     public ArrayList<NhanVien> getDanhSachNhanVien() {
         if (this.listNhanVien == null) {
             docDanhSach();

@@ -48,7 +48,7 @@ public class NhanVienDAO {
 
         return null;
     }
-
+    
     public NhanVien getNhanVien(int maNV) {
         Connection conn = DBConnection.getConnection();
 
@@ -60,7 +60,7 @@ public class NhanVienDAO {
         try {
             String sql = "SELECT * FROM nhan_vien WHERE nv_id=?";
             PreparedStatement pre = conn.prepareStatement(sql);
-            pre.setInt(0, maNV);
+            pre.setInt(1, maNV);
             ResultSet rs = pre.executeQuery();
             while (rs.next()) {
                 nv = new NhanVien();
@@ -76,7 +76,32 @@ public class NhanVienDAO {
 
         return nv;
     }
-
+    public NhanVien getNhanVienBYMaTaiKhoanNhanVien(int taiKhoanId) {
+        Connection conn = DBConnection.getConnection();
+        if (conn == null) {
+            System.out.println("Lỗi kết nối cơ sở dữ liệu!");
+            return null;
+        }
+        NhanVien nv = null;
+        try {
+            String sql = "SELECT * FROM nhan_vien WHERE tk_id= ?";
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setInt(1, taiKhoanId);
+            ResultSet rs = pre.executeQuery();
+            while (rs.next()) {
+                nv = new NhanVien();
+                nv.setMaNhanvien(rs.getInt(1));
+                nv.setHoTen(rs.getString(2));
+                nv.setGioiTinh(rs.getString(3));
+                nv.setChucVu(rs.getString(4));
+                nv.setMaTaiKhoan(rs.getInt(5));
+            }
+            return nv;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public boolean updateNhanVien(NhanVien nv) {
         String sql = "UPDATE nhan_vien SET ho_ten = ?, gioi_tinh = ?, chuc_vu = ?, tk_id = ? WHERE nv_id = ?";
         try (Connection conn = DBConnection.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {

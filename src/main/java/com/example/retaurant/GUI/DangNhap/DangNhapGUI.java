@@ -8,8 +8,10 @@ import com.example.retaurant.Main.Main;
 import com.example.retaurant.MyCustom.ImagePanel;
 import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.BUS.DangNhapBUS;
+import com.example.retaurant.BUS.NhanVienBUS;
 import com.example.retaurant.DTO.TaiKhoan;
 import com.example.retaurant.BUS.UserBUS;
+import com.example.retaurant.DTO.NhanVien;
 import com.example.retaurant.DTO.UserDTO;
 import com.example.retaurant.GUI.DashboardFrame;
 import javax.swing.*;
@@ -230,9 +232,17 @@ public class DangNhapGUI extends JFrame {
         DangNhapBUS dangNhapBUS = new DangNhapBUS();
         TaiKhoan tk = dangNhapBUS.getTaiKhoanDangNhap(txtUser.getText(),
                 txtPassword.getText(), ckbRemember.isSelected());
+        if ( tk == null) {
+            System.out.println("khong co tai khoan");
+            return;
+        }
+        NhanVienBUS busNv = new NhanVienBUS();
+         System.out.println("tai khoan id: "+ tk.getMaTaiKhoan());
+        NhanVien nvDto = busNv.getNhanVienByTaiKhoanId(tk.getMaTaiKhoan());
+        System.out.println("nhan vien" +nvDto.toString());
         try {
             this.dispose();
-            new DashboardFrame().setVisible(true);
+            new DashboardFrame(nvDto).setVisible(true);
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Lỗi: " + e.getMessage());
