@@ -738,8 +738,8 @@ public class QuanLyNhanVienGUI extends JPanel {
         if (row > -1) {
             txtMaNV.setText(tblNhanVien.getValueAt(row, 0) + "");
             txtHoTen.setText(tblNhanVien.getValueAt(row, 1) + "");
-            txtChucVu.setText(tblNhanVien.getValueAt(row, 4) + "");
-            txtMaTaiKhoan.setText(tblNhanVien.getValueAt(row, 2) + "");
+            txtChucVu.setText(tblNhanVien.getValueAt(row, 3) + "");
+            txtMaTaiKhoan.setText(tblNhanVien.getValueAt(row, 4) + "");
 
             String gioiTinh = "";
             if ((tblNhanVien.getValueAt(row, 3) + "").equals("Nam")) {
