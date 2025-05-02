@@ -239,7 +239,7 @@ public class DangNhapGUI extends JFrame {
         NhanVienBUS busNv = new NhanVienBUS();
          System.out.println("tai khoan id: "+ tk.getMaTaiKhoan());
         NhanVien nvDto = busNv.getNhanVienByTaiKhoanId(tk.getMaTaiKhoan());
-        System.out.println("nhan vien" +nvDto.toString());
+        System.out.println("nhan vien: " +nvDto.toString());
         try {
             this.dispose();
             new DashboardFrame(nvDto).setVisible(true);

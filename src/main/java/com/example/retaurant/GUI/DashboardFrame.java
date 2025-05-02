@@ -96,13 +96,16 @@ public class DashboardFrame extends javax.swing.JFrame {
         });
         updateNavigateButton();
     }
+    //ham cay thong tin nhan vien cho cac panel con
     public void setNvDto(NhanVien nvDto) {
         this.currentNhanVien = nvDto;
+        System.out.println(nvDto);
         datBanPN.setCurrentNvId(this.currentNhanVien.getMaNhanvien());
     }
     public DashboardFrame(NhanVien nvDto){
         this();
-        this.currentNhanVien = nvDto;
+        setNvDto(nvDto);
+        System.out.println(this.currentNhanVien);
         if (currentNhanVien != null) {
             navBtnUserInfo.setText(currentNhanVien.getHoTen());
         }

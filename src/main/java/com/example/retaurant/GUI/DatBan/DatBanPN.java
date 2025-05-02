@@ -83,6 +83,7 @@ public class DatBanPN extends javax.swing.JPanel {
     }
     public void setCurrentNvId(int nvId) {
         this.currentNvId = nvId;
+        System.out.println("dat ban pn nvid: "+ this.currentNvId);
     }
     public void intStyle() {
         model = new MyTableModel();
