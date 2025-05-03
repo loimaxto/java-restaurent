@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -60,6 +61,11 @@ public class SuaKhuyenMaiTheoDon extends javax.swing.JFrame {
         });
 
         btnHuy.setText("Huỷ");
+        btnHuy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHuyActionPerformed(evt);
+            }
+        });
 
         txtTen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -181,10 +187,25 @@ public class SuaKhuyenMaiTheoDon extends javax.swing.JFrame {
         KhuyenMaiTheoDonDTO kmTheoDon = new KhuyenMaiTheoDonDTO(id_km,phan_tram);
         
         KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
-        khuyenMaiBUS.updateKhuyenMai(km);
         KhuyenMaiTheoDonBUS khuyenMaiTheoDonBUS = new KhuyenMaiTheoDonBUS();
-        khuyenMaiTheoDonBUS.updateKhuyenMaiTheoDon(kmTheoDon);
+        if (khuyenMaiBUS.checkMaKhuyenMai(id_km)) {
+            JOptionPane.showMessageDialog(null, "Khuyến mãi đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiBUS.checktimeKhuyenMaiDTO(km)) {
+            JOptionPane.showMessageDialog(null, "Ngày kết thúc phải sau ngày bắt đầu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiTheoDonBUS.ktraPhanTram(kmTheoDon) ){
+            JOptionPane.showMessageDialog(null, "Số phần trăm phải lớn hơn 0 và nhỏ hơn 100", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        }
+        else {
+            khuyenMaiBUS.updateKhuyenMai(km);
+            khuyenMaiTheoDonBUS.updateKhuyenMaiTheoDon(kmTheoDon);
+            JOptionPane.showMessageDialog(null, "Thêm khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
     }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnHuyActionPerformed
 
     /**
      * @param args the command line arguments

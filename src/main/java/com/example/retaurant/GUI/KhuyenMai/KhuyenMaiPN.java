@@ -12,6 +12,8 @@ import com.example.retaurant.DTO.KhuyenMaiDTO;
 import com.example.retaurant.DTO.KhuyenMaiTheoDonDTO;
 import com.example.retaurant.DTO.KhuyenMaiTheoMonDTO;
 import com.example.retaurant.DTO.MonAnDTO;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.sql.SQLException;
 import java.util.List;
 import javax.swing.JFrame;
@@ -74,8 +76,18 @@ public class KhuyenMaiPN extends javax.swing.JPanel {
         jScrollPane1.setViewportView(jTable1);
 
         btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnThemActionPerformed(evt);
+            }
+        });
 
         btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuaActionPerformed(evt);
+            }
+        });
 
         btnXoa.setText("Xoá");
         btnXoa.addActionListener(new java.awt.event.ActionListener() {
@@ -85,6 +97,11 @@ public class KhuyenMaiPN extends javax.swing.JPanel {
         });
 
         btnTim.setText("Tìm");
+        btnTim.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnTimActionPerformed(evt);
+            }
+        });
 
         jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         jComboBox1.addActionListener(new java.awt.event.ActionListener() {
@@ -212,6 +229,130 @@ public class KhuyenMaiPN extends javax.swing.JPanel {
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
+        // TODO add your handling code here:
+        String selected = (String) jComboBox1.getSelectedItem();
+        if(selected != null){
+            switch (selected){
+                case "Khuyến Mãi Theo Món Ăn":
+                    ThemKhuyenMaiTheoMon frameMon = new ThemKhuyenMaiTheoMon();
+                    frameMon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frameMon.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        loadKhuyenMaiTheoMon();
+                        }
+                    });
+                    frameMon.setLocationRelativeTo(null);
+                    frameMon.setVisible(true);
+                    break;
+                case "Khuyến Mãi Theo Hoá Đơn":
+                    ThemKhuyenMaiTheoDon frameDon = new ThemKhuyenMaiTheoDon();
+                    frameDon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frameDon.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        loadKhuyenMaiTheoDon();
+                    }
+                    });
+                    frameDon.setLocationRelativeTo(null);
+                    frameDon.setVisible(true);
+                    break;
+            }
+        }
+    }//GEN-LAST:event_btnThemActionPerformed
+
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
+        // TODO add your handling code here:
+        String selected = (String) jComboBox1.getSelectedItem();
+        if(selected != null){
+            switch (selected){
+                case "Khuyến Mãi Theo Món Ăn":
+                    SuaKhuyenMaiTheoMon frameMon = new SuaKhuyenMaiTheoMon();
+                    frameMon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frameMon.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        loadKhuyenMaiTheoMon();
+                        }
+                    });
+                    frameMon.setLocationRelativeTo(null);
+                    frameMon.setVisible(true);
+                    break;
+                case "Khuyến Mãi Theo Hoá Đơn":
+                    SuaKhuyenMaiTheoDon frameDon = new SuaKhuyenMaiTheoDon();
+                    frameDon.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    frameDon.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowClosed(WindowEvent e) {
+                        loadKhuyenMaiTheoDon();
+                    }
+                    });
+                    frameDon.setLocationRelativeTo(null);
+                    frameDon.setVisible(true);
+                    break;
+            }
+        }
+    }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
+        // TODO add your handling code here:
+        String keyString = txtTimKiem.getText();
+        String selected = (String) jComboBox1.getSelectedItem();
+        if(selected != null){
+            switch (selected){
+                case "Khuyến Mãi Theo Món Ăn":
+                    String[] columnNames = {"ID Khuyến Mãi", "Tên Khuyến Mãi", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Món Ăn", "Số Tiền"};
+                    DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
+                    jTable1.setModel(tableModel);
+                    tableModel.setRowCount(0);
+                    KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
+                    KhuyenMaiTheoMonBUS khuyenMaiTheoMonBUS = new KhuyenMaiTheoMonBUS();
+                    MonAnBUS monAnBUS= new MonAnBUS();
+                    List<MonAnDTO> dsma = monAnBUS.getAllMonAn();
+                    List<KhuyenMaiDTO> dskm = khuyenMaiBUS.searchKhuyenMaiTheoDon(keyString);
+                    List<KhuyenMaiTheoMonDTO> dskmTheoMon = khuyenMaiTheoMonBUS. getAllKhuyenMaiTheoMon();
+                    for (KhuyenMaiDTO km : dskm) {
+                        if(km.getLoaiKm()== 0){
+                            for(KhuyenMaiTheoMonDTO kmTheoMon : dskmTheoMon){                    
+                                if(km.getKmId()==kmTheoMon.getKmId()){
+                                    for(MonAnDTO madto: dsma){
+                                        if(kmTheoMon.getMaSp()==madto.getSpId()){
+                                            tableModel.addRow(new Object[]{km.getKmId(), km.getTenKm(), km.getNgayBd(), km.getNgayKt(), madto.getTenSp(), kmTheoMon.getSoTien()});
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case "Khuyến Mãi Theo Hoá Đơn":
+                    
+                    String[] columnNames1 = {"ID Khuyến Mãi", "Tên Khuyến Mãi", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Phần Trăm"};
+                    DefaultTableModel tableMode1 = new DefaultTableModel(columnNames1, 0);
+                    jTable1.setModel(tableMode1);
+                    tableMode1.setRowCount(0);
+                    KhuyenMaiBUS khuyenMaiBUS1 = new KhuyenMaiBUS();
+                    KhuyenMaiTheoDonBUS khuyenMaiTheoDonBUS1 = new KhuyenMaiTheoDonBUS();
+                    List<KhuyenMaiDTO> dskms = khuyenMaiBUS1.searchKhuyenMaiTheoDon(keyString);
+                    List<KhuyenMaiTheoDonDTO> dskmTheoDon = khuyenMaiTheoDonBUS1.getAllKhuyenMaiTheoDon();
+                    for (KhuyenMaiDTO kms : dskms) {
+                        if(kms.getLoaiKm()== 1){
+                            for(KhuyenMaiTheoDonDTO kmTheoDon: dskmTheoDon){
+                                if(kms.getKmId()==kmTheoDon.getKmId()){
+                                    tableMode1.addRow(new Object[]{kms.getKmId(), kms.getTenKm(), kms.getNgayBd(), kms.getNgayKt(), kmTheoDon.getPhanTram()});
+                                    break;
+                                }
+                            }
+                        }
+            
+                    }
+                    break;
+            }
+        }
+    }//GEN-LAST:event_btnTimActionPerformed
     
     public void loadKhuyenMaiTheoMon(){
         String[] columnNames = {"ID Khuyến Mãi", "Tên Khuyến Mãi", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Món Ăn", "Số Tiền"};

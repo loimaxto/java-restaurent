@@ -5,6 +5,7 @@
 package com.example.retaurant.GUI.CongThuc;
 
 import com.example.retaurant.BUS.CongThucBUS;
+import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.BUS.NguyenLieuBUS;
 import com.example.retaurant.DTO.CongThucDTO;
 import com.example.retaurant.DTO.NguyenLieuDTO;
@@ -227,7 +228,23 @@ public class AddCongThuc extends javax.swing.JFrame {
         float soluong = Float.parseFloat(txt_soluong.getText());
         CongThucDTO ct =new CongThucDTO(spid,nlid,soluong);
         CongThucBUS ctbus = new CongThucBUS();
-        
+        MonAnBUS mabus = new MonAnBUS();
+        if(!mabus.ktraIdMonAn(spid)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(!ctbus.checkSoluong(ct)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            if(ctbus.checkCongThuc(ct)){
+                JOptionPane.showMessageDialog(null, "id món ăn và id nguyên liệu đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddCongThuc.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             if (ctbus.addCongThuc(ct)>0){
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
