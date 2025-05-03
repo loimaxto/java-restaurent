@@ -6,6 +6,7 @@ package com.example.retaurant.GUI.KhuyenMai;
 
 import com.example.retaurant.BUS.KhuyenMaiBUS;
 import com.example.retaurant.BUS.KhuyenMaiTheoMonBUS;
+import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.KhuyenMaiDTO;
 import com.example.retaurant.DTO.KhuyenMaiTheoMonDTO;
 import java.text.ParseException;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -179,9 +181,9 @@ public class ThemKhuyenMaiTheoMon extends javax.swing.JFrame {
                     .addComponent(jLabel7)
                     .addComponent(txtSoTien, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton3))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton3)
+                    .addComponent(jButton1))
                 .addGap(18, 18, 18)
                 .addComponent(jButton2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -200,6 +202,7 @@ public class ThemKhuyenMaiTheoMon extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -228,12 +231,23 @@ public class ThemKhuyenMaiTheoMon extends javax.swing.JFrame {
         KhuyenMaiDTO km = new KhuyenMaiDTO(id_km, ten_km, sqlNgayBD, sqlNgayKT, 0);
         
         KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
-        khuyenMaiBUS.addKhuyenMai(km);
-        
         KhuyenMaiTheoMonDTO kmTheoMon = new KhuyenMaiTheoMonDTO(id_km, id_mon, so_tien);
-        
         KhuyenMaiTheoMonBUS khuyenMaiTheoMonBUS = new KhuyenMaiTheoMonBUS();
-        khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+        MonAnBUS monAnBUS = new MonAnBUS();
+        
+        if (khuyenMaiBUS.checkMaKhuyenMai(id_km)) {
+            JOptionPane.showMessageDialog(null, "Khuyến mãi đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiBUS.checktimeKhuyenMaiDTO(km)) {
+            JOptionPane.showMessageDialog(null, "Ngày kết thúc phải sau ngày bắt đầu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiTheoMonBUS.ktraSoTien(kmTheoMon) ){
+            JOptionPane.showMessageDialog(null, "Số phần trăm phải lớn hơn 0 và nhỏ hơn giá thành", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if(!monAnBUS.ktraIdMonAn(id_mon)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);          
+        } else {
+            khuyenMaiBUS.addKhuyenMai(km);
+            khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+            JOptionPane.showMessageDialog(null, "Thêm khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -245,6 +259,19 @@ public class ThemKhuyenMaiTheoMon extends javax.swing.JFrame {
         KhuyenMaiTheoMonDTO kmTheoMon = new KhuyenMaiTheoMonDTO(id_km, id_mon, so_tien);
         
         KhuyenMaiTheoMonBUS khuyenMaiTheoMonBUS = new KhuyenMaiTheoMonBUS();
+        KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
+        MonAnBUS monAnBUS = new MonAnBUS();
+        
+        if (khuyenMaiBUS.checkMaKhuyenMai(id_km)) {
+            JOptionPane.showMessageDialog(null, "Khuyến mãi đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiTheoMonBUS.ktraSoTien(kmTheoMon) ){
+            JOptionPane.showMessageDialog(null, "Số phần trăm phải lớn hơn 0 và nhỏ hơn giá thành", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if(!monAnBUS.ktraIdMonAn(id_mon)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);          
+        } else {
+            khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+            JOptionPane.showMessageDialog(null, "Thêm khuyến mãi cho món ăn thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
         khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
     }//GEN-LAST:event_jButton2ActionPerformed
 

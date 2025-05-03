@@ -33,6 +33,21 @@ public class CongThucBUS {
         
     }
 
+    public boolean checkSoluong(CongThucDTO ct){
+        if(ct.getSoluong()>0)
+               return true;
+        return false;
+    }
+    
+    public boolean checkCongThuc(CongThucDTO ct) throws SQLException{
+        List<CongThucDTO> dsct = getAllCongThuc();
+        for(CongThucDTO cts: dsct){
+            if(cts.getNlid()==ct.getNlid() && cts.getSpid()==ct.getSpid())
+                return true;
+        }
+        return false;
+    }
+    
     public List<CongThucDTO> getAllCongThuc() throws SQLException {
         try {
             return congThucDAO.getAllDsCongThuc();

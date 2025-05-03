@@ -27,6 +27,16 @@ public class MonAnBUS {
         monAnDAO = new MonAnDAO(connection);
     }
 
+    public boolean ktraIdMonAn(Integer idMonAn){
+        List<MonAnDTO> danhSach = getAllMonAn();
+        for (MonAnDTO mon : danhSach) {
+            if(idMonAn== mon.getSpId()){
+                return true;
+            }
+        }
+        return false;
+    }
+    
    public List<MonAnDTO> getAllMonAn() {
         try {
             return monAnDAO.getAllDsMonAn();

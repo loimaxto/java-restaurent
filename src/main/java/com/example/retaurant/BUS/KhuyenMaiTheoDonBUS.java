@@ -19,6 +19,11 @@ public class KhuyenMaiTheoDonBUS {
     public KhuyenMaiTheoDonBUS() {
         this.khuyenMaiTheoDonDAO = new KhuyenMaiTheoDonDAO();
     }
+    public boolean ktraPhanTram(KhuyenMaiTheoDonDTO kmTheoMon){
+        if(kmTheoMon.getPhanTram()>0&&kmTheoMon.getPhanTram()<100)
+            return true;
+        return false;
+    }
     
     public List<KhuyenMaiTheoDonDTO> getAllKhuyenMaiTheoDon() {
         try {

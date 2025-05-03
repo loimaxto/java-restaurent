@@ -6,6 +6,7 @@ package com.example.retaurant.GUI.KhuyenMai;
 
 import com.example.retaurant.BUS.KhuyenMaiBUS;
 import com.example.retaurant.BUS.KhuyenMaiTheoMonBUS;
+import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.DTO.KhuyenMaiDTO;
 import com.example.retaurant.DTO.KhuyenMaiTheoMonDTO;
 import java.text.ParseException;
@@ -13,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -51,6 +53,7 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtSoTien = new javax.swing.JTextField();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -68,7 +71,7 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
 
         jLabel5.setText("Ngày Kết Thúc");
 
-        btnSua.setText("Sửa");
+        btnSua.setText("Sửa Khuyến Mãi");
         btnSua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSuaActionPerformed(evt);
@@ -78,10 +81,22 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
         jLabel6.setText("Id Món Ăn");
 
         btnHuy.setText("Huỷ");
+        btnHuy.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHuyActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Sủa Khuyến Mãi Đơn Hàng");
 
         jLabel7.setText("Số Tiền");
+
+        jButton2.setText("Sửa Món Ăn Trong Khuyến Mãi");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -107,10 +122,6 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
                         .addGap(63, 63, 63)
                         .addComponent(txtNgayKT, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSua)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnHuy))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -120,13 +131,19 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
                             .addComponent(txtSoTien)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addGap(62, 62, 62)
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton2)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(btnSua)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(btnHuy))))
                 .addContainerGap(74, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(16, Short.MAX_VALUE)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -156,7 +173,9 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSua)
                     .addComponent(btnHuy))
-                .addGap(23, 23, 23))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton2)
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();
@@ -191,14 +210,50 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
         int so_tien = Integer.parseInt(txtSoTien.getText());
         KhuyenMaiDTO km = new KhuyenMaiDTO(id_km, ten_km, sqlNgayBD, sqlNgayKT, 1);
         
-        KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
-        khuyenMaiBUS.updateKhuyenMai(km);
+        KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();  
+        MonAnBUS monAnBUS = new MonAnBUS();
         
-        KhuyenMaiTheoMonDTO kmTheoMon = new KhuyenMaiTheoMonDTO(id_km, id_mon, so_tien);
-        
-        KhuyenMaiTheoMonBUS khuyenMaiTheoMonBUS = new KhuyenMaiTheoMonBUS();
-        khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+        if (khuyenMaiBUS.checkMaKhuyenMai(id_km)) {
+            JOptionPane.showMessageDialog(null, "Khuyến mãi đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiBUS.checktimeKhuyenMaiDTO(km)) {
+            JOptionPane.showMessageDialog(null, "Ngày kết thúc phải sau ngày bắt đầu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if(!monAnBUS.ktraIdMonAn(id_mon)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);          
+        } else {
+            khuyenMaiBUS.updateKhuyenMai(km);
+            JOptionPane.showMessageDialog(null, "Sửa khuyến mãi thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+       
     }//GEN-LAST:event_btnSuaActionPerformed
+
+    private void btnHuyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHuyActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_btnHuyActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        int id_km = Integer.parseInt(txtId.getText());
+        int id_mon = Integer.parseInt(txtIdMon.getText());
+        int so_tien = Integer.parseInt(txtSoTien.getText());
+        KhuyenMaiTheoMonDTO kmTheoMon = new KhuyenMaiTheoMonDTO(id_km, id_mon, so_tien);
+
+        KhuyenMaiTheoMonBUS khuyenMaiTheoMonBUS = new KhuyenMaiTheoMonBUS();
+        KhuyenMaiBUS khuyenMaiBUS = new KhuyenMaiBUS();
+        MonAnBUS monAnBUS = new MonAnBUS();
+
+        if (khuyenMaiBUS.checkMaKhuyenMai(id_km)) {
+            JOptionPane.showMessageDialog(null, "Khuyến mãi đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if (!khuyenMaiTheoMonBUS.ktraSoTien(kmTheoMon) ){
+            JOptionPane.showMessageDialog(null, "Số phần trăm phải lớn hơn 0 và nhỏ hơn giá thành", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else if(!monAnBUS.ktraIdMonAn(id_mon)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        } else {
+            khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+            JOptionPane.showMessageDialog(null, "Sửa khuyến mãi cho món ăn thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+        }
+        khuyenMaiTheoMonBUS.addKhuyenmaiTheoMon(kmTheoMon);
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -238,6 +293,7 @@ public class SuaKhuyenMaiTheoMon extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnHuy;
     private javax.swing.JButton btnSua;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

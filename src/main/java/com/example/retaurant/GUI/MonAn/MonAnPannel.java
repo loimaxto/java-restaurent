@@ -193,6 +193,7 @@ public class MonAnPannel extends javax.swing.JPanel {
                 loadTableData(); // Tải lại dữ liệu bảng sau khi thêm
             }
         });
+        addMonAn.setLocationRelativeTo(null);
         addMonAn.setVisible(true);
         
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -250,6 +251,7 @@ public class MonAnPannel extends javax.swing.JPanel {
                 loadTableData(); // Tải lại dữ liệu bảng sau khi thêm
             }
         });
+        suaMonAn.setLocationRelativeTo(null);
         suaMonAn.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
