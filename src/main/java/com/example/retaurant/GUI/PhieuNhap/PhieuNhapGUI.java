@@ -1,20 +1,14 @@
 package com.example.retaurant.GUI.PhieuNhap;
 
-import com.example.retaurant.BUS.PhieuNhapBUS;
-import com.example.retaurant.BUS.NguyenLieuBUS;
-import com.example.retaurant.DTO.ChiTietPhieuNhapDTO;
-import com.example.retaurant.DTO.NguyenLieuDTO;
-import com.example.retaurant.DTO.NhaCungCapDTO;
-import com.example.retaurant.DTO.PhieuNhapDTO;
+import com.example.retaurant.BUS.*;
+import com.example.retaurant.DTO.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
 
 public class PhieuNhapGUI extends JPanel {
@@ -26,19 +20,25 @@ public class PhieuNhapGUI extends JPanel {
     
     private JTable table;
     private JTable chiTietTable;
-    private JComboBox<NguyenLieuDTO> cbNguyenLieu;
-    private JComboBox<NhaCungCapDTO> cbNhaCungCap;
+    private JComboBox<String> cbNguyenLieu;
+    private JComboBox<String> cbNhaCungCap;
     private JTextField txtSoLuong;
     private JTextField txtDonGia;
     private JTextField txtPhieuNhapId;
     private JTextArea txtGhiChu;
     private List<ChiTietPhieuNhapDTO> chiTietList;
     
-    private JComboBox<String> cbSearchColumn;
-    private JComboBox<String> cbSearchOperator;
-    private JTextField txtSearchValue;
+    // Search components
+    private JTextField txtSearchMaPN;
+    private JComboBox<String> cbSearchOpMaPN;
+    private JTextField txtSearchNhaCungCap;
+    private JComboBox<String> cbSearchOpNhaCungCap;
+    private JTextField txtSearchNguoiNhap;
+    private JComboBox<String> cbSearchOpNguoiNhap;
+    private JTextField txtSearchTongTien;
+    private JComboBox<String> cbSearchOpTongTien;
+    private JComboBox<String> cbSearchLogicOp;
     private JButton btnSearch;
-    private JButton btnAdvancedSearch;
     private JButton btnClearSearch;
 
     public PhieuNhapGUI() {
@@ -81,55 +81,78 @@ public class PhieuNhapGUI extends JPanel {
 
     private JPanel createSearchPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm phiếu nhập"));
-        panel.setPreferredSize(new Dimension(600, 180));
+        panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm nâng cao"));
+        panel.setPreferredSize(new Dimension(600, 250)); // Reduced height
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
+        // Row 1: Mã PN
         gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Trường dữ liệu:"), gbc);
+        panel.add(new JLabel("Mã PN:"), gbc);
         
         gbc.gridx = 1;
-        cbSearchColumn = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
-        cbSearchColumn.setPreferredSize(new Dimension(200, 25));
-        panel.add(cbSearchColumn, gbc);
+        txtSearchMaPN = new JTextField(10);
+        panel.add(txtSearchMaPN, gbc);
         
+        gbc.gridx = 2;
+        cbSearchOpMaPN = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>"});
+        panel.add(cbSearchOpMaPN, gbc);
+        
+        // Row 2: Nhà cung cấp
         gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("Toán tử:"), gbc);
+        panel.add(new JLabel("Nhà cung cấp:"), gbc);
         
         gbc.gridx = 1;
-        cbSearchOperator = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        cbSearchOperator.setPreferredSize(new Dimension(200, 25));
-        panel.add(cbSearchOperator, gbc);
+        txtSearchNhaCungCap = new JTextField(10);
+        panel.add(txtSearchNhaCungCap, gbc);
         
+        gbc.gridx = 2;
+        cbSearchOpNhaCungCap = new JComboBox<>(new String[]{"=", "LIKE"});
+        panel.add(cbSearchOpNhaCungCap, gbc);
+        
+        // Row 3: Người nhập
         gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Giá trị:"), gbc);
+        panel.add(new JLabel("Người nhập:"), gbc);
         
         gbc.gridx = 1;
-        txtSearchValue = new JTextField();
-        txtSearchValue.setPreferredSize(new Dimension(200, 25));
-        panel.add(txtSearchValue, gbc);
+        txtSearchNguoiNhap = new JTextField(10);
+        panel.add(txtSearchNguoiNhap, gbc);
         
+        gbc.gridx = 2;
+        cbSearchOpNguoiNhap = new JComboBox<>(new String[]{"=", "LIKE"});
+        panel.add(cbSearchOpNguoiNhap, gbc);
+        
+        // Row 4: Tổng tiền
         gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.CENTER;
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        panel.add(new JLabel("Tổng tiền:"), gbc);
+        
+        gbc.gridx = 1;
+        txtSearchTongTien = new JTextField(10);
+        panel.add(txtSearchTongTien, gbc);
+        
+        gbc.gridx = 2;
+        cbSearchOpTongTien = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>"});
+        panel.add(cbSearchOpTongTien, gbc);
+        
+        // Row 5: Logical operator and buttons
+        gbc.gridx = 0; gbc.gridy = 4;
+        panel.add(new JLabel("Toán tử logic:"), gbc);
+        
+        gbc.gridx = 1;
+        cbSearchLogicOp = new JComboBox<>(new String[]{"AND", "OR"});
+        panel.add(cbSearchLogicOp, gbc);
+        
+        gbc.gridx = 2;
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         
         btnSearch = new JButton("Tìm kiếm");
-        btnSearch.addActionListener(e -> searchPhieuNhap());
+        btnSearch.addActionListener(e -> performAdvancedSearch());
         buttonPanel.add(btnSearch);
         
-        btnAdvancedSearch = new JButton("Tìm kiếm nâng cao");
-        btnAdvancedSearch.addActionListener(e -> showAdvancedSearchDialog());
-        buttonPanel.add(btnAdvancedSearch);
-        
         btnClearSearch = new JButton("Xóa tìm kiếm");
-        btnClearSearch.addActionListener(e -> {
-            txtSearchValue.setText("");
-            loadDataToTable();
-        });
+        btnClearSearch.addActionListener(e -> clearSearchFields());
         buttonPanel.add(btnClearSearch);
         
         panel.add(buttonPanel, gbc);
@@ -162,7 +185,6 @@ public class PhieuNhapGUI extends JPanel {
         JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
-        // Add ID field
         inputPanel.add(new JLabel("Mã Phiếu Nhập:"));
         txtPhieuNhapId = new JTextField();
         inputPanel.add(txtPhieuNhapId);
@@ -219,31 +241,65 @@ public class PhieuNhapGUI extends JPanel {
         return panel;
     }
 
-    private void searchPhieuNhap() {
-        String column = (String) cbSearchColumn.getSelectedItem();
-        String operator = (String) cbSearchOperator.getSelectedItem();
-        String value = txtSearchValue.getText().trim();
+    private void performAdvancedSearch() {
+    Map<String, String> filters = new HashMap<>();
+    
+    if (!txtSearchMaPN.getText().trim().isEmpty()) {
+        filters.put("pn_id", cbSearchOpMaPN.getSelectedItem() + " " + txtSearchMaPN.getText().trim());
+    }
+    
+    if (!txtSearchNhaCungCap.getText().trim().isEmpty()) {
+        // Always use LIKE for supplier name search
+        filters.put("ncc_id", "LIKE " + txtSearchNhaCungCap.getText().trim());
+    }
+    
+    if (!txtSearchNguoiNhap.getText().trim().isEmpty()) {
+        filters.put("nguoi_nhap_id", cbSearchOpNguoiNhap.getSelectedItem() + " " + txtSearchNguoiNhap.getText().trim());
+    }
+    
+    if (!txtSearchTongTien.getText().trim().isEmpty()) {
+        filters.put("tong_tien", cbSearchOpTongTien.getSelectedItem() + " " + txtSearchTongTien.getText().trim());
+    }
+    
+    if (!filters.isEmpty()) {
+        filters.put("logic", (String) cbSearchLogicOp.getSelectedItem());
+    }
+    
+    try {
+        List<PhieuNhapDTO> searchResults = phieuNhapBUS.advancedSearch(filters);
+        updateTableWithResults(searchResults);
         
-        if (value.isEmpty()) {
-            loadDataToTable();
-            return;
+        if (searchResults.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu nhập nào phù hợp");
         }
-        
-        String fieldName = "";
-        switch (column) {
-            case "Mã PN": fieldName = "pn_id"; break;
-            case "Ngày nhập": fieldName = "ngay_nhap"; break;
-            case "Nhà cung cấp": fieldName = "ncc_id"; break;
-            case "Người nhập": fieldName = "nguoi_nhap_id"; break;
-            case "Tổng tiền": fieldName = "tong_tien"; break;
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage());
+        e.printStackTrace();
+    }
+}
+
+    private void clearSearchFields() {
+        txtSearchMaPN.setText("");
+        txtSearchNhaCungCap.setText("");
+        txtSearchNguoiNhap.setText("");
+        txtSearchTongTien.setText("");
+        loadDataToTable();
+    }
+
+    private int getNccIdFromName(String name) {
+        List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
+        for (NhaCungCapDTO ncc : list) {
+            if (ncc.getTen_ncc().equalsIgnoreCase(name)) {
+                return ncc.getNcc_id();
+            }
         }
-        
-        String condition = fieldName + " " + operator + " ?";
-        List<PhieuNhapDTO> searchResults = phieuNhapBUS.searchPhieuNhap(condition, new String[]{value});
-        
+        return -1;
+    }
+
+    private void updateTableWithResults(List<PhieuNhapDTO> results) {
         tableModel.setRowCount(0);
-        if (searchResults != null) {
-            for (PhieuNhapDTO pn : searchResults) {
+        if (results != null) {
+            for (PhieuNhapDTO pn : results) {
                 tableModel.addRow(new Object[]{
                     pn.getPnId(),
                     pn.getNgayNhap(),
@@ -252,105 +308,6 @@ public class PhieuNhapGUI extends JPanel {
                     pn.getTongTien()
                 });
             }
-        }
-    }
-
-    private void showAdvancedSearchDialog() {
-        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Tìm kiếm nâng cao", true);
-        dialog.setLayout(new BorderLayout());
-        dialog.setSize(500, 300);
-        
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Trường 1:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbField1 = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
-        panel.add(cbField1, gbc);
-        
-        gbc.gridx = 2;
-        JComboBox<String> cbOperator1 = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        panel.add(cbOperator1, gbc);
-        
-        gbc.gridx = 3;
-        JTextField txtValue1 = new JTextField(10);
-        panel.add(txtValue1, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("Toán tử logic:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbLogicOp = new JComboBox<>(new String[]{"AND", "OR", "NOT"});
-        panel.add(cbLogicOp, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Trường 2:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbField2 = new JComboBox<>(new String[]{"Mã PN", "Ngày nhập", "Nhà cung cấp", "Người nhập", "Tổng tiền"});
-        panel.add(cbField2, gbc);
-        
-        gbc.gridx = 2;
-        JComboBox<String> cbOperator2 = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        panel.add(cbOperator2, gbc);
-        
-        gbc.gridx = 3;
-        JTextField txtValue2 = new JTextField(10);
-        panel.add(txtValue2, gbc);
-        
-        gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.CENTER;
-        JButton btnSearch = new JButton("Tìm kiếm");
-        btnSearch.addActionListener(e -> {
-            String fieldName1 = getFieldName((String) cbField1.getSelectedItem());
-            String operator1 = (String) cbOperator1.getSelectedItem();
-            String value1 = txtValue1.getText().trim();
-            
-            String logicOp = (String) cbLogicOp.getSelectedItem();
-            
-            String fieldName2 = getFieldName((String) cbField2.getSelectedItem());
-            String operator2 = (String) cbOperator2.getSelectedItem();
-            String value2 = txtValue2.getText().trim();
-            
-            String condition = fieldName1 + " " + operator1 + " ? " + logicOp + " " + 
-                             fieldName2 + " " + operator2 + " ?";
-            
-            List<PhieuNhapDTO> searchResults = phieuNhapBUS.searchPhieuNhap(condition, new String[]{value1, value2});
-            
-            tableModel.setRowCount(0);
-            if (searchResults != null) {
-                for (PhieuNhapDTO pn : searchResults) {
-                    tableModel.addRow(new Object[]{
-                        pn.getPnId(),
-                        pn.getNgayNhap(),
-                        getNhaCungCapName(pn.getNccId()),
-                        getNhanVienName(pn.getNguoiNhapId()),
-                        pn.getTongTien()
-                    });
-                }
-            }
-            dialog.dispose();
-        });
-        panel.add(btnSearch, gbc);
-        
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
-    }
-
-    private String getFieldName(String displayName) {
-        switch (displayName) {
-            case "Mã PN": return "pn_id";
-            case "Ngày nhập": return "ngay_nhap";
-            case "Nhà cung cấp": return "ncc_id";
-            case "Người nhập": return "nguoi_nhap_id";
-            case "Tổng tiền": return "tong_tien";
-            default: return "";
         }
     }
 
@@ -390,7 +347,7 @@ public class PhieuNhapGUI extends JPanel {
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         if (list != null) {
             for (NguyenLieuDTO nl : list) {
-                cbNguyenLieu.addItem(nl);
+                cbNguyenLieu.addItem(nl.getTenNl());
             }
         }
     }
@@ -399,19 +356,26 @@ public class PhieuNhapGUI extends JPanel {
         List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
         if (list != null) {
             for (NhaCungCapDTO ncc : list) {
-                cbNhaCungCap.addItem(ncc);
+                cbNhaCungCap.addItem(ncc.getTen_ncc());
             }
         }
     }
 
     private void addToPhieuNhap() {
         try {
-            NguyenLieuDTO selectedNL = (NguyenLieuDTO) cbNguyenLieu.getSelectedItem();
+            String selectedNLName = (String) cbNguyenLieu.getSelectedItem();
             long soLuong = Long.parseLong(txtSoLuong.getText());
             long donGia = Long.parseLong(txtDonGia.getText());
             
-            if (selectedNL == null || soLuong <= 0 || donGia <= 0) {
+            if (selectedNLName == null || soLuong <= 0 || donGia <= 0) {
                 JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin hợp lệ");
+                return;
+            }
+            
+            // Get the full NguyenLieuDTO object from the name
+            NguyenLieuDTO selectedNL = getNguyenLieuByName(selectedNLName);
+            if (selectedNL == null) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nguyên liệu");
                 return;
             }
             
@@ -430,6 +394,18 @@ public class PhieuNhapGUI extends JPanel {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "Số lượng và đơn giá phải là số");
         }
+    }
+
+    private NguyenLieuDTO getNguyenLieuByName(String name) {
+        List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
+        if (list != null) {
+            for (NguyenLieuDTO nl : list) {
+                if (nl.getTenNl().equals(name)) {
+                    return nl;
+                }
+            }
+        }
+        return null;
     }
 
     private void updateChiTietTable() {
@@ -479,7 +455,8 @@ public class PhieuNhapGUI extends JPanel {
             return;
         }
         
-        if (cbNhaCungCap.getSelectedItem() == null) {
+        String selectedNCCName = (String) cbNhaCungCap.getSelectedItem();
+        if (selectedNCCName == null) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn nhà cung cấp");
             return;
         }
@@ -498,7 +475,12 @@ public class PhieuNhapGUI extends JPanel {
             
             int nguoiNhapId = 2; // Default employee ID
             
-            NhaCungCapDTO selectedNCC = (NhaCungCapDTO) cbNhaCungCap.getSelectedItem();
+            // Get the full NhaCungCapDTO object from the name
+            NhaCungCapDTO selectedNCC = getNhaCungCapByName(selectedNCCName);
+            if (selectedNCC == null) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy nhà cung cấp");
+                return;
+            }
             
             PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
             phieuNhap.setPnId(pnId);
@@ -521,6 +503,18 @@ public class PhieuNhapGUI extends JPanel {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "ID phải là số nguyên");
         }
+    }
+
+    private NhaCungCapDTO getNhaCungCapByName(String name) {
+        List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
+        if (list != null) {
+            for (NhaCungCapDTO ncc : list) {
+                if (ncc.getTen_ncc().equals(name)) {
+                    return ncc;
+                }
+            }
+        }
+        return null;
     }
 
     private void refreshForm() {
