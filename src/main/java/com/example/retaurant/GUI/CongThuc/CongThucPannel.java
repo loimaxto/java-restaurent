@@ -196,6 +196,7 @@ public class CongThucPannel extends javax.swing.JPanel {
         String idMonAn = jTable1.getValueAt(rowMonAn, 0).toString();
 
         AddCongThuc fthem = new AddCongThuc(idMonAn,tenMonAn);
+        fthem.setLocationRelativeTo(null);
         fthem.setVisible(true);
         
         fthem.addWindowListener(new java.awt.event.WindowAdapter() {

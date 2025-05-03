@@ -4,6 +4,7 @@ import com.example.retaurant.DAO.KhuyenMaiDAO;
 import com.example.retaurant.DTO.KhuyenMaiDTO;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,6 +22,41 @@ public class KhuyenMaiBUS {
         
         return false;
     }
+    public boolean checkMaKhuyenMai(Integer id_km){
+        List<KhuyenMaiDTO> dskm = getAllKhuyenMais();
+        
+        for(KhuyenMaiDTO km: dskm){
+            if(id_km == km.getKmId())
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public List<KhuyenMaiDTO> searchKhuyenMaiTheoDon(String keyword) {
+        List<KhuyenMaiDTO> allList = getAllKhuyenMais();
+        List<KhuyenMaiDTO> result = new ArrayList<>();
+
+        if (allList != null) {
+            for (KhuyenMaiDTO km : allList) {
+                if (km.getTenKm().toLowerCase().contains(keyword.toLowerCase())) {
+                    result.add(km);
+                }
+            }
+        }
+
+        return result;
+    }
+    
+    public boolean checktimeKhuyenMaiDTO(KhuyenMaiDTO km){
+        if(km.getNgayKt().after(km.getNgayBd()))
+        {
+            return true;
+        }
+        return false;
+    }
+    
     public KhuyenMaiDTO getKhuyenMaiById(Integer kmId) throws SQLException {
         return khuyenMaiDAO.getKhuyenMaiById(kmId);
     }

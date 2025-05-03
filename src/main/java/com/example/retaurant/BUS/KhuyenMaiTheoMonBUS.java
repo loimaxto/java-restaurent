@@ -6,6 +6,7 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.KhuyenMaiTheoMonDAO;
 import com.example.retaurant.DTO.KhuyenMaiTheoMonDTO;
+import com.example.retaurant.DTO.MonAnDTO;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -20,6 +21,20 @@ public class KhuyenMaiTheoMonBUS {
         this.khuyenMaiTheoMonDAO = new KhuyenMaiTheoMonDAO();
     }
     
+    public boolean ktraSoTien(KhuyenMaiTheoMonDTO khuyenMaiTheoMonDTO){
+        MonAnBUS monAnBUS = new MonAnBUS();
+        List<MonAnDTO> dsma = monAnBUS.getAllMonAn();
+        for(MonAnDTO ma: dsma){
+            if(khuyenMaiTheoMonDTO.getMaSp() == ma.getSpId())
+            {
+                if(khuyenMaiTheoMonDTO.getSoTien() > 0 && khuyenMaiTheoMonDTO.getSoTien() < ma.getGiaSp())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     
     public List<KhuyenMaiTheoMonDTO> getAllKhuyenMaiTheoMon(){
         try {
