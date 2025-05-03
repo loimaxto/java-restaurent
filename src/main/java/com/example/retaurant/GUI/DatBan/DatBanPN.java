@@ -78,7 +78,8 @@ public class DatBanPN extends javax.swing.JPanel {
         Image scaledImage = originalIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         btnKhModal.setIcon(scaledIcon);
-//        ImageUtil.setIcont(btnKhModal, "/image/three-dots-vertical-svgrepo-com.svg", WIDTH, HEIGHT);
+        
+        
         intStyle();
     }
     public void setCurrentNvId(int nvId) {
@@ -238,6 +239,7 @@ public class DatBanPN extends javax.swing.JPanel {
         textFieldsdt = new javax.swing.JTextField();
         btnThemKh = new javax.swing.JButton();
         btnKhModal = new javax.swing.JButton();
+        btnSetting = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         leftPanel = new javax.swing.JPanel();
@@ -316,13 +318,14 @@ public class DatBanPN extends javax.swing.JPanel {
                         .addComponent(sdtTextField)
                         .addGap(30, 30, 30)
                         .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(242, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                        .addComponent(btnSetting))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(btnKhModal, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnThemKh)
-                        .addContainerGap())))
+                        .addComponent(btnThemKh)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,7 +342,8 @@ public class DatBanPN extends javax.swing.JPanel {
                     .addComponent(tenKhLabel)
                     .addComponent(textFieldTenKh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sdtTextField)
-                    .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSetting))
                 .addContainerGap(26, Short.MAX_VALUE))
         );
 
@@ -606,6 +610,7 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JButton btnInsertKhForHoaDon;
     private javax.swing.JButton btnKhModal;
     private javax.swing.JButton btnPay;
+    private javax.swing.JButton btnSetting;
     private javax.swing.JButton btnThemKh;
     private javax.swing.JPanel headerPN;
     private javax.swing.JLabel jLabel2;
