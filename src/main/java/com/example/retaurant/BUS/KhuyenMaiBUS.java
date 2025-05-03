@@ -6,6 +6,8 @@ import com.example.retaurant.DTO.KhuyenMaiDTO;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KhuyenMaiBUS {
 
@@ -23,19 +25,41 @@ public class KhuyenMaiBUS {
         return khuyenMaiDAO.getKhuyenMaiById(kmId);
     }
 
-    public List<KhuyenMaiDTO> getAllKhuyenMais() throws SQLException {
-        return khuyenMaiDAO.getAllKhuyenMais();
+    public List<KhuyenMaiDTO> getAllKhuyenMais(){
+        try {
+            return khuyenMaiDAO.getAllKhuyenMais();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(MonAnBUS.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 
-    public boolean addKhuyenMai(KhuyenMaiDTO khuyenMai) throws SQLException {
-        return khuyenMaiDAO.addKhuyenMai(khuyenMai);
+    public boolean addKhuyenMai(KhuyenMaiDTO khuyenMai){
+        try {
+            return khuyenMaiDAO.addKhuyenMai(khuyenMai);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            Logger.getLogger(MonAnBUS.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
-    public boolean updateKhuyenMai(KhuyenMaiDTO khuyenMai) throws SQLException {
-        return khuyenMaiDAO.updateKhuyenMai(khuyenMai);
+    public boolean updateKhuyenMai(KhuyenMaiDTO khuyenMai){     
+        try {
+            return khuyenMaiDAO.updateKhuyenMai(khuyenMai);
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật khuyến mãi: " + e.getMessage());
+            return false;
+        }
     }
 
-    public boolean deleteKhuyenMai(Integer kmId) throws SQLException {
-        return khuyenMaiDAO.deleteKhuyenMai(kmId);
+    public boolean deleteKhuyenMai(Integer kmId) {
+        try {
+            return khuyenMaiDAO.deleteKhuyenMai(kmId);
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi cập nhật khuyến mãi: " + e.getMessage());
+            return false;
+        }
     }
 }

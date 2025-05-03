@@ -42,23 +42,23 @@ public class CongThucPannel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton4 = new javax.swing.JButton();
+        btnThem = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btnTim = new javax.swing.JButton();
+        btnSua = new javax.swing.JButton();
+        btnXoa = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(1108, 524));
 
-        jButton4.setText("Thêm");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnThem.setText("Thêm");
+        btnThem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnThemActionPerformed(evt);
             }
         });
 
@@ -84,15 +84,23 @@ public class CongThucPannel extends javax.swing.JPanel {
 
         jTable3.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
-                "ID Nguyên Liệu ", "Tên Nguyên Liệu", "Số lượng (g)"
+                "ID Nguyên Liệu ", "Tên Nguyên Liệu", "Đơn vị", "Số lượng"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Float.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
         jTable3.setMaximumSize(new java.awt.Dimension(2147483647, 12312380));
         jTable3.setPreferredSize(new java.awt.Dimension(500, 80));
         jScrollPane3.setViewportView(jTable3);
@@ -105,24 +113,27 @@ public class CongThucPannel extends javax.swing.JPanel {
             }
         });
 
-        jButton1.setText("Tìm");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnTim.setText("Tìm");
+        btnTim.setName(""); // NOI18N
+        btnTim.setOpaque(true);
+        btnTim.setRolloverEnabled(false);
+        btnTim.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnTimActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Sửa");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnSua.setText("Sửa");
+        btnSua.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnSuaActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Xoá");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnXoa.setText("Xoá");
+        btnXoa.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnXoaActionPerformed(evt);
             }
         });
 
@@ -136,7 +147,7 @@ public class CongThucPannel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton1)
+                .addComponent(btnTim)
                 .addGap(0, 0, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
@@ -145,11 +156,11 @@ public class CongThucPannel extends javax.swing.JPanel {
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton4)
+                .addComponent(btnThem)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
+                .addComponent(btnSua)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                .addComponent(btnXoa)
                 .addGap(122, 122, 122))
         );
         layout.setVerticalGroup(
@@ -159,12 +170,12 @@ public class CongThucPannel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnTim))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(btnSua)
+                    .addComponent(btnXoa)
+                    .addComponent(btnThem))
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
@@ -172,12 +183,12 @@ public class CongThucPannel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void btnThemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnThemActionPerformed
         // TODO add your handling code here:
         int rowMonAn = jTable1.getSelectedRow();
 
         if (rowMonAn == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để sửa.");
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn món ăn để thêm công thức.");
             return;
         }
         
@@ -198,7 +209,7 @@ public class CongThucPannel extends javax.swing.JPanel {
             }
         });
         
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnThemActionPerformed
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
@@ -217,7 +228,7 @@ public class CongThucPannel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnTimActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTimActionPerformed
         // TODO add your handling code here:
         String[] columnNames = {"ID món ăn", "Tên món ăn", "Giá"};
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
@@ -230,9 +241,9 @@ public class CongThucPannel extends javax.swing.JPanel {
             
         }
                 
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnTimActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnSuaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuaActionPerformed
         // TODO add your handling code here:
         int rowMonAn = jTable1.getSelectedRow();
         int rowNguyenLieu = jTable3.getSelectedRow();
@@ -245,7 +256,7 @@ public class CongThucPannel extends javax.swing.JPanel {
         // Lấy thông tin món ăn và nguyên liệu
         String tenMonAn = jTable1.getValueAt(rowMonAn, 1).toString();
         String tenNguyenLieu = jTable3.getValueAt(rowNguyenLieu, 1).toString();
-        String soLuongCu = jTable3.getValueAt(rowNguyenLieu, 2).toString();
+        String soLuongCu = jTable3.getValueAt(rowNguyenLieu, 3).toString();
         String idMonAn = jTable1.getValueAt(rowMonAn, 0).toString();
         String idNguyenLieu = jTable3.getValueAt(rowNguyenLieu, 0).toString();
 
@@ -260,7 +271,7 @@ public class CongThucPannel extends javax.swing.JPanel {
         if (input == null || input.trim().isEmpty()) return;
 
         try {
-            int soLuongMoi = Integer.parseInt(input.trim());
+            float soLuongMoi = Float.parseFloat(input);
 
             if (soLuongMoi <= 0) {
                 JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0.");
@@ -284,7 +295,7 @@ public class CongThucPannel extends javax.swing.JPanel {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi sửa công thức: " + ex.getMessage());
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnSuaActionPerformed
 
     public void loadCongThuc(){
         String[] columnNames = {"ID món ăn", "Tên món ăn", "Giá"};
@@ -301,7 +312,7 @@ public class CongThucPannel extends javax.swing.JPanel {
         jTable3.setDefaultEditor(Object.class, null);
     }
     private void loadNguyenLieuTheoMon(String idMonAn) throws SQLException {
-        String[] Names = {"ID Nguyên Liệu", "Tên Nguyên Liêu", "Số Lượng (g)"};
+        String[] Names = {"ID Nguyên Liệu", "Tên Nguyên Liêu", "Đơn vị", "Số Lượng "};
         DefaultTableModel model = new DefaultTableModel(Names, 0);
         jTable3.setModel(model);
         model.setRowCount(0);
@@ -316,21 +327,23 @@ public class CongThucPannel extends javax.swing.JPanel {
             if(Objects.equals(ct.getSpid(), Integer.valueOf(idMonAn))){
                 String idNL = null;
                 String tenNL = null;
+                String donvi =null;
                 for (NguyenLieuDTO nl : dsnl) {
                     if(Objects.equals(ct.getNlid(), nl.getNlId())){
                         idNL = nl.getNlId().toString();
                         tenNL = nl.getTenNl();
+                        donvi = nl.getDonVi();
                         break;
                     }
                 }
                 String sol = Float.toString(ct.getSoluong());
-                model.addRow(new Object[]{idNL,tenNL, sol});
+                model.addRow(new Object[]{idNL,tenNL, donvi, sol});
                 model.fireTableDataChanged();
             }
             
         }
     }
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void btnXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXoaActionPerformed
         // TODO add your handling code here:
         int rowMonAn = jTable1.getSelectedRow();
         int rowNguyenLieu = jTable3.getSelectedRow();
@@ -362,14 +375,14 @@ public class CongThucPannel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Lỗi khi xoá công thức: " + ex.getMessage());
             }
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_btnXoaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton btnSua;
+    private javax.swing.JButton btnThem;
+    private javax.swing.JButton btnTim;
+    private javax.swing.JButton btnXoa;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
