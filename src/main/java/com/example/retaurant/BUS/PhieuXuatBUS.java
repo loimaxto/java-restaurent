@@ -1,17 +1,12 @@
 package com.example.retaurant.BUS;
 
-import com.example.retaurant.DTO.CTPhieuXuatDTO;
-import com.example.retaurant.DTO.PhieuXuatDTO;
+import com.example.retaurant.DTO.*;
 import com.example.retaurant.DAO.PhieuXuatDAO;
 import com.example.retaurant.utils.DBConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class PhieuXuatBUS {
     private PhieuXuatDAO phieuXuatDAO;
@@ -26,7 +21,6 @@ public class PhieuXuatBUS {
         try {
             connection.setAutoCommit(false);
             
-            // Validate ID is provided and unique
             if (phieuXuat.getPxId() <= 0) {
                 throw new SQLException("ID must be a positive number");
             }
@@ -95,50 +89,19 @@ public class PhieuXuatBUS {
         }
     }
 
-    public List<PhieuXuatDTO> searchPhieuXuat(String condition, String[] values) {
-        List<PhieuXuatDTO> results = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM phieu_xuat WHERE ");
-        
-        sql.append(condition);
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < values.length; i++) {
-                if (condition.contains("ngay_xuat")) {
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    java.util.Date date = sdf.parse(values[i]);
-                    stmt.setDate(i + 1, new java.sql.Date(date.getTime()));
-                } else if (condition.contains("px_id") || condition.contains("nguoi_xuat_id")) {
-                    stmt.setInt(i + 1, Integer.parseInt(values[i]));
-                } else {
-                    stmt.setString(i + 1, values[i]);
-                }
-            }
-
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    PhieuXuatDTO px = new PhieuXuatDTO(
-                        rs.getInt("px_id"),
-                        rs.getTimestamp("ngay_xuat"),
-                        rs.getInt("nguoi_xuat_id")
-                    );
-                    results.add(px);
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return results;
-    }
-
     public List<PhieuXuatDTO> advancedSearch(Map<String, String> filters) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM phieu_xuat WHERE 1=1");
         List<Object> params = new ArrayList<>();
+        String logicOp = "AND";
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             String field = entry.getKey();
             String condition = entry.getValue();
+
+            if (field.equals("logic")) {
+                logicOp = condition;
+                continue;
+            }
 
             if (condition == null || condition.trim().isEmpty()) {
                 continue;
@@ -150,33 +113,8 @@ public class PhieuXuatBUS {
             String operator = parts[0];
             String value = parts[1];
 
-            switch (operator.toUpperCase()) {
-                case "AND":
-                    sql.append(" AND ");
-                    break;
-                case "OR":
-                    sql.append(" OR ");
-                    break;
-                case "NOT":
-                    sql.append(" NOT ");
-                    break;
-                default:
-                    sql.append(" AND ").append(field).append(" ");
-                    switch (operator) {
-                        case ">":
-                        case ">=":
-                        case "<":
-                        case "<=":
-                        case "<>":
-                        case "=":
-                            sql.append(operator).append(" ?");
-                            break;
-                        default:
-                            sql.append("= ?");
-                            operator = "=";
-                    }
-                    params.add(parseValue(field, value));
-            }
+            sql.append(" ").append(logicOp).append(" ").append(field).append(" ").append(operator).append(" ?");
+            params.add(parseValue(field, value));
         }
 
         sql.append(" ORDER BY ngay_xuat DESC");
@@ -203,10 +141,7 @@ public class PhieuXuatBUS {
 
     private Object parseValue(String field, String value) {
         try {
-            if (field.equals("ngay_xuat")) {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                return new java.sql.Date(sdf.parse(value).getTime());
-            } else if (field.equals("px_id") || field.equals("nguoi_xuat_id")) {
+            if (field.equals("px_id") || field.equals("nguoi_xuat_id")) {
                 return Integer.parseInt(value);
             }
         } catch (Exception e) {
