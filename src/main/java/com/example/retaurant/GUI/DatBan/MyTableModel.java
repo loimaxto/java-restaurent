@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class MyTableModel extends AbstractTableModel {
-    private final String[] columnNames = {"Tên bàn", "Tình trạng", "Hành động"};
+    private final String[] columnNames = {"Mã bàn","Tên bàn", "Tình trạng", "Hành động"};
     private final List<Object[]> data;
 
     public MyTableModel() {
@@ -22,7 +22,7 @@ public class MyTableModel extends AbstractTableModel {
 
     }
     public void addRow(Vector row) {
-         data.add(new Object[]{row.get(0), getTableStatus(row.get(1)), ""});
+         data.add(new Object[]{row.get(0),row.get(1), getTableStatus(row.get(2)), ""});
  
     }
     public Object[] getRowValues(int rowIndex) {
@@ -57,7 +57,7 @@ public class MyTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 2;
+        return columnIndex == 3;
     }
     
     public void resetData() {

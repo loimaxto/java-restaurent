@@ -39,7 +39,7 @@ public class BanDAO {
     }
 
     public List<BanDTO> getAllBans() throws SQLException {
-        String sql = "SELECT * FROM ban";
+        String sql = "SELECT * FROM ban WHERE trang_thai_ban = 1";
         List<BanDTO> bans = new ArrayList<>();
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(sql)) {
@@ -51,11 +51,13 @@ public class BanDAO {
     }
 
     public int addBan(BanDTO ban) throws SQLException {
-        String sql = "INSERT INTO ban (ten_ban, tinh_trang_su_dung, trang_thai_ban) VALUES (?, ?, ?)";
+        System.out.println(ban.toString());
+        String sql = "INSERT INTO ban (ban_id,ten_ban, tinh_trang_su_dung, trang_thai_ban) VALUES (?,?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, ban.getTenBan());
-            statement.setInt(2, ban.getTinhTrangSuDung());
-            statement.setInt(3, ban.getTrangThaiBan());
+            statement.setInt(1, ban.getBanId());
+            statement.setString(2, ban.getTenBan());
+            statement.setInt(3, 0);
+            statement.setInt(4, 1);
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = statement.getGeneratedKeys()) {
@@ -89,13 +91,27 @@ public class BanDAO {
     }
 
     public boolean deleteBan(int banId) throws SQLException {
-        String sql = "DELETE FROM ban WHERE ban_id = ?";
+        String sql = "UPDATE ban SET  trang_thai_ban = ? WHERE ban_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, banId);
+            statement.setInt(1, 0);
+            statement.setInt(2, banId);
             return statement.executeUpdate() > 0;
         }
     }
-
+    public boolean isUniqueId(int banId) {
+        String sql = "SELECT COUNT(*) FROM ban WHERE ban_id = ?"; 
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, banId); 
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) { 
+                int count = rs.getInt(1); 
+                return count == 0; 
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return false; 
+    }
    private BanDTO mapResultSetToBanDTO(ResultSet resultSet) throws SQLException {
         BanDTO ban = new BanDTO();
         ban.setBanId(resultSet.getInt("ban_id"));

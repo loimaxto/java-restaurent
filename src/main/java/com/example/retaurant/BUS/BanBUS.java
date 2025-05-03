@@ -6,6 +6,7 @@ package com.example.retaurant.BUS;
 
 import com.example.retaurant.DAO.BanDAO;
 import com.example.retaurant.DTO.BanDTO;
+import com.example.retaurant.MyCustom.MyDialog;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,9 +43,14 @@ public class BanBUS {
 
     public boolean addBan(BanDTO ban) {
         try {
-            return banDAO.addBan(ban) > 0;
+            if ( banDAO.isUniqueId(ban.getBanId())) {
+                return banDAO.addBan(ban) > 0;
+            } else {
+                new MyDialog("Mã bàn bị trùng", 0);
+                return false;
+            }
         } catch (SQLException e) {
-            System.out.println("Error adding ban: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -76,7 +82,9 @@ public class BanBUS {
             return false;
         }
     }
-
+    public boolean isUniqueTableId(int tableId ) {
+        return banDAO.isUniqueId(tableId);
+    }
     public boolean deleteBan(int banId) {
         try {
             return banDAO.deleteBan(banId);

@@ -27,7 +27,7 @@ public class ButtonCellRenderer extends JPanel implements TableCellRenderer {
          if (table.getModel() instanceof MyTableModel) {
             MyTableModel model = (MyTableModel) table.getModel();
             Object[] rowData =  model.getRowValues(row);
-            if (  rowData[1] == "Đang dùng") {
+            if (  rowData[2] == "Đang dùng") {
                 panel.add(detailButton);
                 panel.add(cancelButton);
             } else {

@@ -73,6 +73,6 @@ public class HoaDonBUS {
             new MyDialog("Ngày bắt đầu > ngày kết thúc", 0);
             return null;
         }
-        return hoaDonDAO.getHoaDonByCriteria(dataSearch);
+        return hoaDonDAO.getListHoaDonByCriteria(dataSearch);
     }
 }

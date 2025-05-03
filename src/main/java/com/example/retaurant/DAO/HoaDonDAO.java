@@ -79,7 +79,7 @@ public class HoaDonDAO {
         return null;
     }
 
-    public List<HoaDonDTO2> getHoaDonByCriteria(SearchCriteria searchObj) {
+    public List<HoaDonDTO2> getListHoaDonByCriteria(SearchCriteria searchObj) {
         StringBuilder sql = new StringBuilder(
                 "SELECT * FROM hoa_don "
                 + "INNER JOIN nhan_vien ON hoa_don.nguoi_lap_id = nhan_vien.nv_id "
