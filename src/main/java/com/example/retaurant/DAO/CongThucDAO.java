@@ -89,7 +89,7 @@ public class CongThucDAO {
         CongThucDTO ct = new CongThucDTO();
         ct.setSpid(resultSet.getInt("sp_id"));
         ct.setNlid(resultSet.getInt("nl_id"));
-        ct.setSoluong(resultSet.getInt("soLuong"));
+        ct.setSoluong(resultSet.getFloat("soLuong"));
         return ct;
     }
     
