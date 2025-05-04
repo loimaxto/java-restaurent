@@ -15,7 +15,7 @@ public class NhaCungCapPanel extends JPanel {
     private JTable table;
     private DefaultTableModel tableModel;
     private JTextField txtId, txtTenNCC, txtSDT, txtDiaChi, txtTimKiem;
-    private JButton btnThem, btnSua, btnXoa, btnTimKiem, btnLamMoi, btnTimKiemNangCao;
+    private JButton btnThem, btnSua, btnXoa, btnTimKiem, btnLamMoi;
     private NhaCungCapBUS nhaCungCapBUS;
     private int selectedNCCId = -1;
 
@@ -56,10 +56,8 @@ public class NhaCungCapPanel extends JPanel {
         searchPanel.add(new JLabel("Tìm kiếm:"));
         txtTimKiem = new JTextField(20);
         searchPanel.add(txtTimKiem);
-        btnTimKiem = new JButton("Tìm cơ bản");
-        btnTimKiemNangCao = new JButton("Tìm nâng cao");
+        btnTimKiem = new JButton("Tìm");
         searchPanel.add(btnTimKiem);
-        searchPanel.add(btnTimKiemNangCao);
 
         // Combine input and search panels
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -108,11 +106,8 @@ public class NhaCungCapPanel extends JPanel {
         // Delete button
         btnXoa.addActionListener(e -> handleDeleteSupplier());
         
-        // Basic search button
+        // Search button
         btnTimKiem.addActionListener(e -> handleBasicSearch());
-        
-        // Advanced search button
-        btnTimKiemNangCao.addActionListener(e -> showAdvancedSearchDialog());
         
         // Refresh button
         btnLamMoi.addActionListener(e -> {
@@ -274,10 +269,6 @@ public class NhaCungCapPanel extends JPanel {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Lỗi kết nối cơ sở dữ liệu!", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void showAdvancedSearchDialog() {
-        // ... (keep the same advanced search dialog implementation)
     }
 
     private void loadDataToTable() {

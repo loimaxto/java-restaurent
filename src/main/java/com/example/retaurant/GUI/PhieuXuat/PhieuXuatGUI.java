@@ -2,6 +2,7 @@ package com.example.retaurant.GUI.PhieuXuat;
 
 import com.example.retaurant.BUS.*;
 import com.example.retaurant.DTO.*;
+import com.example.retaurant.DTO.NhanVien;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
@@ -13,6 +14,7 @@ import java.util.List;
 public class PhieuXuatGUI extends JPanel {
     private PhieuXuatBUS phieuXuatBUS;
     private NguyenLieuBUS nguyenLieuBUS;
+    private NhanVienBUS nhanVienBUS;
     
     private DefaultTableModel tableModel;
     private DefaultTableModel chiTietModel;
@@ -20,6 +22,7 @@ public class PhieuXuatGUI extends JPanel {
     private JTable table;
     private JTable chiTietTable;
     private JComboBox<NguyenLieuDTO> cbNguyenLieu;
+    private JComboBox<String> cbNhanVien;
     private JTextField txtSoLuong;
     private JTextArea txtGhiChu;
     private List<CTPhieuXuatDTO> chiTietList;
@@ -36,10 +39,12 @@ public class PhieuXuatGUI extends JPanel {
     public PhieuXuatGUI() {
         this.phieuXuatBUS = new PhieuXuatBUS();
         this.nguyenLieuBUS = new NguyenLieuBUS();
+        this.nhanVienBUS = new NhanVienBUS();
         this.chiTietList = new ArrayList<>();
         initComponents();
         loadDataToTable();
         loadNguyenLieuComboBox();
+        loadNhanVienComboBox();
     }
 
     private void initComponents() {
@@ -90,9 +95,9 @@ public class PhieuXuatGUI extends JPanel {
         cbSearchOpMaPX = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>"});
         panel.add(cbSearchOpMaPX, gbc);
         
-        // Row 2: Người xuất (ID only)
+        // Row 2: Người xuất (name search)
         gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("Người xuất (ID):"), gbc);
+        panel.add(new JLabel("Tên người xuất:"), gbc);
         
         gbc.gridx = 1;
         txtSearchNguoiXuat = new JTextField(10);
@@ -156,6 +161,10 @@ public class PhieuXuatGUI extends JPanel {
         inputPanel.add(new JLabel("Mã Phiếu Xuất:"));
         txtPhieuXuatId = new JTextField();
         inputPanel.add(txtPhieuXuatId);
+        
+        inputPanel.add(new JLabel("Người xuất:"));
+        cbNhanVien = new JComboBox<>();
+        inputPanel.add(cbNhanVien);
         
         inputPanel.add(new JLabel("Nguyên liệu:"));
         cbNguyenLieu = new JComboBox<>();
@@ -227,7 +236,7 @@ public class PhieuXuatGUI extends JPanel {
         }
         
         if (!txtSearchNguoiXuat.getText().trim().isEmpty()) {
-            filters.put("nguoi_xuat_id", "= " + txtSearchNguoiXuat.getText().trim());
+            filters.put("nguoi_xuat_name", "LIKE " + txtSearchNguoiXuat.getText().trim());
         }
         
         if (!filters.isEmpty()) {
@@ -260,7 +269,7 @@ public class PhieuXuatGUI extends JPanel {
                 tableModel.addRow(new Object[]{
                     px.getPxId(),
                     px.getNgayXuat(),
-                    "NV " + px.getNguoiXuatId()
+                    getNhanVienName(px.getNguoiXuatId())
                 });
             }
         }
@@ -279,6 +288,21 @@ public class PhieuXuatGUI extends JPanel {
                 cbNguyenLieu.addItem(new NguyenLieuDTO(nl.getNlId(), nl.getTenNl(), nl.getDonVi(), nl.getSoLuong()));
             }
         }
+    }
+
+    private void loadNhanVienComboBox() {
+        cbNhanVien.removeAllItems();
+        List<NhanVien> list = nhanVienBUS.getDanhSachNhanVien();
+        if (list != null) {
+            for (NhanVien nv : list) {
+                cbNhanVien.addItem(nv.getHoTen() + " (ID: " + nv.getMaNhanvien() + ")");
+            }
+        }
+    }
+
+    private String getNhanVienName(int nvId) {
+        NhanVien nv = nhanVienBUS.getNhanVienById(nvId);
+        return nv != null ? nv.getHoTen() : "NV " + nvId;
     }
 
     private void addToPhieuXuat() {
@@ -357,7 +381,13 @@ public class PhieuXuatGUI extends JPanel {
                 return;
             }
             
-            int nguoiXuatId = 2; // Default employee ID
+            String selectedNVString = (String) cbNhanVien.getSelectedItem();
+            if (selectedNVString == null || selectedNVString.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng chọn người xuất", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int nguoiXuatId = extractEmployeeId(selectedNVString);
             
             PhieuXuatDTO phieuXuat = new PhieuXuatDTO();
             phieuXuat.setPxId(pxId);
@@ -383,11 +413,28 @@ public class PhieuXuatGUI extends JPanel {
         }
     }
 
+    private int extractEmployeeId(String employeeString) {
+        try {
+            int start = employeeString.indexOf("(ID: ") + 5;
+            int end = employeeString.indexOf(")");
+            String idStr = employeeString.substring(start, end).trim();
+            return Integer.parseInt(idStr);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     private void refreshForm() {
         chiTietList.clear();
         chiTietModel.setRowCount(0);
         txtGhiChu.setText("");
         txtSoLuong.setText("");
         txtPhieuXuatId.setText("");
+        if (cbNhanVien.getItemCount() > 0) {
+            cbNhanVien.setSelectedIndex(0);
+        }
+        if (cbNguyenLieu.getItemCount() > 0) {
+            cbNguyenLieu.setSelectedIndex(0);
+        }
     }
 }
