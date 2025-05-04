@@ -34,13 +34,15 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         this.currentRow = row;
         panel.removeAll(); // Clear previous buttons
 
-        Object rowData = tableModel.getValueAt(currentRow, 1);
+        Object rowData = tableModel.getValueAt(currentRow, 2);
         if ((String) rowData != "Trống") {
+            System.out.println("trong");
             detailButton = createChiTietBtn();
             cancelButton = createCancelButton();
             panel.add(detailButton);
             panel.add(cancelButton);
         } else {
+            System.out.println("aaa");
             orderButton = createDatBanBtn();
             panel.add(orderButton);
         }
@@ -54,10 +56,10 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         JButton button = new JButton("Chi tiết");
         button.addActionListener(e -> {
             if (currentRow != -1) {
-                Object tenBan = tableModel.getValueAt(currentRow, 0);
-                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
-                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
+                int currentIdBan = (int) tableModel.getValueAt(currentRow, 0);
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
+                datBanPN.setTenBanXemChiTietHienTai(currentBanDTO.getTenBan());
+
                 //lay hoa moi tao va cap nhat id hoa don cho ban hiện tại
                 HoaDonDTO hoaDonDTO = busHoaDon.getBillById(currentBanDTO.getIdHoaDonHienTai());
                 datBanPN.setHoaDonForListScrollItemPN(hoaDonDTO);
@@ -77,14 +79,12 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         JButton button = new JButton("Đặt bàn");
         button.addActionListener(e -> {
             if (currentRow != -1) {
-
-                Object tenBan = tableModel.getValueAt(currentRow, 0);
-                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
-                datBanPN.setTenBanXemChiTietHienTai("Bàn " + currentIdBan);
-                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan,datBanPN.getCreatorId());
-
-                // lay id ban nut duoc nhan và cập nhật hóa đơn của bàn
+                int currentIdBan = (int) tableModel.getValueAt(currentRow, 0);
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
+                datBanPN.setTenBanXemChiTietHienTai(currentBanDTO.getTenBan());
+                //tao hoa don moi cho ban được đặt
+                int newHoaDonId = busHoaDon.addDefaultHoaDon(currentIdBan, datBanPN.getCreatorId());
+                // lay id ban nut duoc nhan và cập nhật hóa đơn của bàn
                 busBan.updateBanDangDuocDat(currentBanDTO, newHoaDonId);
 
                 //cap nha thoa moi tao va cap nhat id hoa don cho ban hiện tại
@@ -102,9 +102,7 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
         JButton button = new JButton("Hủy");
         button.addActionListener(e -> {
             if (currentRow != -1) {
-
-                Object tenBan = tableModel.getValueAt(currentRow, 0);
-                int currentIdBan = getBanIdTuTenBan(tenBan.toString());
+                int currentIdBan = (int) tableModel.getValueAt(currentRow, 0);
                 BanDTO currentBanDTO = busBan.getBanById(currentIdBan);
                 Object[] options = {"Xác nhận", "Hủy"};
                 int choice = JOptionPane.showOptionDialog(null,
@@ -118,17 +116,19 @@ public class ButtonCellEditor extends AbstractCellEditor implements TableCellEdi
                 if (choice == JOptionPane.YES_OPTION) {
                     busBan.updateBanDangDuocDat(currentBanDTO, null);
                     resetCurrentHoaDonAndBanAndTable();
-                } 
+                }
             }
         });
         return button;
     }
+
     public void resetCurrentHoaDonAndBanAndTable() {
         // loai bo dto ban,dto hoa don trong panel chứa thông tin hóa đơn
         datBanPN.resetThongTinHoaDon();
         datBanPN.renderThongTinBan();
         stopCellEditing();
     }
+
     public static int getBanIdTuTenBan(String tenBan) {
         if (tenBan == null || tenBan.isEmpty()) {
             return -1;

@@ -18,6 +18,7 @@ import com.example.retaurant.GUI.MonAn.MonAnPannel;
 import com.example.retaurant.GUI.NguyenLieu.NguyenLieuGUI;
 import com.example.retaurant.GUI.NhaCungCap.NhaCungCapPanel;
 import com.example.retaurant.GUI.NhanVien.QuanLyNhanVienGUI;
+import com.example.retaurant.GUI.ThongKe.QuanLyThongKeGUI;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,6 +42,8 @@ public class DashboardFrame extends javax.swing.JFrame {
     private CongThucPannel congThucPannel= new CongThucPannel();
     private NhaCungCapPanel nhaCungCapPanel = new NhaCungCapPanel();
     private QuanLyNhanVienGUI nhanvienPanel = new QuanLyNhanVienGUI();
+    private QuanLyThongKeGUI thongKePanel = new QuanLyThongKeGUI();
+    
     public DashboardFrame() {
         initComponents();
         currentPanel.removeAll();
@@ -58,6 +61,7 @@ public class DashboardFrame extends javax.swing.JFrame {
         currentPanel.add(congThucPannel, "Cong thuc");
         currentPanel.add(nhaCungCapPanel, btnCungCap.getActionCommand());
         currentPanel.add(nhanvienPanel, btnNhanVien.getActionCommand());
+        currentPanel.add(thongKePanel, btnThongKe.getActionCommand());
         
         buttonGroup.add(btnCungCap);
         buttonGroup.add(btnDangXuat);
@@ -82,7 +86,7 @@ public class DashboardFrame extends javax.swing.JFrame {
          hoaDonPN.reloadDataPanel();
          switchPanel(btnHoaDon.getActionCommand());
         });
-//         btnCungCap.addActionListener(e -> switchPanel(btnCungCap.getActionCommand()));
+        btnThongKe.addActionListener(e -> switchPanel(btnThongKe.getActionCommand()));
         btnNhanVien.addActionListener(e -> switchPanel(btnNhanVien.getActionCommand()));
         btnDangXuat.addActionListener(e -> handleLogout());
         navBtnUserInfo.addActionListener(e -> switchPanel("InfoPanel"));

@@ -9,6 +9,7 @@ import com.example.retaurant.BUS.CtHoaDonBUS;
 import com.example.retaurant.BUS.CustomerBUS;
 import com.example.retaurant.BUS.HoaDonBUS;
 import com.example.retaurant.BUS.MonAnBUS;
+import com.example.retaurant.DAO.BanDAO;
 import com.example.retaurant.DTO.BanDTO;
 import com.example.retaurant.DTO.CtHoaDonDTO;
 import com.example.retaurant.DTO.CustomerDTO;
@@ -19,6 +20,7 @@ import com.example.retaurant.GUI.HoaDon.ChiTietHoaDonModal;
 import com.example.retaurant.GUI.KhachHang.AddKhachHangPanel;
 import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.utils.ImageUtil;
+import java.awt.CardLayout;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -37,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -65,6 +68,7 @@ public class DatBanPN extends javax.swing.JPanel {
     private List<MonAnDTO> searchResults;
     private int currentNvId;
     ButtonCellEditor btnCellEditor;
+
     public DatBanPN() {
         currentNvId = 2;
         busBan = new BanBUS();
@@ -78,13 +82,15 @@ public class DatBanPN extends javax.swing.JPanel {
         Image scaledImage = originalIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT);
         ImageIcon scaledIcon = new ImageIcon(scaledImage);
         btnKhModal.setIcon(scaledIcon);
-//        ImageUtil.setIcont(btnKhModal, "/image/three-dots-vertical-svgrepo-com.svg", WIDTH, HEIGHT);
+
         intStyle();
     }
+
     public void setCurrentNvId(int nvId) {
         this.currentNvId = nvId;
-        System.out.println("dat ban pn nvid: "+ this.currentNvId);
+        System.out.println("dat ban pn nvid: " + this.currentNvId);
     }
+
     public void intStyle() {
         model = new MyTableModel();
         table.setModel(model);
@@ -93,7 +99,7 @@ public class DatBanPN extends javax.swing.JPanel {
         table.setRowSelectionAllowed(false);
         table.setShowVerticalLines(false);
 
-        TableColumn column = table.getColumnModel().getColumn(2);
+        TableColumn column = table.getColumnModel().getColumn(3);
         btnCellEditor = new ButtonCellEditor(table, model, this);
         column.setCellRenderer(new ButtonCellRenderer());
         column.setCellEditor(btnCellEditor);
@@ -121,7 +127,27 @@ public class DatBanPN extends javax.swing.JPanel {
             }
 
         });
-//        renderTest();        
+        CardLayout cardLayoutSettingTable = new CardLayout();
+        pnCardLayoutSetting.setLayout(cardLayoutSettingTable);
+        pnCardLayoutSetting.add(pnThemBan,"pnThemBan");
+        pnCardLayoutSetting.add(pnXoaBan,"pnXoaBan");
+        
+        dialogTable.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialogTable.pack();
+        dialogTable.setLocationRelativeTo(this);
+        btnSwitchAddTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayoutSettingTable.show(pnCardLayoutSetting, "pnThemBan");
+            }
+        });
+        btnSwitchDeleteTable.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("xxoa pn");
+                cardLayoutSettingTable.show(pnCardLayoutSetting, "pnXoaBan");
+            }
+        });
     }
 
     private void performSearch(String query) {
@@ -172,6 +198,7 @@ public class DatBanPN extends javax.swing.JPanel {
 
         for (BanDTO item : listBan) {
             Vector row = new Vector();
+            row.add(item.getBanId());
             row.add(item.getTenBan());
             row.add(item.getTinhTrangSuDung());
             model.addRow(row);
@@ -228,6 +255,27 @@ public class DatBanPN extends javax.swing.JPanel {
 
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        dialogTable = new javax.swing.JDialog();
+        pnCardLayoutSetting = new javax.swing.JPanel();
+        pnThemBan = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        textMaBanThem = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        textSttBan = new javax.swing.JTextField();
+        jPanel9 = new javax.swing.JPanel();
+        btnXacNhanThemBan = new javax.swing.JButton();
+        jLabel10 = new javax.swing.JLabel();
+        pnXoaBan = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        textMaBanXoa = new javax.swing.JTextField();
+        jPanel10 = new javax.swing.JPanel();
+        btnXacNhanThemBan1 = new javax.swing.JButton();
+        jLabel9 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        btnSwitchAddTable = new javax.swing.JButton();
+        btnSwitchDeleteTable = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         tenKhLabel = new javax.swing.JLabel();
@@ -238,6 +286,7 @@ public class DatBanPN extends javax.swing.JPanel {
         textFieldsdt = new javax.swing.JTextField();
         btnThemKh = new javax.swing.JButton();
         btnKhModal = new javax.swing.JButton();
+        btnSetting = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
         leftPanel = new javax.swing.JPanel();
@@ -257,6 +306,141 @@ public class DatBanPN extends javax.swing.JPanel {
 
         jMenuItem1.setText("jMenuItem1");
         jMenu1.add(jMenuItem1);
+
+        pnCardLayoutSetting.setLayout(new java.awt.CardLayout());
+
+        jLabel1.setText("Nhập mã bàn");
+
+        jLabel6.setText("Nhập tên bàn(số thứ tự)");
+
+        btnXacNhanThemBan.setText("Xác nhận");
+        btnXacNhanThemBan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXacNhanThemBanActionPerformed(evt);
+            }
+        });
+        jPanel9.add(btnXacNhanThemBan);
+
+        jLabel10.setText("Thêm");
+
+        javax.swing.GroupLayout pnThemBanLayout = new javax.swing.GroupLayout(pnThemBan);
+        pnThemBan.setLayout(pnThemBanLayout);
+        pnThemBanLayout.setHorizontalGroup(
+            pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel9, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnThemBanLayout.createSequentialGroup()
+                .addGroup(pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnThemBanLayout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addGroup(pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(2, 2, 2)
+                        .addGroup(pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(textSttBan, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(textMaBanThem, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(pnThemBanLayout.createSequentialGroup()
+                        .addGap(150, 150, 150)
+                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(66, Short.MAX_VALUE))
+        );
+        pnThemBanLayout.setVerticalGroup(
+            pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnThemBanLayout.createSequentialGroup()
+                .addGap(7, 7, 7)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(textMaBanThem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnThemBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(textSttBan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
+                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        pnCardLayoutSetting.add(pnThemBan, "pnThemBan");
+
+        jLabel7.setText("Nhập mã bàn");
+
+        textMaBanXoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                textMaBanXoaActionPerformed(evt);
+            }
+        });
+
+        btnXacNhanThemBan1.setText("Xác nhận");
+        btnXacNhanThemBan1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnXacNhanThemBan1ActionPerformed(evt);
+            }
+        });
+        jPanel10.add(btnXacNhanThemBan1);
+
+        jLabel9.setText("Xóa");
+
+        javax.swing.GroupLayout pnXoaBanLayout = new javax.swing.GroupLayout(pnXoaBan);
+        pnXoaBan.setLayout(pnXoaBanLayout);
+        pnXoaBanLayout.setHorizontalGroup(
+            pnXoaBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnXoaBanLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(56, 56, 56)
+                .addComponent(textMaBanXoa, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(66, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnXoaBanLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(148, 148, 148))
+        );
+        pnXoaBanLayout.setVerticalGroup(
+            pnXoaBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnXoaBanLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel9)
+                .addGap(13, 13, 13)
+                .addGroup(pnXoaBanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(textMaBanXoa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        pnCardLayoutSetting.add(pnXoaBan, "pnXoaBan");
+
+        btnSwitchAddTable.setText("Thêm bàn");
+        jPanel7.add(btnSwitchAddTable);
+
+        btnSwitchDeleteTable.setText("Xóa bàn");
+        jPanel7.add(btnSwitchDeleteTable);
+
+        jLabel3.setText("Quản lý bàn");
+        jPanel8.add(jLabel3);
+
+        javax.swing.GroupLayout dialogTableLayout = new javax.swing.GroupLayout(dialogTable.getContentPane());
+        dialogTable.getContentPane().setLayout(dialogTableLayout);
+        dialogTableLayout.setHorizontalGroup(
+            dialogTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(pnCardLayoutSetting, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, dialogTableLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        dialogTableLayout.setVerticalGroup(
+            dialogTableLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(dialogTableLayout.createSequentialGroup()
+                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnCardLayoutSetting, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         setLayout(new javax.swing.BoxLayout(this, javax.swing.BoxLayout.LINE_AXIS));
 
@@ -295,6 +479,13 @@ public class DatBanPN extends javax.swing.JPanel {
             }
         });
 
+        btnSetting.setText("Cài đặt");
+        btnSetting.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSettingActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -312,17 +503,18 @@ public class DatBanPN extends javax.swing.JPanel {
                         .addComponent(btnInsertKhForHoaDon)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
+                        .addGap(34, 34, 34)
                         .addComponent(sdtTextField)
-                        .addGap(30, 30, 30)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(242, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
+                        .addComponent(btnSetting))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addComponent(btnKhModal, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnThemKh)
-                        .addContainerGap())))
+                        .addComponent(btnThemKh)))
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,8 +531,9 @@ public class DatBanPN extends javax.swing.JPanel {
                     .addComponent(tenKhLabel)
                     .addComponent(textFieldTenKh, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(sdtTextField)
-                    .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addComponent(textFieldsdt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSetting))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2);
@@ -491,7 +684,7 @@ public class DatBanPN extends javax.swing.JPanel {
             new MyDialog("Chọn bàn trước khi thêm khách hàng!", WIDTH);
             return;
         }
-        
+
         AddKhachHangPanel addPanel = new AddKhachHangPanel();
         addPanel.setLocationRelativeTo(this); // Center relative to the parent
         addPanel.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Crucial line
@@ -521,26 +714,54 @@ public class DatBanPN extends javax.swing.JPanel {
             new MyDialog("Chọn bàn trước khi thêm khách hàng!", WIDTH);
             return;
         }
-        
+
         KhachHangModal khachHangModal = new KhachHangModal(this);
         khachHangModal.setLocationRelativeTo(this);
         khachHangModal.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         khachHangModal.setModalExclusionType(Dialog.ModalExclusionType.APPLICATION_EXCLUDE);
         khachHangModal.setVisible(true);
 
-        
+
     }//GEN-LAST:event_btnKhModalActionPerformed
+
+    private void textMaBanXoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textMaBanXoaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_textMaBanXoaActionPerformed
+
+    private void btnXacNhanThemBan1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanThemBan1ActionPerformed
+        // TODO add your handling code here:
+        BanBUS banBUS = new BanBUS();
+        banBUS.deleteBan(Integer.parseInt(textMaBanXoa.getText()));
+        renderThongTinBan();
+        dialogTable.dispose();
+    }//GEN-LAST:event_btnXacNhanThemBan1ActionPerformed
+
+    private void btnXacNhanThemBanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnXacNhanThemBanActionPerformed
+        // TODO add your handling code here:
+        BanDTO banDTO = new BanDTO();
+        banDTO.setBanId(Integer.parseInt(textMaBanThem.getText()));
+        banDTO.setTenBan("Bàn " + textSttBan.getText());
+        BanBUS banBUS = new BanBUS();
+        banBUS.addBan(banDTO);
+        renderThongTinBan();
+        dialogTable.dispose();
+    }//GEN-LAST:event_btnXacNhanThemBanActionPerformed
+
+    private void btnSettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingActionPerformed
+        // TODO add your handling code here:
+        dialogTable.setVisible(true);
+    }//GEN-LAST:event_btnSettingActionPerformed
     public void updateNewInsertKhachHanhForHoaDon(int khId) {
         CustomerDTO cust = busCustomer.getCustomerById(khId);
         HoaDonDTO hoaDonDto = listItemInBillPanel.getHoaDonDTO();
-        if (cust != null && hoaDonDto != null ) {
+        if (cust != null && hoaDonDto != null) {
             hoaDonDto.setKhId(cust.getKhId());
             busHoaDon.updateBill(hoaDonDto);
             updateCustomerInforForTable(cust.getKhId());
         } else if (hoaDonDto == null) {
             new MyDialog("Chưa chọn hóa đơn thêm khách hàng", 0);
             return;
-        } 
+        }
     }
 
     public void resetCurrentHoaDonAndBanAndTable() {
@@ -606,20 +827,39 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JButton btnInsertKhForHoaDon;
     private javax.swing.JButton btnKhModal;
     private javax.swing.JButton btnPay;
+    private javax.swing.JButton btnSetting;
+    private javax.swing.JButton btnSwitchAddTable;
+    private javax.swing.JButton btnSwitchDeleteTable;
     private javax.swing.JButton btnThemKh;
+    private javax.swing.JButton btnXacNhanThemBan;
+    private javax.swing.JButton btnXacNhanThemBan1;
+    private javax.swing.JDialog dialogTable;
     private javax.swing.JPanel headerPN;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel leftPanel;
+    private javax.swing.JPanel pnCardLayoutSetting;
+    private javax.swing.JPanel pnThemBan;
+    private javax.swing.JPanel pnXoaBan;
     private javax.swing.JLabel sdtTextField;
     private javax.swing.JTextField searchTextField;
     private javax.swing.JTable table;
@@ -627,6 +867,9 @@ public class DatBanPN extends javax.swing.JPanel {
     private javax.swing.JLabel tenKhLabel;
     private javax.swing.JTextField textFieldTenKh;
     private javax.swing.JTextField textFieldsdt;
+    private javax.swing.JTextField textMaBanThem;
+    private javax.swing.JTextField textMaBanXoa;
+    private javax.swing.JTextField textSttBan;
     private javax.swing.JTextField txtFieldSdt;
     // End of variables declaration//GEN-END:variables
 }

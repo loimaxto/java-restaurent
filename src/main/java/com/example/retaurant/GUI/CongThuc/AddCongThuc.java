@@ -5,6 +5,7 @@
 package com.example.retaurant.GUI.CongThuc;
 
 import com.example.retaurant.BUS.CongThucBUS;
+import com.example.retaurant.BUS.MonAnBUS;
 import com.example.retaurant.BUS.NguyenLieuBUS;
 import com.example.retaurant.DTO.CongThucDTO;
 import com.example.retaurant.DTO.NguyenLieuDTO;
@@ -29,25 +30,27 @@ public class AddCongThuc extends javax.swing.JFrame {
     private CongThucBUS ctbus;
     public AddCongThuc(String idMonAn, String tenMonAn ) {
         initComponents();
-        jTextField1.setText(idMonAn);
-        jTextField1.setEditable(false);
-        jTextField4.setText(tenMonAn);
-        jTextField4.setEditable(false);
-        jTextField5.setEditable(false);
+        txt_Id_Mon.setText(idMonAn);
+        txt_Id_Mon.setEditable(false);
+        txt_Ten_Mon.setText(tenMonAn);
+        txt_Ten_Mon.setEditable(false);
+        txt_Ten_Nl.setEditable(false);
+        txt_donvi.setEditable(false);
         
         NguyenLieuBUS nguyenLieuBUS = new NguyenLieuBUS();
         List<NguyenLieuDTO> dsnl =nguyenLieuBUS.getAllNguyenLieu();
         
-        jTextField2.getDocument().addDocumentListener(new DocumentListener() {
+        txt_Id_Nl.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { timTheoTen(); }
             public void removeUpdate(DocumentEvent e) { timTheoTen(); }
             public void changedUpdate(DocumentEvent e) { timTheoTen(); }
 
             private void timTheoTen() {
-                int nl_id= Integer.parseInt(jTextField2.getText());
+                int nl_id= Integer.parseInt(txt_Id_Nl.getText());
                 for (NguyenLieuDTO nguyenLieu : dsnl) {
                     if (nl_id==nguyenLieu.getNlId()) {
-                        jTextField5.setText(nguyenLieu.getTenNl());
+                        txt_Ten_Nl.setText(nguyenLieu.getTenNl());
+                        txt_donvi.setText(nguyenLieu.getDonVi());
                         break;
                        
                 }
@@ -70,15 +73,17 @@ public class AddCongThuc extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jTextField4 = new javax.swing.JTextField();
+        txt_Id_Mon = new javax.swing.JTextField();
+        txt_Id_Nl = new javax.swing.JTextField();
+        txt_soluong = new javax.swing.JTextField();
+        btn_XacNhan = new javax.swing.JButton();
+        btn_Dong = new javax.swing.JButton();
+        txt_Ten_Mon = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txt_Ten_Nl = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txt_donvi = new javax.swing.JTextField();
 
         jLabel6.setText("jLabel6");
 
@@ -90,40 +95,44 @@ public class AddCongThuc extends javax.swing.JFrame {
 
         jLabel3.setText("ID Nguyên Liệu");
 
-        jLabel4.setText("Số lượng (g)");
+        jLabel4.setText("Số lượng");
 
-        jTextField1.setName(""); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txt_Id_Mon.setName(""); // NOI18N
+        txt_Id_Mon.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txt_Id_MonActionPerformed(evt);
             }
         });
 
-        jTextField2.setName(""); // NOI18N
+        txt_Id_Nl.setName(""); // NOI18N
 
-        jTextField3.setName(""); // NOI18N
+        txt_soluong.setName(""); // NOI18N
 
-        jButton1.setText("Xác Nhận");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_XacNhan.setText("Xác Nhận");
+        btn_XacNhan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_XacNhanActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Đóng");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btn_Dong.setText("Đóng");
+        btn_Dong.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btn_DongActionPerformed(evt);
             }
         });
 
-        jTextField4.setName(""); // NOI18N
+        txt_Ten_Mon.setName(""); // NOI18N
 
         jLabel5.setText("Tên Món Ăn");
 
-        jLabel7.setText("Tên Nguyen Liệu");
+        jLabel7.setText("Tên Nguyên Liệu");
 
-        jTextField5.setName(""); // NOI18N
+        txt_Ten_Nl.setName(""); // NOI18N
+
+        jLabel8.setText("Đơn vị");
+
+        txt_donvi.setName(""); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -133,32 +142,35 @@ public class AddCongThuc extends javax.swing.JFrame {
                 .addGap(71, 71, 71)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jButton1)
+                        .addGap(0, 18, Short.MAX_VALUE)
+                        .addComponent(btn_XacNhan)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)
+                        .addComponent(btn_Dong)
                         .addGap(17, 17, 17))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGap(18, 18, 18))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGap(10, 10, 10)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(22, 22, 22)))
+                                .addGap(22, 22, 22))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jTextField3)
-                            .addComponent(jTextField5)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(txt_donvi)
+                            .addComponent(txt_soluong)
+                            .addComponent(txt_Ten_Nl)
+                            .addComponent(txt_Id_Nl, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txt_Ten_Mon, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txt_Id_Mon, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE))))
                 .addGap(103, 103, 103))
             .addGroup(layout.createSequentialGroup()
                 .addGap(128, 128, 128)
@@ -173,47 +185,66 @@ public class AddCongThuc extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(txt_Id_Mon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_Ten_Mon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_Id_Nl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(txt_Ten_Nl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txt_donvi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_soluong, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addContainerGap(44, Short.MAX_VALUE))
+                    .addComponent(btn_XacNhan)
+                    .addComponent(btn_Dong))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jLabel2.getAccessibleContext().setAccessibleName("Tên Món Ăn");
-        jTextField1.getAccessibleContext().setAccessibleName("");
-        jButton2.getAccessibleContext().setAccessibleName("Đóng");
-        jTextField4.getAccessibleContext().setAccessibleName("");
+        txt_Id_Mon.getAccessibleContext().setAccessibleName("");
+        txt_Ten_Mon.getAccessibleContext().setAccessibleName("");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btn_XacNhanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_XacNhanActionPerformed
 
         // TODO add your handling code here:
-        int spid = Integer.parseInt(jTextField1.getText());
-        int nlid = Integer.parseInt(jTextField2.getText());
-        float soluong = Float.parseFloat(jTextField3.getText());
+        int spid = Integer.parseInt(txt_Id_Mon.getText());
+        int nlid = Integer.parseInt(txt_Id_Nl.getText());
+        float soluong = Float.parseFloat(txt_soluong.getText());
         CongThucDTO ct =new CongThucDTO(spid,nlid,soluong);
         CongThucBUS ctbus = new CongThucBUS();
-        
+        MonAnBUS mabus = new MonAnBUS();
+        if(!mabus.ktraIdMonAn(spid)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if(!ctbus.checkSoluong(ct)){
+            JOptionPane.showMessageDialog(null, "id món ăn chưa có", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            if(ctbus.checkCongThuc(ct)){
+                JOptionPane.showMessageDialog(null, "id món ăn và id nguyên liệu đã tồn tại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AddCongThuc.class.getName()).log(Level.SEVERE, null, ex);
+        }
         try {
             if (ctbus.addCongThuc(ct)>0){
                 JOptionPane.showMessageDialog(this, "Cập nhật thành công!");
@@ -227,17 +258,17 @@ public class AddCongThuc extends javax.swing.JFrame {
         
         
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btn_XacNhanActionPerformed
 
     
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btn_DongActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_DongActionPerformed
         // TODO add your handling code her
         this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btn_DongActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txt_Id_MonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_Id_MonActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txt_Id_MonActionPerformed
 
     
     /**
@@ -272,8 +303,8 @@ public class AddCongThuc extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btn_Dong;
+    private javax.swing.JButton btn_XacNhan;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -281,10 +312,12 @@ public class AddCongThuc extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JTextField txt_Id_Mon;
+    private javax.swing.JTextField txt_Id_Nl;
+    private javax.swing.JTextField txt_Ten_Mon;
+    private javax.swing.JTextField txt_Ten_Nl;
+    private javax.swing.JTextField txt_donvi;
+    private javax.swing.JTextField txt_soluong;
     // End of variables declaration//GEN-END:variables
 }

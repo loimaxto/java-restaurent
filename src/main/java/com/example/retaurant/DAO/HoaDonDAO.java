@@ -10,6 +10,7 @@ package com.example.retaurant.DAO;
  */
 import com.example.retaurant.DTO.HoaDonDTO;
 import com.example.retaurant.DTO.HoaDonDTO2;
+import com.example.retaurant.DTO.SearchCriteria;
 import com.example.retaurant.utils.DBConnection;
 import java.sql.*;
 import java.util.ArrayList;
@@ -50,26 +51,7 @@ public class HoaDonDAO {
             statement.setInt(1, hdId);
             try (ResultSet rs = statement.executeQuery()) {
                 if (rs.next()) {
-                    HoaDonDTO2 hd2 = new HoaDonDTO2();
-                    hd2.setHdId(rs.getInt("hd_id"));
-                    hd2.setThoiGian(rs.getTimestamp("thoi_gian"));
-                    hd2.setGhiChu(rs.getByte("ghi_chu"));
-                    Object tongGiaObj = rs.getObject("tong_gia");
-                    hd2.setTongGia(tongGiaObj != null ? ((Number) tongGiaObj).intValue() : null);
-                    Object khIdObj = rs.getObject("kh_id");
-                    hd2.setKhId(khIdObj != null ? ((Number) khIdObj).intValue() : null);
-                    Object banIdObj = rs.getObject("ban_id");
-                    hd2.setBanId(banIdObj != null ? ((Number) banIdObj).intValue() : null);
-                    Object nguoiLapIdObj = rs.getObject("nguoi_lap_id");
-                    hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
-                    Object kmIdObj = rs.getObject("km_id");
-                    hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
-                    hd2.setTenKh(rs.getString("ho_kh"));
-                    hd2.setHoKh(rs.getString("ten_kh"));
-                    hd2.setHoTenNv(rs.getString("ho_ten"));
-                    hd2.setSdt(rs.getString("sdt"));
-                    
-                    return hd2;
+                    return mapResultToHoaDonDTO2(rs);
                 }
                 return null;
             }
@@ -88,28 +70,69 @@ public class HoaDonDAO {
         List<HoaDonDTO2> bills = new ArrayList<>();
         try (Statement statement = connection.createStatement(); ResultSet rs = statement.executeQuery(sql)) {
             while (rs.next()) {
-                HoaDonDTO2 hd2 = new HoaDonDTO2();
-                hd2.setHdId(rs.getInt("hd_id"));
-                hd2.setThoiGian(rs.getTimestamp("thoi_gian"));
-                hd2.setGhiChu(rs.getByte("ghi_chu"));
-                Object tongGiaObj = rs.getObject("tong_gia");
-                hd2.setTongGia(tongGiaObj != null ? ((Number) tongGiaObj).intValue() : null);
-                Object khIdObj = rs.getObject("kh_id");
-                hd2.setKhId(khIdObj != null ? ((Number) khIdObj).intValue() : null);
-                Object banIdObj = rs.getObject("ban_id");
-                hd2.setBanId(banIdObj != null ? ((Number) banIdObj).intValue() : null);
-                Object nguoiLapIdObj = rs.getObject("nguoi_lap_id");
-                hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
-                Object kmIdObj = rs.getObject("km_id");
-                hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
-                hd2.setTenKh(rs.getString("ten_kh"));
-                hd2.setHoKh(rs.getString("ho_kh"));
-                hd2.setHoTenNv(rs.getString("ho_ten"));
-                hd2.setSdt(rs.getString("sdt"));
-                bills.add(hd2);
+                bills.add(mapResultToHoaDonDTO2(rs));
             }
             return bills;
         } catch (SQLException ex) {
+            Logger.getLogger(HoaDonDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public List<HoaDonDTO2> getListHoaDonByCriteria(SearchCriteria searchObj) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT * FROM hoa_don "
+                + "INNER JOIN nhan_vien ON hoa_don.nguoi_lap_id = nhan_vien.nv_id "
+                + "INNER JOIN khach_hang ON khach_hang.kh_id = hoa_don.kh_id "
+                + "WHERE 1 = 1 "
+        );
+
+        List<Object> params = new ArrayList<>();
+
+        // Add conditions dynamically
+        if (searchObj.getTextCreator() != null && !searchObj.getTextCreator().isEmpty()) {
+            sql.append(" ").append(searchObj.getLogicChon()).append(" nhan_vien.ho_ten LIKE ? ");
+            params.add("%" + searchObj.getTextCreator() + "%");
+        }
+
+        if (searchObj.getTextCustomer() != null && !searchObj.getTextCustomer().isEmpty()) {
+            sql.append(" ").append(searchObj.getLogicChon()).append(" CONCAT(ho_kh, ' ', ten_kh) LIKE ? ");
+            params.add("%" + searchObj.getTextCustomer() + "%");
+        }
+
+        if (searchObj.getStartDate() != null && searchObj.getEndDate() != null) {
+            sql.append(" ").append(searchObj.getLogicChon()).append(" hoa_don.thoi_gian BETWEEN ? AND ? ");
+            params.add(searchObj.getStartDate());
+            params.add(searchObj.getEndDate());
+        } else if (searchObj.getStartDate() != null) {
+            sql.append(" ").append(searchObj.getLogicChon()).append(" hoa_don.thoi_gian >= ? ");
+            params.add(searchObj.getStartDate());
+        } else if (searchObj.getEndDate() != null) {
+            sql.append(" ").append(searchObj.getLogicChon()).append(" hoa_don.thoi_gian <= ? ");
+            params.add(searchObj.getEndDate());
+        }
+
+        sql.append(" ORDER BY hoa_don.hd_id DESC");
+
+        List<HoaDonDTO2> bills = new ArrayList<>();
+
+        try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
+                if (param instanceof String) {
+                    statement.setString(i + 1, (String) param);
+                } else if (param instanceof java.sql.Date) {
+                    statement.setDate(i + 1, (java.sql.Date) param);
+                }
+            }
+
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                bills.add(mapResultToHoaDonDTO2(rs));
+            }
+            return bills;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
             Logger.getLogger(HoaDonDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
@@ -157,7 +180,7 @@ public class HoaDonDAO {
         }
     }
 
-    public boolean updateBill(HoaDonDTO bill)  {
+    public boolean updateBill(HoaDonDTO bill) {
         String sql = "UPDATE hoa_don SET thoi_gian = ?, ghi_chu = ?, tong_gia = ?, kh_id = ?, ban_id = ?, nguoi_lap_id = ?, km_id = ? WHERE hd_id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 
@@ -256,6 +279,28 @@ public class HoaDonDAO {
         Object kmIdObj = resultSet.getObject("km_id");
         bill.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
         return bill;
+    }
+
+    private HoaDonDTO2 mapResultToHoaDonDTO2(ResultSet rs) throws SQLException {
+        HoaDonDTO2 hd2 = new HoaDonDTO2();
+        hd2.setHdId(rs.getInt("hd_id"));
+        hd2.setThoiGian(rs.getTimestamp("thoi_gian"));
+        hd2.setGhiChu(rs.getByte("ghi_chu"));
+        Object tongGiaObj = rs.getObject("tong_gia");
+        hd2.setTongGia(tongGiaObj != null ? ((Number) tongGiaObj).intValue() : null);
+        Object khIdObj = rs.getObject("kh_id");
+        hd2.setKhId(khIdObj != null ? ((Number) khIdObj).intValue() : null);
+        Object banIdObj = rs.getObject("ban_id");
+        hd2.setBanId(banIdObj != null ? ((Number) banIdObj).intValue() : null);
+        Object nguoiLapIdObj = rs.getObject("nguoi_lap_id");
+        hd2.setNguoiLapId(nguoiLapIdObj != null ? ((Number) nguoiLapIdObj).intValue() : null);
+        Object kmIdObj = rs.getObject("km_id");
+        hd2.setKmId(kmIdObj != null ? ((Number) kmIdObj).intValue() : null);
+        hd2.setTenKh(rs.getString("ten_kh"));
+        hd2.setHoKh(rs.getString("ho_kh"));
+        hd2.setHoTenNv(rs.getString("ho_ten"));
+        hd2.setSdt(rs.getString("sdt"));
+        return hd2;
     }
 
 }

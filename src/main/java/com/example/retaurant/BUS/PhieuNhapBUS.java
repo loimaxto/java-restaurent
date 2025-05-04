@@ -1,18 +1,12 @@
 package com.example.retaurant.BUS;
 
-import com.example.retaurant.DTO.PhieuNhapDTO;
-import com.example.retaurant.DTO.ChiTietPhieuNhapDTO;
-import com.example.retaurant.DTO.NhaCungCapDTO;
+import com.example.retaurant.DTO.*;
 import com.example.retaurant.DAO.PhieuNhapDAO;
 import com.example.retaurant.utils.DBConnection;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class PhieuNhapBUS {
     private PhieuNhapDAO phieuNhapDAO;
@@ -27,11 +21,9 @@ public class PhieuNhapBUS {
         try {
             connection.setAutoCommit(false);
             
-            // Calculate total
             long tongTien = chiTietList.stream().mapToLong(ChiTietPhieuNhapDTO::getTongTien).sum();
             phieuNhap.setTongTien(tongTien);
             
-            // Validate ID is provided
             if (phieuNhap.getPnId() <= 0) {
                 throw new SQLException("ID must be a positive number");
             }
@@ -104,15 +96,26 @@ public class PhieuNhapBUS {
             return false;
         }
     }
-    
 
     public List<PhieuNhapDTO> advancedSearch(Map<String, String> filters) throws SQLException {
-        StringBuilder sql = new StringBuilder("SELECT * FROM phieu_nhap WHERE 1=1");
+        StringBuilder sql = new StringBuilder("""
+            SELECT pn.* FROM phieu_nhap pn
+            JOIN nha_cung_cap ncc ON pn.ncc_id = ncc.ncc_id
+            JOIN nhan_vien nv ON pn.nguoi_nhap_id = nv.nv_id
+            WHERE 1=1
+            """);
+        
         List<Object> params = new ArrayList<>();
+        String logicOp = "AND";
 
         for (Map.Entry<String, String> entry : filters.entrySet()) {
             String field = entry.getKey();
             String condition = entry.getValue();
+
+            if (field.equals("logic")) {
+                logicOp = condition;
+                continue;
+            }
 
             if (condition == null || condition.trim().isEmpty()) {
                 continue;
@@ -124,36 +127,43 @@ public class PhieuNhapBUS {
             String operator = parts[0];
             String value = parts[1];
 
-            switch (operator.toUpperCase()) {
-                case "AND":
-                    sql.append(" AND ");
+            sql.append(" ").append(logicOp).append(" ");
+
+            if (field.equals("ncc_id")) {
+                sql.append("LOWER(ncc.ten_ncc) LIKE LOWER(?)");
+                params.add("%" + value + "%");
+                continue;
+            }
+
+            if (field.equals("nguoi_nhap_name")) {
+                sql.append("LOWER(nv.ho_ten) LIKE LOWER(?)");
+                params.add("%" + value + "%");
+                continue;
+            }
+
+            sql.append("pn.").append(field).append(" ");
+            
+            switch (operator) {
+                case ">":
+                case ">=":
+                case "<":
+                case "<=":
+                case "<>":
+                case "=":
+                    sql.append(operator).append(" ?");
                     break;
-                case "OR":
-                    sql.append(" OR ");
-                    break;
-                case "NOT":
-                    sql.append(" NOT ");
+                case "LIKE":
+                    sql.append("LIKE ?");
+                    value = "%" + value + "%";
                     break;
                 default:
-                    sql.append(" AND ").append(field).append(" ");
-                    switch (operator) {
-                        case ">":
-                        case ">=":
-                        case "<":
-                        case "<=":
-                        case "<>":
-                        case "=":
-                            sql.append(operator).append(" ?");
-                            break;
-                        default:
-                            sql.append("= ?");
-                            operator = "=";
-                    }
-                    params.add(parseValue(field, value));
+                    sql.append("= ?");
             }
+            
+            params.add(parseValue(field, value));
         }
 
-        sql.append(" ORDER BY ngay_nhap DESC");
+        sql.append(" ORDER BY pn.ngay_nhap DESC");
 
         try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -176,37 +186,6 @@ public class PhieuNhapBUS {
             return result;
         }
     }
-       public List<PhieuNhapDTO> searchPhieuNhap(String condition, String[] values) {
-    List<PhieuNhapDTO> results = new ArrayList<>();
-    StringBuilder sql = new StringBuilder("SELECT * FROM phieu_nhap WHERE ");
-
-    sql.append(condition); // condition example: "ngay_nhap BETWEEN ? AND ?" or "tong_tien > ? AND tong_tien < ?"
-
-    try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-        for (int i = 0; i < values.length; i++) {
-            stmt.setString(i + 1, values[i]);
-        }
-
-        try (ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                PhieuNhapDTO pn = new PhieuNhapDTO(
-                    rs.getInt("pn_id"),
-                    rs.getTimestamp("ngay_nhap"),
-                    rs.getInt("ncc_id"),
-                    rs.getInt("nguoi_nhap_id"),
-                    rs.getLong("tong_tien")
-                );
-                results.add(pn);
-            }
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return results;
-}
-
-
 
     private Object parseValue(String field, String value) {
         try {
