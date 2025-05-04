@@ -90,54 +90,84 @@ public class PhieuXuatBUS {
     }
 
     public List<PhieuXuatDTO> advancedSearch(Map<String, String> filters) throws SQLException {
-        StringBuilder sql = new StringBuilder("SELECT * FROM phieu_xuat WHERE 1=1");
-        List<Object> params = new ArrayList<>();
-        String logicOp = "AND";
+    StringBuilder sql = new StringBuilder("""
+        SELECT px.* FROM phieu_xuat px
+        JOIN nhan_vien nv ON px.nguoi_xuat_id = nv.nv_id
+        WHERE 1=1
+        """);
+    List<Object> params = new ArrayList<>();
+    String logicOp = "AND";
 
-        for (Map.Entry<String, String> entry : filters.entrySet()) {
-            String field = entry.getKey();
-            String condition = entry.getValue();
+    for (Map.Entry<String, String> entry : filters.entrySet()) {
+        String field = entry.getKey();
+        String condition = entry.getValue();
 
-            if (field.equals("logic")) {
-                logicOp = condition;
-                continue;
-            }
-
-            if (condition == null || condition.trim().isEmpty()) {
-                continue;
-            }
-
-            String[] parts = condition.split(" ", 2);
-            if (parts.length != 2) continue;
-
-            String operator = parts[0];
-            String value = parts[1];
-
-            sql.append(" ").append(logicOp).append(" ").append(field).append(" ").append(operator).append(" ?");
-            params.add(parseValue(field, value));
+        if (field.equals("logic")) {
+            logicOp = condition;
+            continue;
         }
 
-        sql.append(" ORDER BY ngay_xuat DESC");
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-            for (int i = 0; i < params.size(); i++) {
-                stmt.setObject(i + 1, params.get(i));
-            }
-
-            List<PhieuXuatDTO> result = new ArrayList<>();
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    PhieuXuatDTO px = new PhieuXuatDTO(
-                        rs.getInt("px_id"),
-                        rs.getTimestamp("ngay_xuat"),
-                        rs.getInt("nguoi_xuat_id")
-                    );
-                    result.add(px);
-                }
-            }
-            return result;
+        if (condition == null || condition.trim().isEmpty()) {
+            continue;
         }
+
+        String[] parts = condition.split(" ", 2);
+        if (parts.length != 2) continue;
+
+        String operator = parts[0];
+        String value = parts[1];
+
+        sql.append(" ").append(logicOp).append(" ");
+
+        if (field.equals("nguoi_xuat_name")) {
+            sql.append("LOWER(nv.ho_ten) LIKE LOWER(?)");
+            params.add("%" + value + "%");
+            continue;
+        }
+
+        sql.append("px.").append(field).append(" ");
+        
+        switch (operator) {
+            case ">":
+            case ">=":
+            case "<":
+            case "<=":
+            case "<>":
+            case "=":
+                sql.append(operator).append(" ?");
+                break;
+            case "LIKE":
+                sql.append("LIKE ?");
+                value = "%" + value + "%";
+                break;
+            default:
+                sql.append("= ?");
+        }
+        
+        params.add(parseValue(field, value));
     }
+
+    sql.append(" ORDER BY px.ngay_xuat DESC");
+
+    try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+        for (int i = 0; i < params.size(); i++) {
+            stmt.setObject(i + 1, params.get(i));
+        }
+
+        List<PhieuXuatDTO> result = new ArrayList<>();
+        try (ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                PhieuXuatDTO px = new PhieuXuatDTO(
+                    rs.getInt("px_id"),
+                    rs.getTimestamp("ngay_xuat"),
+                    rs.getInt("nguoi_xuat_id")
+                );
+                result.add(px);
+            }
+        }
+        return result;
+    }
+}
 
     private Object parseValue(String field, String value) {
         try {
