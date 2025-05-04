@@ -14,6 +14,7 @@ import java.util.List;
 public class PhieuNhapGUI extends JPanel {
     private PhieuNhapBUS phieuNhapBUS;
     private NguyenLieuBUS nguyenLieuBUS;
+    private NhanVienBUS nhanVienBUS;
     
     private DefaultTableModel tableModel;
     private DefaultTableModel chiTietModel;
@@ -22,6 +23,7 @@ public class PhieuNhapGUI extends JPanel {
     private JTable chiTietTable;
     private JComboBox<String> cbNguyenLieu;
     private JComboBox<String> cbNhaCungCap;
+    private JComboBox<String> cbNhanVien;
     private JTextField txtSoLuong;
     private JTextField txtDonGia;
     private JTextField txtPhieuNhapId;
@@ -44,11 +46,13 @@ public class PhieuNhapGUI extends JPanel {
     public PhieuNhapGUI() {
         this.phieuNhapBUS = new PhieuNhapBUS();
         this.nguyenLieuBUS = new NguyenLieuBUS();
+        this.nhanVienBUS = new NhanVienBUS();
         this.chiTietList = new ArrayList<>();
         initComponents();
         loadDataToTable();
         loadNguyenLieuComboBox();
         loadNhaCungCapComboBox();
+        loadNhanVienComboBox();
     }
 
     private void initComponents() {
@@ -82,7 +86,7 @@ public class PhieuNhapGUI extends JPanel {
     private JPanel createSearchPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createTitledBorder("Tìm kiếm nâng cao"));
-        panel.setPreferredSize(new Dimension(600, 250)); // Reduced height
+        panel.setPreferredSize(new Dimension(600, 250));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
@@ -109,19 +113,19 @@ public class PhieuNhapGUI extends JPanel {
         panel.add(txtSearchNhaCungCap, gbc);
         
         gbc.gridx = 2;
-        cbSearchOpNhaCungCap = new JComboBox<>(new String[]{"=", "LIKE"});
+        cbSearchOpNhaCungCap = new JComboBox<>(new String[]{"LIKE"});
         panel.add(cbSearchOpNhaCungCap, gbc);
         
         // Row 3: Người nhập
         gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Người nhập:"), gbc);
+        panel.add(new JLabel("Tên người nhập:"), gbc);
         
         gbc.gridx = 1;
         txtSearchNguoiNhap = new JTextField(10);
         panel.add(txtSearchNguoiNhap, gbc);
         
         gbc.gridx = 2;
-        cbSearchOpNguoiNhap = new JComboBox<>(new String[]{"=", "LIKE"});
+        cbSearchOpNguoiNhap = new JComboBox<>(new String[]{"LIKE"});
         panel.add(cbSearchOpNguoiNhap, gbc);
         
         // Row 4: Tổng tiền
@@ -189,9 +193,13 @@ public class PhieuNhapGUI extends JPanel {
         txtPhieuNhapId = new JTextField();
         inputPanel.add(txtPhieuNhapId);
         
-        cbNhaCungCap = new JComboBox<>();
         inputPanel.add(new JLabel("Nhà cung cấp:"));
+        cbNhaCungCap = new JComboBox<>();
         inputPanel.add(cbNhaCungCap);
+        
+        inputPanel.add(new JLabel("Người nhập:"));
+        cbNhanVien = new JComboBox<>();
+        inputPanel.add(cbNhanVien);
         
         inputPanel.add(new JLabel("Nguyên liệu:"));
         cbNguyenLieu = new JComboBox<>();
@@ -242,41 +250,40 @@ public class PhieuNhapGUI extends JPanel {
     }
 
     private void performAdvancedSearch() {
-    Map<String, String> filters = new HashMap<>();
-    
-    if (!txtSearchMaPN.getText().trim().isEmpty()) {
-        filters.put("pn_id", cbSearchOpMaPN.getSelectedItem() + " " + txtSearchMaPN.getText().trim());
-    }
-    
-    if (!txtSearchNhaCungCap.getText().trim().isEmpty()) {
-        // Always use LIKE for supplier name search
-        filters.put("ncc_id", "LIKE " + txtSearchNhaCungCap.getText().trim());
-    }
-    
-    if (!txtSearchNguoiNhap.getText().trim().isEmpty()) {
-        filters.put("nguoi_nhap_id", cbSearchOpNguoiNhap.getSelectedItem() + " " + txtSearchNguoiNhap.getText().trim());
-    }
-    
-    if (!txtSearchTongTien.getText().trim().isEmpty()) {
-        filters.put("tong_tien", cbSearchOpTongTien.getSelectedItem() + " " + txtSearchTongTien.getText().trim());
-    }
-    
-    if (!filters.isEmpty()) {
-        filters.put("logic", (String) cbSearchLogicOp.getSelectedItem());
-    }
-    
-    try {
-        List<PhieuNhapDTO> searchResults = phieuNhapBUS.advancedSearch(filters);
-        updateTableWithResults(searchResults);
+        Map<String, String> filters = new HashMap<>();
         
-        if (searchResults.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu nhập nào phù hợp");
+        if (!txtSearchMaPN.getText().trim().isEmpty()) {
+            filters.put("pn_id", cbSearchOpMaPN.getSelectedItem() + " " + txtSearchMaPN.getText().trim());
         }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage());
-        e.printStackTrace();
+        
+        if (!txtSearchNhaCungCap.getText().trim().isEmpty()) {
+            filters.put("ncc_id", "LIKE " + txtSearchNhaCungCap.getText().trim());
+        }
+        
+        if (!txtSearchNguoiNhap.getText().trim().isEmpty()) {
+            filters.put("nguoi_nhap_name", "LIKE " + txtSearchNguoiNhap.getText().trim());
+        }
+        
+        if (!txtSearchTongTien.getText().trim().isEmpty()) {
+            filters.put("tong_tien", cbSearchOpTongTien.getSelectedItem() + " " + txtSearchTongTien.getText().trim());
+        }
+        
+        if (!filters.isEmpty()) {
+            filters.put("logic", (String) cbSearchLogicOp.getSelectedItem());
+        }
+        
+        try {
+            List<PhieuNhapDTO> searchResults = phieuNhapBUS.advancedSearch(filters);
+            updateTableWithResults(searchResults);
+            
+            if (searchResults.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu nhập nào phù hợp");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-}
 
     private void clearSearchFields() {
         txtSearchMaPN.setText("");
@@ -284,16 +291,6 @@ public class PhieuNhapGUI extends JPanel {
         txtSearchNguoiNhap.setText("");
         txtSearchTongTien.setText("");
         loadDataToTable();
-    }
-
-    private int getNccIdFromName(String name) {
-        List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
-        for (NhaCungCapDTO ncc : list) {
-            if (ncc.getTen_ncc().equalsIgnoreCase(name)) {
-                return ncc.getNcc_id();
-            }
-        }
-        return -1;
     }
 
     private void updateTableWithResults(List<PhieuNhapDTO> results) {
@@ -340,10 +337,12 @@ public class PhieuNhapGUI extends JPanel {
     }
 
     private String getNhanVienName(int nvId) {
-        return "NV " + nvId;
+        NhanVien nv = nhanVienBUS.getNhanVienById(nvId);
+        return nv != null ? nv.getHoTen() : "NV " + nvId;
     }
 
     private void loadNguyenLieuComboBox() {
+        cbNguyenLieu.removeAllItems();
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         if (list != null) {
             for (NguyenLieuDTO nl : list) {
@@ -353,10 +352,21 @@ public class PhieuNhapGUI extends JPanel {
     }
 
     private void loadNhaCungCapComboBox() {
+        cbNhaCungCap.removeAllItems();
         List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
         if (list != null) {
             for (NhaCungCapDTO ncc : list) {
                 cbNhaCungCap.addItem(ncc.getTen_ncc());
+            }
+        }
+    }
+
+    private void loadNhanVienComboBox() {
+        cbNhanVien.removeAllItems();
+        List<NhanVien> list = nhanVienBUS.getDanhSachNhanVien();
+        if (list != null) {
+            for (NhanVien nv : list) {
+                cbNhanVien.addItem(nv.getHoTen() + " (ID: " + nv.getMaNhanvien() + ")");
             }
         }
     }
@@ -372,7 +382,6 @@ public class PhieuNhapGUI extends JPanel {
                 return;
             }
             
-            // Get the full NguyenLieuDTO object from the name
             NguyenLieuDTO selectedNL = getNguyenLieuByName(selectedNLName);
             if (selectedNL == null) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy nguyên liệu");
@@ -461,6 +470,12 @@ public class PhieuNhapGUI extends JPanel {
             return;
         }
         
+        String selectedNVString = (String) cbNhanVien.getSelectedItem();
+        if (selectedNVString == null || selectedNVString.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn người nhập");
+            return;
+        }
+        
         try {
             int pnId = Integer.parseInt(txtPhieuNhapId.getText().trim());
             if (pnId <= 0) {
@@ -473,9 +488,12 @@ public class PhieuNhapGUI extends JPanel {
                 return;
             }
             
-            int nguoiNhapId = 2; // Default employee ID
+            int nguoiNhapId = extractEmployeeId(selectedNVString);
+            if (nguoiNhapId <= 0) {
+                JOptionPane.showMessageDialog(this, "ID nhân viên không hợp lệ");
+                return;
+            }
             
-            // Get the full NhaCungCapDTO object from the name
             NhaCungCapDTO selectedNCC = getNhaCungCapByName(selectedNCCName);
             if (selectedNCC == null) {
                 JOptionPane.showMessageDialog(this, "Không tìm thấy nhà cung cấp");
@@ -505,6 +523,17 @@ public class PhieuNhapGUI extends JPanel {
         }
     }
 
+    private int extractEmployeeId(String employeeString) {
+        try {
+            int start = employeeString.indexOf("(ID: ") + 5;
+            int end = employeeString.indexOf(")");
+            String idStr = employeeString.substring(start, end).trim();
+            return Integer.parseInt(idStr);
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
     private NhaCungCapDTO getNhaCungCapByName(String name) {
         List<NhaCungCapDTO> list = phieuNhapBUS.getAllNhaCungCap();
         if (list != null) {
@@ -522,5 +551,16 @@ public class PhieuNhapGUI extends JPanel {
         chiTietModel.setRowCount(0);
         txtGhiChu.setText("");
         txtPhieuNhapId.setText("");
+        txtSoLuong.setText("");
+        txtDonGia.setText("");
+        if (cbNhanVien.getItemCount() > 0) {
+            cbNhanVien.setSelectedIndex(0);
+        }
+        if (cbNhaCungCap.getItemCount() > 0) {
+            cbNhaCungCap.setSelectedIndex(0);
+        }
+        if (cbNguyenLieu.getItemCount() > 0) {
+            cbNguyenLieu.setSelectedIndex(0);
+        }
     }
 }
