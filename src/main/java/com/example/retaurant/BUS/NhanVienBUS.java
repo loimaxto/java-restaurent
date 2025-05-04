@@ -142,12 +142,11 @@ public class NhanVienBUS {
         return false;
     }
 
-    public boolean nhapExcel(String hoTen, String gioiTinh, String chucVu, int maTaiKhoan) {
+    public boolean nhapExcel(String hoTen, String gioiTinh, String chucVu) {
         NhanVien nv = new NhanVien();
         nv.setHoTen(hoTen);
         nv.setGioiTinh(gioiTinh);
         nv.setChucVu(chucVu);
-        nv.setMaTaiKhoan(maTaiKhoan);
         boolean flag = nvDAO.nhapExcel(nv);
         return flag;
     }

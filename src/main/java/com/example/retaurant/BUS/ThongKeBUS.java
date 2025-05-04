@@ -39,4 +39,14 @@ public class ThongKeBUS {
     public ArrayList<MonAnDTO> getTopMonAn() {
         return thongKeDAO.getTopBanChay();
     }
+
+    public ArrayList<MonAnDTO> getTopBanChayTheoThang(int thang) {
+        return thongKeDAO.getTopBanChayTheoThang(thang);
+    }
+
+    public ArrayList<MonAnDTO> getTopBanChayTheoQuy(int quy) {
+        int startMonth = (quy - 1) * 3 + 1;
+        int endMonth = startMonth + 2;
+        return thongKeDAO.getTopBanChayTheoKhoangThang(startMonth, endMonth);
+    }
 }

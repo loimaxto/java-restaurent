@@ -43,7 +43,7 @@ public class QuanLyNhanVienGUI extends JPanel {
     final Color colorPanel = new Color(247, 247, 247);
     CardLayout cardNhanVienGroup = new CardLayout();
     JPanel pnCardTabNhanVien;
-    JTextField txtMaNV, txtHoTen, txtChucVu, txtTimNV,txtMaTaiKhoan;
+    JTextField txtMaNV, txtHoTen, txtChucVu, txtTimNV, txtMaTaiKhoan;
     JComboBox<String> cmbGioiTinh;
     MyTable tblNhanVien;
     DefaultTableModel dtmNhanVien;
@@ -129,7 +129,7 @@ public class QuanLyNhanVienGUI extends JPanel {
         cmbGioiTinh.addItem("Nam");
         cmbGioiTinh.addItem("Nữ");
 
-        JLabel lblMa, lblHoTen, lblGioiTinh, lblChucVu ,lblMaTaiKhoan;
+        JLabel lblMa, lblHoTen, lblGioiTinh, lblChucVu, lblMaTaiKhoan;
 
         lblMa = new JLabel("Mã Nhân viên");
         lblHoTen = new JLabel("Họ đệm");
@@ -152,7 +152,6 @@ public class QuanLyNhanVienGUI extends JPanel {
         pnHo.add(lblHoTen);
         pnHo.add(txtHoTen);
         pnText.add(pnHo);
-
 
         JPanel pnGioiTinh = new TransparentPanel();
         pnGioiTinh.add(lblGioiTinh);
@@ -478,20 +477,20 @@ public class QuanLyNhanVienGUI extends JPanel {
                 xuLyNhapExcel();
             }
         });
-//
-//        btnCapTaiKhoan.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                xuLyCapTaiKhoan();
-//            }
-//        });
 
-//        btnResetMatKhau.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                xuLyResetMatKhau();
-//            }
-//        });
+        btnCapTaiKhoan.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                xuLyCapTaiKhoan();
+            }
+        });
+
+        btnResetMatKhau.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                xuLyResetMatKhau();
+            }
+        });
         btnXoaTaiKhoan.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -629,24 +628,26 @@ public class QuanLyNhanVienGUI extends JPanel {
         }
     }
 
-//    private void xuLyResetMatKhau() {
-//        String maNV = txtMaNV.getText();
-//        if (maNV.trim().equals("")) {
-//            new MyDialog("Hãy chọn nhân viên!", MyDialog.ERROR_DIALOG);
-//            return;
-//        }
-//        DlgQuyen_MatKhau dialog = new DlgQuyen_MatKhau(maNV);
-//        dialog.setVisible(true);
-//    }
-//    private void xuLyCapTaiKhoan() {
-//        if (txtMaNV.getText().trim().equals("")) {
-//            new MyDialog("Hãy chọn nhân viên!", MyDialog.ERROR_DIALOG);
-//            return;
-//        }
-//        DlgCapTaiKhoan dialog = new DlgCapTaiKhoan(txtMaNV.getText());
-//        dialog.setVisible(true);
-//        loadDataTblNhanVien();
-//    }
+    private void xuLyResetMatKhau() {
+        String maNV = txtMaNV.getText();
+        if (maNV.trim().equals("")) {
+            new MyDialog("Hãy chọn nhân viên!", MyDialog.ERROR_DIALOG);
+            return;
+        }
+        DlgQuyen_MatKhau dialog = new DlgQuyen_MatKhau(maNV);
+        dialog.setVisible(true);
+    }
+
+    private void xuLyCapTaiKhoan() {
+        if (txtMaNV.getText().trim().equals("")) {
+            new MyDialog("Hãy chọn nhân viên!", MyDialog.ERROR_DIALOG);
+            return;
+        }
+        DlgCapTaiKhoan dialog = new DlgCapTaiKhoan(txtMaNV.getText());
+        dialog.setVisible(true);
+        loadDataTblNhanVien();
+    }
+
     private void xuLyKhoaTaiKhoan() {
         TaiKhoanBUS taiKhoanBUS = new TaiKhoanBUS();
         taiKhoanBUS.khoaTaiKhoan(txtMaNV.getText());
@@ -667,10 +668,7 @@ public class QuanLyNhanVienGUI extends JPanel {
             String hoTen = tblNhanVien.getValueAt(i, 1) + "";
             String gioiTinh = tblNhanVien.getValueAt(i, 2) + "";
             String chucVu = tblNhanVien.getValueAt(i, 3) + "";
-            String maTaiKhoan = tblNhanVien.getValueAt(i, 4) + "";
-
-//            nhanVienBUS.nhapExcel(hoTen, gioiTinh, chucVu, maTaiKhoan);
-
+            nhanVienBUS.nhapExcel(hoTen, gioiTinh, chucVu);
         }
     }
 
@@ -698,7 +696,7 @@ public class QuanLyNhanVienGUI extends JPanel {
         String gioiTinh = cmbGioiTinh.getSelectedItem() + "";
         String chucVu = txtChucVu.getText();
         String maTaiKhoan = txtMaTaiKhoan.getText();
-        if (nhanVienBUS.updateNhanVien(ma, hoTen, gioiTinh, chucVu , maTaiKhoan)) {
+        if (nhanVienBUS.updateNhanVien(ma, hoTen, gioiTinh, chucVu, maTaiKhoan)) {
             nhanVienBUS.docDanhSach();
             loadDataTblNhanVien();
         }
@@ -774,19 +772,18 @@ public class QuanLyNhanVienGUI extends JPanel {
     }
 
     TaiKhoanBUS taiKhoanBUS = new TaiKhoanBUS();
-    
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Quản lý Nhân Viên");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(1100, 900); // Điều chỉnh kích thước phù hợp
             frame.setLocationRelativeTo(null);
-            
+
             QuanLyNhanVienGUI panel = new QuanLyNhanVienGUI();
             frame.add(panel);
-            
+
             frame.setVisible(true);
         });
     }
 }
-

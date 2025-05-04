@@ -18,44 +18,89 @@ import java.sql.Statement;
  */
 public class TaiKhoanDAO {
 
-    public boolean themTaiKhoan(int maNV, String tenDangNhap, String matKhau, String quyen, int trangThai) {
+    public boolean themTaiKhoan(int maNV, String tenDangNhap, String quyen) {
         Connection conn = DBConnection.getConnection();
 
         if (conn == null) {
             System.out.println("Lỗi kết nối cơ sở dữ liệu!");
             return false;
         }
+
+        // Kiểm tra trùng mã nhân viên
+        if (kiemTraTrungMaNV(maNV)) {
+            System.out.println("Trùng mã nhân viên: " + maNV);
+            return false;
+        }
+
+        // Kiểm tra trùng username
+        if (kiemTraTrungTenDangNhap(tenDangNhap)) {
+            System.out.println("Trùng username: " + tenDangNhap);
+            return false;
+        }
+
         try {
-            String sql = "INSERT INTO tai_khoan(tk_id, username, password, quyen, trangthai) "
-                    + "VALUES (?, ?, ?, ?)";
+            String sql = "INSERT INTO tai_khoan(tk_id, username, password, quyen) VALUES (?, ?, ?, ?)";
             PreparedStatement pre = conn.prepareStatement(sql);
             pre.setInt(1, maNV);
             pre.setString(2, tenDangNhap);
-            pre.setString(3, matKhau);
+            pre.setString(3, tenDangNhap); // mật khẩu mặc định = tên đăng nhập
             pre.setString(4, quyen);
-            pre.setInt(5, trangThai);
-            return pre.executeUpdate() > 0;
+            int rows = pre.executeUpdate();
+
+            System.out.println("Số dòng thêm thành công: " + rows);
+            return rows > 0;
+
         } catch (Exception e) {
+            // In lỗi chi tiết
+            System.err.println("Lỗi thêm tài khoản: " + e.getMessage());
+            e.printStackTrace();
         }
+
         return false;
     }
 
     public boolean kiemTraTrungTenDangNhap(String tenDangNhap) {
         Connection conn = DBConnection.getConnection();
-
-        if (conn == null) {
-            System.out.println("Lỗi kết nối cơ sở dữ liệu!");
-            return false;
-        }
         try {
-            String sql = "SELECT * FROM tai_khoan WHERE username = '" + tenDangNhap + "'";
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery(sql);
+            String sql = "SELECT * FROM tai_khoan WHERE username = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, tenDangNhap);
+            ResultSet rs = ps.executeQuery();
             return rs.next();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Lỗi kiểm tra tên đăng nhập: " + e.getMessage());
+            return false;
         }
-        return false;
+    }
+
+//    public boolean kiemTraTrungTenDangNhap(String tenDangNhap) {
+//        Connection conn = DBConnection.getConnection();
+//
+//        if (conn == null) {
+//            System.out.println("Lỗi kết nối cơ sở dữ liệu!");
+//            return false;
+//        }
+//        try {
+//            String sql = "SELECT * FROM tai_khoan WHERE username = '" + tenDangNhap + "'";
+//            Statement st = conn.createStatement();
+//            ResultSet rs = st.executeQuery(sql);
+//            return rs.next();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
+    public boolean kiemTraTrungMaNV(int maNV) {
+        Connection conn = DBConnection.getConnection();
+        String sql = "SELECT * FROM tai_khoan WHERE tk_id = ?";
+        try {
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, maNV);
+            ResultSet rs = ps.executeQuery();
+            return rs.next();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public String getTenDangNhapTheoMa(int maNV) {

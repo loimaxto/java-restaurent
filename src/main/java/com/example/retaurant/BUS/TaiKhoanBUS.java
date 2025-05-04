@@ -3,14 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.example.retaurant.BUS;
+
 import com.example.retaurant.MyCustom.MyDialog;
 import com.example.retaurant.DTO.TaiKhoan;
 import com.example.retaurant.DAO.TaiKhoanDAO;
+
 /**
  *
  * @author ASUS
  */
 public class TaiKhoanBUS {
+
     private TaiKhoanDAO taiKhoanDAO = new TaiKhoanDAO();
 
     public String getTenDangNhapTheoMa(String ma) {
@@ -47,12 +50,19 @@ public class TaiKhoanBUS {
         return taiKhoanDAO.kiemTraTrungTenDangNhap(tenDangNhap);
     }
 
-    public boolean themTaiKhoan(String ma, String tenDangNhap, String matKhau,String quyen , int trangThai) {
+    public boolean themTaiKhoan(String ma, String tenDangNhap, String quyen) {
         int maNV = Integer.parseInt(ma);
+
         if (tenDangNhap.trim().equals("")) {
             new MyDialog("Không được để trống Tên đăng nhập!", MyDialog.ERROR_DIALOG);
             return false;
         }
+
+        if (taiKhoanDAO.kiemTraTrungMaNV(maNV)) {
+            new MyDialog("Nhân viên này đã có tài khoản!", MyDialog.ERROR_DIALOG);
+            return false;
+        }
+
         if (kiemTraTrungTenDangNhap(tenDangNhap)) {
             MyDialog dlg = new MyDialog("Tên đăng nhập bị trùng! Có thể tài khoản bị khoá, thực hiện mở khoá?", MyDialog.WARNING_DIALOG);
             if (dlg.getAction() == MyDialog.OK_OPTION) {
@@ -61,7 +71,8 @@ public class TaiKhoanBUS {
             }
             return false;
         }
-        boolean flag = taiKhoanDAO.themTaiKhoan(maNV, tenDangNhap, matKhau, quyen, trangThai) ;
+
+        boolean flag = taiKhoanDAO.themTaiKhoan(maNV, tenDangNhap, quyen);
         if (flag) {
             new MyDialog("Cấp tài khoản thành công! Mật khẩu là " + tenDangNhap, MyDialog.SUCCESS_DIALOG);
         } else {
@@ -91,7 +102,7 @@ public class TaiKhoanBUS {
     }
 
     public boolean doiMatKhau(String matKhauCu, String matKhauMoi, String nhapLaiMatKhau) {
-        if(!matKhauMoi.equals(nhapLaiMatKhau)) {
+        if (!matKhauMoi.equals(nhapLaiMatKhau)) {
             new MyDialog("Mật khẩu mới không khớp!", MyDialog.ERROR_DIALOG);
             return false;
         }
@@ -103,10 +114,9 @@ public class TaiKhoanBUS {
         }
         return flag;
     }
-    
+
     public int getTrangThai(String maNV) {
         int ma = Integer.parseInt(maNV);
         return taiKhoanDAO.getTrangThai(ma);
     }
 }
-
