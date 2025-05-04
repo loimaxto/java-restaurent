@@ -532,7 +532,7 @@ public class QuanLyThongKeGUI extends JPanel {
         pnTopMonAn = new JPanel(new BorderLayout());
         pnTopMonAn.setBackground(colorPanel);
 
-        JLabel lblTitle = new JLabel("Top món ăn bán chạy", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Top món ăn bán chạy theo tháng", SwingConstants.CENTER);
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
         pnTopMonAn.add(lblTitle, BorderLayout.NORTH);
@@ -540,66 +540,48 @@ public class QuanLyThongKeGUI extends JPanel {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setBackground(colorPanel);
 
-        JLabel lblLoai = new JLabel("Thống kê theo: ");
-        lblLoai.setForeground(Color.WHITE);
-        lblLoai.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        topPanel.add(lblLoai);
-
-        JComboBox<String> comboLoai = new JComboBox<>(new String[]{"Tháng", "Quý"});
-        comboLoai.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        topPanel.add(comboLoai);
-
         comboThang = new JComboBox<>();
         comboThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
         for (int i = 1; i <= 12; i++) {
             comboThang.addItem("Tháng " + i);
         }
         comboThang.setSelectedIndex(Calendar.getInstance().get(Calendar.MONTH));
-        topPanel.add(comboThang);
+        comboThang.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTopMonAnTheoThang();
+            }
+        });
 
-        JComboBox<String> comboQuy = new JComboBox<>(new String[]{"Quý 1", "Quý 2", "Quý 3", "Quý 4"});
-        comboQuy.setFont(new Font("Tahoma", Font.PLAIN, 14));
-        comboQuy.setVisible(false);
-        topPanel.add(comboQuy);
+        JLabel lblThang = new JLabel("Chọn tháng: ");
+        lblThang.setForeground(Color.WHITE);
+        lblThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        topPanel.add(lblThang);
+        topPanel.add(comboThang);
 
         pnTopMonAn.add(topPanel, BorderLayout.NORTH);
 
+        // Table setup
         tableTopThang = new JTable();
         tableTopThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
         tableTopThang.setRowHeight(30);
         JScrollPane scrollPane = new JScrollPane(tableTopThang);
         pnTopMonAn.add(scrollPane, BorderLayout.CENTER);
 
-        // Events
-        comboLoai.addActionListener(e -> {
-            boolean isThang = comboLoai.getSelectedItem().equals("Tháng");
-            comboThang.setVisible(isThang);
-            comboQuy.setVisible(!isThang);
-            updateTopMonAnTheoLoai();
-        });
-
-        comboThang.addActionListener(e -> updateTopMonAnTheoLoai());
-        comboQuy.addActionListener(e -> updateTopMonAnTheoLoai());
-
-        updateTopMonAnTheoLoai();
+        updateTopMonAnTheoThang();
     }
 
-    private void updateTopMonAnTheoLoai() {
-        String loai = comboThang.isVisible() ? "Tháng" : "Quý";
-        ArrayList<MonAnDTO> topMonAn;
-        if (loai.equals("Tháng")) {
-            int thang = comboThang.getSelectedIndex() + 1;
-            topMonAn = thongKeBus.getTopBanChayTheoThang(thang);
-        } else {
-            int quy = ((JComboBox<?>) comboThang.getParent().getComponent(3)).getSelectedIndex() + 1;
-            topMonAn = thongKeBus.getTopBanChayTheoQuy(quy);
-        }
+    private void updateTopMonAnTheoThang() {
+        int thang = comboThang.getSelectedIndex() + 1;
+        ArrayList<MonAnDTO> topMonAn = thongKeBus.getTopBanChayTheoThang(thang);
 
         String[] columnNames = {"Tên món", "Số lượng bán"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
         for (MonAnDTO mon : topMonAn) {
             model.addRow(new Object[]{mon.getTenSp(), mon.getGiaSp()});
         }
+
         tableTopThang.setModel(model);
     }
 
