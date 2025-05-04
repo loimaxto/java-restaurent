@@ -129,7 +129,7 @@ public class NguyenLieuGUI extends JPanel { // Changed class to JPanel
         buttonPanel.add(createButton("Cập nhật", e -> updateNguyenLieu()));
         buttonPanel.add(createButton("Xóa", e -> deleteNguyenLieu()));
         buttonPanel.add(createButton("Làm mới", e -> clearForm()));
-        buttonPanel.add(createButton("Excel", e -> exportToExcel()));
+        buttonPanel.add(createButton("Xuất Excel", e -> exportToExcel()));
         buttonPanel.add(createButton("Nhập", e -> showPhieuNhapGUI()));
         buttonPanel.add(createButton("Xuất", e -> showPhieuXuatGUI()));
 

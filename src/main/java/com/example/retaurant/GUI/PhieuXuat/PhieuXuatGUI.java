@@ -1,19 +1,12 @@
 package com.example.retaurant.GUI.PhieuXuat;
 
-import com.example.retaurant.BUS.PhieuXuatBUS;
-import com.example.retaurant.BUS.NguyenLieuBUS;
-import com.example.retaurant.DTO.CTPhieuXuatDTO;
-import com.example.retaurant.DTO.NguyenLieuDTO;
-import com.example.retaurant.DTO.PhieuXuatDTO;
+import com.example.retaurant.BUS.*;
+import com.example.retaurant.DTO.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -33,11 +26,11 @@ public class PhieuXuatGUI extends JPanel {
     private JTextField txtPhieuXuatId;
     
     // Search components
-    private JComboBox<String> cbSearchColumn;
-    private JComboBox<String> cbSearchOperator;
-    private JTextField txtSearchValue;
+    private JTextField txtSearchMaPX;
+    private JComboBox<String> cbSearchOpMaPX;
+    private JTextField txtSearchNguoiXuat;
+    private JComboBox<String> cbSearchLogicOp;
     private JButton btnSearch;
-    private JButton btnAdvancedSearch;
     private JButton btnClearSearch;
 
     public PhieuXuatGUI() {
@@ -57,25 +50,19 @@ public class PhieuXuatGUI extends JPanel {
         mainSplitPane.setDividerLocation(600);
         mainSplitPane.setResizeWeight(0.6);
 
-        // LEFT PANEL - Search and Main Table
         JPanel leftPanel = new JPanel(new BorderLayout(10, 10));
-        
-        // Search Panel
         JPanel searchPanel = createSearchPanel();
         leftPanel.add(searchPanel, BorderLayout.NORTH);
         
-        // Main Table
         JScrollPane tableScrollPane = createMainTable();
         leftPanel.add(tableScrollPane, BorderLayout.CENTER);
 
-        // RIGHT PANEL - Detail Information
         JPanel rightPanel = new JPanel(new BorderLayout(10, 10));
         rightPanel.add(createDetailPanel(), BorderLayout.CENTER);
 
         mainSplitPane.setLeftComponent(leftPanel);
         mainSplitPane.setRightComponent(rightPanel);
 
-        // Bottom buttons panel
         JPanel bottomPanel = createBottomPanel();
         
         this.add(mainSplitPane, BorderLayout.CENTER);
@@ -91,52 +78,43 @@ public class PhieuXuatGUI extends JPanel {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         
-        // Search field selection
+        // Row 1: Mã PX
         gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Trường dữ liệu:"), gbc);
+        panel.add(new JLabel("Mã PX:"), gbc);
         
         gbc.gridx = 1;
-        cbSearchColumn = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
-        cbSearchColumn.setPreferredSize(new Dimension(150, 25));
-        panel.add(cbSearchColumn, gbc);
+        txtSearchMaPX = new JTextField(10);
+        panel.add(txtSearchMaPX, gbc);
         
-        // Operator selection
+        gbc.gridx = 2;
+        cbSearchOpMaPX = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>"});
+        panel.add(cbSearchOpMaPX, gbc);
+        
+        // Row 2: Người xuất (ID only)
         gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("Toán tử:"), gbc);
+        panel.add(new JLabel("Người xuất (ID):"), gbc);
         
         gbc.gridx = 1;
-        cbSearchOperator = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        cbSearchOperator.setPreferredSize(new Dimension(150, 25));
-        panel.add(cbSearchOperator, gbc);
+        txtSearchNguoiXuat = new JTextField(10);
+        panel.add(txtSearchNguoiXuat, gbc);
         
-        // Value input
+        // Row 3: Logical operator and buttons
         gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Giá trị:"), gbc);
+        panel.add(new JLabel("Toán tử logic:"), gbc);
         
         gbc.gridx = 1;
-        txtSearchValue = new JTextField();
-        txtSearchValue.setPreferredSize(new Dimension(150, 25));
-        panel.add(txtSearchValue, gbc);
+        cbSearchLogicOp = new JComboBox<>(new String[]{"AND", "OR"});
+        panel.add(cbSearchLogicOp, gbc);
         
-        // Search buttons
-        gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.CENTER;
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
+        gbc.gridx = 2;
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
         
         btnSearch = new JButton("Tìm kiếm");
-        btnSearch.addActionListener(e -> searchPhieuXuat());
+        btnSearch.addActionListener(e -> performAdvancedSearch());
         buttonPanel.add(btnSearch);
         
-        btnAdvancedSearch = new JButton("Tìm kiếm nâng cao");
-        btnAdvancedSearch.addActionListener(e -> showAdvancedSearchDialog());
-        buttonPanel.add(btnAdvancedSearch);
-        
         btnClearSearch = new JButton("Xóa tìm kiếm");
-        btnClearSearch.addActionListener(e -> {
-            txtSearchValue.setText("");
-            loadDataToTable();
-        });
+        btnClearSearch.addActionListener(e -> clearSearchFields());
         buttonPanel.add(btnClearSearch);
         
         panel.add(buttonPanel, gbc);
@@ -172,7 +150,6 @@ public class PhieuXuatGUI extends JPanel {
         JPanel panel = new JPanel(new BorderLayout(10, 10));
         panel.setBorder(BorderFactory.createTitledBorder("Thông tin phiếu xuất"));
         
-        // Input fields panel
         JPanel inputPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         
@@ -182,6 +159,18 @@ public class PhieuXuatGUI extends JPanel {
         
         inputPanel.add(new JLabel("Nguyên liệu:"));
         cbNguyenLieu = new JComboBox<>();
+        cbNguyenLieu.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, 
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof NguyenLieuDTO) {
+                    NguyenLieuDTO nl = (NguyenLieuDTO) value;
+                    setText(nl.getTenNl() + " (" + nl.getDonVi() + ")");
+                }
+                return this;
+            }
+        });
         inputPanel.add(cbNguyenLieu);
         
         inputPanel.add(new JLabel("Số lượng:"));
@@ -194,7 +183,6 @@ public class PhieuXuatGUI extends JPanel {
         
         panel.add(inputPanel, BorderLayout.NORTH);
         
-        // Detail table
         chiTietModel = new DefaultTableModel(
             new Object[]{"Tên NL", "Đơn vị", "Số lượng"}, 0) {
             @Override
@@ -207,7 +195,6 @@ public class PhieuXuatGUI extends JPanel {
         chiTietScroll.setPreferredSize(new Dimension(280, 200));
         panel.add(chiTietScroll, BorderLayout.CENTER);
         
-        // Notes panel
         JPanel ghiChuPanel = new JPanel(new BorderLayout());
         ghiChuPanel.setBorder(BorderFactory.createTitledBorder("Ghi chú"));
         txtGhiChu = new JTextArea(3, 20);
@@ -232,120 +219,38 @@ public class PhieuXuatGUI extends JPanel {
         return panel;
     }
 
-    private void searchPhieuXuat() {
-        String column = (String) cbSearchColumn.getSelectedItem();
-        String operator = (String) cbSearchOperator.getSelectedItem();
-        String value = txtSearchValue.getText().trim();
+    private void performAdvancedSearch() {
+        Map<String, String> filters = new HashMap<>();
         
-        if (value.isEmpty()) {
-            loadDataToTable();
-            return;
+        if (!txtSearchMaPX.getText().trim().isEmpty()) {
+            filters.put("px_id", cbSearchOpMaPX.getSelectedItem() + " " + txtSearchMaPX.getText().trim());
         }
         
-        String fieldName = "";
-        switch (column) {
-            case "Mã PX": fieldName = "px_id"; break;
-            case "Ngày xuất": fieldName = "ngay_xuat"; break;
-            case "Người xuất": fieldName = "nguoi_xuat_id"; break;
+        if (!txtSearchNguoiXuat.getText().trim().isEmpty()) {
+            filters.put("nguoi_xuat_id", "= " + txtSearchNguoiXuat.getText().trim());
         }
         
-        String condition = fieldName + " " + operator + " ?";
-        List<PhieuXuatDTO> searchResults = phieuXuatBUS.searchPhieuXuat(condition, new String[]{value});
+        if (!filters.isEmpty()) {
+            filters.put("logic", (String) cbSearchLogicOp.getSelectedItem());
+        }
         
-        updateTableWithResults(searchResults);
+        try {
+            List<PhieuXuatDTO> searchResults = phieuXuatBUS.advancedSearch(filters);
+            updateTableWithResults(searchResults);
+            
+            if (searchResults.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Không tìm thấy phiếu xuất phù hợp");
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
-    private void showAdvancedSearchDialog() {
-        JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Tìm kiếm nâng cao", true);
-        dialog.setLayout(new BorderLayout());
-        dialog.setSize(500, 300);
-        
-        JPanel panel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        
-        // Field 1
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("Trường 1:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbField1 = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
-        panel.add(cbField1, gbc);
-        
-        gbc.gridx = 2;
-        JComboBox<String> cbOperator1 = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        panel.add(cbOperator1, gbc);
-        
-        gbc.gridx = 3;
-        JTextField txtValue1 = new JTextField(10);
-        panel.add(txtValue1, gbc);
-        
-        // Logical operator
-        gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("Toán tử logic:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbLogicOp = new JComboBox<>(new String[]{"AND", "OR", "NOT"});
-        panel.add(cbLogicOp, gbc);
-        
-        // Field 2
-        gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Trường 2:"), gbc);
-        
-        gbc.gridx = 1;
-        JComboBox<String> cbField2 = new JComboBox<>(new String[]{"Mã PX", "Ngày xuất", "Người xuất"});
-        panel.add(cbField2, gbc);
-        
-        gbc.gridx = 2;
-        JComboBox<String> cbOperator2 = new JComboBox<>(new String[]{"=", ">", ">=", "<", "<=", "<>", "LIKE"});
-        panel.add(cbOperator2, gbc);
-        
-        gbc.gridx = 3;
-        JTextField txtValue2 = new JTextField(10);
-        panel.add(txtValue2, gbc);
-        
-        // Search button
-        gbc.gridx = 0; gbc.gridy = 3;
-        gbc.gridwidth = 4;
-        gbc.fill = GridBagConstraints.CENTER;
-        JButton btnSearch = new JButton("Tìm kiếm");
-        btnSearch.addActionListener(e -> {
-            Map<String, String> filters = new HashMap<>();
-            
-            // Add first condition
-            String field1 = getFieldName((String) cbField1.getSelectedItem());
-            String operator1 = (String) cbOperator1.getSelectedItem();
-            String value1 = txtValue1.getText().trim();
-            if (!value1.isEmpty()) {
-                filters.put(field1, operator1 + " " + value1);
-            }
-            
-            // Add logical operator
-            String logicOp = (String) cbLogicOp.getSelectedItem();
-            filters.put("logic", logicOp);
-            
-            // Add second condition
-            String field2 = getFieldName((String) cbField2.getSelectedItem());
-            String operator2 = (String) cbOperator2.getSelectedItem();
-            String value2 = txtValue2.getText().trim();
-            if (!value2.isEmpty()) {
-                filters.put(field2, operator2 + " " + value2);
-            }
-            
-            try {
-                List<PhieuXuatDTO> searchResults = phieuXuatBUS.advancedSearch(filters);
-                updateTableWithResults(searchResults);
-                dialog.dispose();
-            } catch (SQLException ex) {
-                JOptionPane.showMessageDialog(this, "Lỗi khi tìm kiếm: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-        panel.add(btnSearch, gbc);
-        
-        dialog.add(panel, BorderLayout.CENTER);
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
+    private void clearSearchFields() {
+        txtSearchMaPX.setText("");
+        txtSearchNguoiXuat.setText("");
+        loadDataToTable();
     }
 
     private void updateTableWithResults(List<PhieuXuatDTO> results) {
@@ -355,7 +260,7 @@ public class PhieuXuatGUI extends JPanel {
                 tableModel.addRow(new Object[]{
                     px.getPxId(),
                     px.getNgayXuat(),
-                    getNhanVienName(px.getNguoiXuatId())
+                    "NV " + px.getNguoiXuatId()
                 });
             }
         }
@@ -366,17 +271,12 @@ public class PhieuXuatGUI extends JPanel {
         updateTableWithResults(list);
     }
 
-    private String getNhanVienName(int nvId) {
-        // In a real application, you would look this up from your database
-        return "NV " + nvId;
-    }
-
     private void loadNguyenLieuComboBox() {
         cbNguyenLieu.removeAllItems();
         List<NguyenLieuDTO> list = nguyenLieuBUS.getAllNguyenLieu();
         if (list != null) {
             for (NguyenLieuDTO nl : list) {
-                cbNguyenLieu.addItem(nl);
+                cbNguyenLieu.addItem(new NguyenLieuDTO(nl.getNlId(), nl.getTenNl(), nl.getDonVi(), nl.getSoLuong()));
             }
         }
     }
@@ -391,7 +291,6 @@ public class PhieuXuatGUI extends JPanel {
                 return;
             }
             
-            // Check if enough quantity is available
             if (selectedNL.getSoLuong() < soLuong) {
                 JOptionPane.showMessageDialog(this, 
                     "Không đủ nguyên liệu. Số lượng hiện có: " + selectedNL.getSoLuong(), 
@@ -440,51 +339,49 @@ public class PhieuXuatGUI extends JPanel {
     }
 
     private void createPhieuXuat() {
-    if (chiTietList.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    try {
-        // Get the ID from the text field
-        int pxId = Integer.parseInt(txtPhieuXuatId.getText().trim());
-        
-        if (pxId <= 0) {
-            JOptionPane.showMessageDialog(this, "ID phải là số dương", "Lỗi", JOptionPane.ERROR_MESSAGE);
+        if (chiTietList.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng thêm ít nhất một nguyên liệu", "Lỗi", JOptionPane.ERROR_MESSAGE);
             return;
         }
         
-        if (phieuXuatBUS.isIdExists(pxId)) {
-            JOptionPane.showMessageDialog(this, "ID đã tồn tại, vui lòng chọn ID khác", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        int nguoiXuatId = 2; // Default employee ID - in real app, get from session
-        
-        PhieuXuatDTO phieuXuat = new PhieuXuatDTO();
-        phieuXuat.setPxId(pxId); // Set the manual ID
-        phieuXuat.setNgayXuat(new Date());
-        phieuXuat.setNguoiXuatId(nguoiXuatId);
-        
-        int createdId = phieuXuatBUS.createPhieuXuat(phieuXuat, chiTietList);
-        if (createdId > 0) {
-            // Update inventory
-            for (CTPhieuXuatDTO ct : chiTietList) {
-                nguyenLieuBUS.updateNguyenLieuQuantityXuat(ct.getNlId(), (long) ct.getSoLuong());
+        try {
+            int pxId = Integer.parseInt(txtPhieuXuatId.getText().trim());
+            
+            if (pxId <= 0) {
+                JOptionPane.showMessageDialog(this, "ID phải là số dương", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
             }
             
-            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thành công với mã: " + createdId, 
-                "Thành công", JOptionPane.INFORMATION_MESSAGE);
-            refreshForm();
-            loadDataToTable();
-            loadNguyenLieuComboBox(); // Refresh inventory quantities
-        } else {
-            JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            if (phieuXuatBUS.isIdExists(pxId)) {
+                JOptionPane.showMessageDialog(this, "ID đã tồn tại, vui lòng chọn ID khác", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            int nguoiXuatId = 2; // Default employee ID
+            
+            PhieuXuatDTO phieuXuat = new PhieuXuatDTO();
+            phieuXuat.setPxId(pxId);
+            phieuXuat.setNgayXuat(new Date());
+            phieuXuat.setNguoiXuatId(nguoiXuatId);
+            
+            int createdId = phieuXuatBUS.createPhieuXuat(phieuXuat, chiTietList);
+            if (createdId > 0) {
+                for (CTPhieuXuatDTO ct : chiTietList) {
+                    nguyenLieuBUS.updateNguyenLieuQuantityXuat(ct.getNlId(), (long) ct.getSoLuong());
+                }
+                
+                JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thành công với mã: " + createdId, 
+                    "Thành công", JOptionPane.INFORMATION_MESSAGE);
+                refreshForm();
+                loadDataToTable();
+                loadNguyenLieuComboBox();
+            } else {
+                JOptionPane.showMessageDialog(this, "Tạo phiếu xuất thất bại", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID phải là số nguyên", "Lỗi", JOptionPane.ERROR_MESSAGE);
         }
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "ID phải là số nguyên", "Lỗi", JOptionPane.ERROR_MESSAGE);
     }
-}
 
     private void refreshForm() {
         chiTietList.clear();
@@ -492,14 +389,5 @@ public class PhieuXuatGUI extends JPanel {
         txtGhiChu.setText("");
         txtSoLuong.setText("");
         txtPhieuXuatId.setText("");
-    }
-
-    private String getFieldName(String displayName) {
-        switch (displayName) {
-            case "Mã PX": return "px_id";
-            case "Ngày xuất": return "ngay_xuat";
-            case "Người xuất": return "nguoi_xuat_id";
-            default: return "";
-        }
     }
 }
