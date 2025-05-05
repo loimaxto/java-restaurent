@@ -40,8 +40,8 @@ public class ThongKeBUS {
         return thongKeDAO.getTopBanChay();
     }
 
-    public ArrayList<MonAnDTO> getTopBanChayTheoThang(int thang) {
-        return thongKeDAO.getTopBanChayTheoThang(thang);
+    public ArrayList<MonAnDTO> getTopBanChayTheoThang(int thang, int nam) {
+        return thongKeDAO.getTopBanChayTheoThang(thang, nam);
     }
 
     public ArrayList<MonAnDTO> getTopBanChayTheoQuy(int quy) {

@@ -77,7 +77,7 @@ public class QuanLyThongKeGUI extends JPanel {
     JMenu thongKeMenu;
     JMenuItem thongKeChungItem, thongKeTheoQuyItem, topMonAnItem, bieuDoDoanhThuItem, thongKeTheoNgayItem, thongKeKhoangNgayItem, TopMonAnTheoThangItem;
     JPanel pnThongKeChiTiet, pnChart;
-    JPanel pnThongKeChung, pnThongKeTheoQuy, pnTopMonAn, pnBieuDoDoanhThu;
+    JPanel pnThongKeChung, pnThongKeTheoQuy, pnTopMonAn , pnTopMonAn1, pnBieuDoDoanhThu;
     //label Thong ke chung
     JLabel lblThongKeMonAn, lblThongKeKhachHang, lblThongKeDoanhThu;
     //label Thong ke theo quy
@@ -96,6 +96,7 @@ public class QuanLyThongKeGUI extends JPanel {
     private JPanel pnTopMonAnTheoThang;
     private JTable tableTopThang;
     private JComboBox<String> comboThang;
+    private JComboBox<Integer> comboNam;
     final Color colorPanel = new Color(56, 56, 56);
     int w = 1030;
     int h = 844;
@@ -121,8 +122,8 @@ public class QuanLyThongKeGUI extends JPanel {
         thongKeMenu = new JMenu("THỐNG KÊ TỔNG QUÁT");
         thongKeMenu.setForeground(Color.WHITE);
         thongKeChungItem = new JMenuItem("Thống kê chung");
-        thongKeTheoNgayItem = new JMenuItem("Thống kê theo ngày");
-        thongKeTheoQuyItem = new JMenuItem("Thống kê theo quý");
+        thongKeTheoNgayItem = new JMenuItem("Thống kê theo doanh thu ngày");
+        thongKeTheoQuyItem = new JMenuItem("Thống kê doanh thu theo quý");
         TopMonAnTheoThangItem = new JMenuItem("Thống kê top món ăn theo Tháng");
         topMonAnItem = new JMenuItem("Top món ăn bán chạy nhất");
         bieuDoDoanhThuItem = new JMenuItem("Biểu đồ doanh thu");
@@ -529,51 +530,63 @@ public class QuanLyThongKeGUI extends JPanel {
     }
 
     private void createTopMonAnTheoThangPanel() {
-        pnTopMonAn = new JPanel(new BorderLayout());
-        pnTopMonAn.setBackground(colorPanel);
+        pnTopMonAn1 = new JPanel(new BorderLayout());
+        pnTopMonAn1.setBackground(colorPanel);
 
         JLabel lblTitle = new JLabel("Top món ăn bán chạy theo tháng", SwingConstants.CENTER);
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setFont(new Font("Tahoma", Font.BOLD, 20));
-        pnTopMonAn.add(lblTitle, BorderLayout.NORTH);
+        pnTopMonAn1.add(lblTitle, BorderLayout.NORTH);
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.setBackground(colorPanel);
 
+        // Tháng
         comboThang = new JComboBox<>();
         comboThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
         for (int i = 1; i <= 12; i++) {
             comboThang.addItem("Tháng " + i);
         }
         comboThang.setSelectedIndex(Calendar.getInstance().get(Calendar.MONTH));
-        comboThang.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTopMonAnTheoThang();
-            }
-        });
+        comboThang.addActionListener(e -> updateTopMonAnTheoThang());
+
+        // Năm
+        comboNam = new JComboBox<>();
+        comboNam.setFont(new Font("Tahoma", Font.PLAIN, 14));
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        for (int i = 0; i < 5; i++) {
+            comboNam.addItem(currentYear - i);
+        }
+        comboNam.addActionListener(e -> updateTopMonAnTheoThang());
 
         JLabel lblThang = new JLabel("Chọn tháng: ");
         lblThang.setForeground(Color.WHITE);
         lblThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+        JLabel lblNam = new JLabel("Năm: ");
+        lblNam.setForeground(Color.WHITE);
+        lblNam.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
         topPanel.add(lblThang);
         topPanel.add(comboThang);
+        topPanel.add(lblNam);
+        topPanel.add(comboNam);
 
-        pnTopMonAn.add(topPanel, BorderLayout.NORTH);
+        pnTopMonAn1.add(topPanel, BorderLayout.NORTH);
 
-        // Table setup
         tableTopThang = new JTable();
         tableTopThang.setFont(new Font("Tahoma", Font.PLAIN, 14));
         tableTopThang.setRowHeight(30);
         JScrollPane scrollPane = new JScrollPane(tableTopThang);
-        pnTopMonAn.add(scrollPane, BorderLayout.CENTER);
+        pnTopMonAn1.add(scrollPane, BorderLayout.CENTER);
 
         updateTopMonAnTheoThang();
     }
 
     private void updateTopMonAnTheoThang() {
         int thang = comboThang.getSelectedIndex() + 1;
-        ArrayList<MonAnDTO> topMonAn = thongKeBus.getTopBanChayTheoThang(thang);
+        int nam = (int) comboNam.getSelectedItem();
+        ArrayList<MonAnDTO> topMonAn = thongKeBus.getTopBanChayTheoThang(thang, nam);
 
         String[] columnNames = {"Tên món", "Số lượng bán"};
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -678,10 +691,10 @@ public class QuanLyThongKeGUI extends JPanel {
         TopMonAnTheoThangItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (pnTopMonAn == null) {
+                if (pnTopMonAn1 == null) {
                     createTopMonAnTheoThangPanel(); // đảm bảo panel được tạo
                 }
-                showPanel(pnTopMonAn); // lúc này pnTopChuyenBay không null nữa
+                showPanel(pnTopMonAn1); // lúc này pnTopChuyenBay không null nữa
             }
         });
         bieuDoDoanhThuItem.addActionListener(new ActionListener() {

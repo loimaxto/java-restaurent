@@ -202,7 +202,7 @@ public class ThongKeDAO {
         return dsMonAn;
     }
 
-    public ArrayList<MonAnDTO> getTopBanChayTheoThang(int thang) {
+    public ArrayList<MonAnDTO> getTopBanChayTheoThang(int thang, int nam) {
         ArrayList<MonAnDTO> dsMonAn = new ArrayList<>();
         String sql = """
         SELECT ma.ten_sp AS ten_mon, SUM(cthd.so_luong) AS tong_so_luong
@@ -213,19 +213,18 @@ public class ThongKeDAO {
         GROUP BY ma.ten_sp
         ORDER BY tong_so_luong DESC
         LIMIT 5
-        """;
+    """;
 
         try (Connection conn = DBConnection.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            LocalDate now = LocalDate.now(); // năm hiện tại
             ps.setInt(1, thang);
-            ps.setInt(2, now.getYear());
+            ps.setInt(2, nam);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     MonAnDTO mon = new MonAnDTO();
                     mon.setTenSp(rs.getString("ten_mon"));
-                    mon.setGiaSp(rs.getInt("tong_so_luong")); // lưu vào field GiaSp như cũ
+                    mon.setGiaSp(rs.getInt("tong_so_luong")); // Tạm lưu vào giaSp
                     dsMonAn.add(mon);
                 }
             }
