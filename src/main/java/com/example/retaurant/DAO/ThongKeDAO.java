@@ -235,41 +235,4 @@ public class ThongKeDAO {
 
         return dsMonAn;
     }
-
-    public ArrayList<MonAnDTO> getTopBanChayTheoKhoangThang(int startMonth, int endMonth) {
-        ArrayList<MonAnDTO> ds = new ArrayList<>();
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            conn = DBConnection.getConnection();
-            String sql = """
-                    SELECT ma.ten_sp AS ten_mon, SUM(cthd.so_luong) AS tong_so_luong
-                        FROM ct_hoa_don cthd
-                        JOIN mon_an ma ON cthd.spd_id = ma.sp_id
-                        JOIN hoa_don hd ON cthd.hd_id = hd.hd_id
-                        WHERE MONTH(hd.thoi_gian) BETWEEN ? AND ?
-                          AND YEAR(hd.thoi_gian) = ?
-                        GROUP BY ma.ten_sp
-                        ORDER BY tong_so_luong DESC
-                        LIMIT 10
-                """;
-
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, startMonth);
-            stmt.setInt(2, endMonth);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                MonAnDTO mon = new MonAnDTO();
-                mon.setTenSp(rs.getString("TenMonAn"));
-                mon.setGiaSp(rs.getInt("SoLuongBan"));
-                ds.add(mon);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Có thể thay bằng log
-        }
-        return ds;
-    }
 }
