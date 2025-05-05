@@ -176,12 +176,6 @@
                 <Property name="toolTipText" type="java.lang.String" value=""/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JToggleButton" name="btnTaiKhoan">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="T&#xe0;i Kho&#x1ea3;n"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JToggleButton" name="btnDangXuat">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&#x110;&#x103;ng xu&#x1ea5;t"/>

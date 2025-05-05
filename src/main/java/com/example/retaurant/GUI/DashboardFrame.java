@@ -72,7 +72,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         buttonGroup.add(btnMonAn);
         buttonGroup.add(btnNguyenLieu);
         buttonGroup.add(btnNhanVien);
-        buttonGroup.add(btnTaiKhoan);
         buttonGroup.add(btnThongKe);
 
         //them sự kiện chuyển trang
@@ -182,7 +181,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnHoaDon = new javax.swing.JToggleButton();
         btnThongKe = new javax.swing.JToggleButton();
         btnKhuyenMai = new javax.swing.JToggleButton();
-        btnTaiKhoan = new javax.swing.JToggleButton();
         btnDangXuat = new javax.swing.JToggleButton();
         currentPanel = new javax.swing.JPanel();
         examplePanel1 = new javax.swing.JPanel();
@@ -262,10 +260,6 @@ public class DashboardFrame extends javax.swing.JFrame {
         btnKhuyenMai.setText("Khuyến mãi");
         btnKhuyenMai.setToolTipText("");
         navigationPanel.add(btnKhuyenMai);
-
-        btnTaiKhoan.setText("Tài Khoản");
-        btnTaiKhoan.setToolTipText("");
-        navigationPanel.add(btnTaiKhoan);
 
         btnDangXuat.setText("Đăng xuất");
         btnDangXuat.addActionListener(new java.awt.event.ActionListener() {
@@ -374,7 +368,6 @@ public class DashboardFrame extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnMonAn;
     private javax.swing.JToggleButton btnNguyenLieu;
     private javax.swing.JToggleButton btnNhanVien;
-    private javax.swing.JToggleButton btnTaiKhoan;
     private javax.swing.JToggleButton btnThongKe;
     private javax.swing.ButtonGroup buttonGroup;
     private java.awt.CardLayout cardLayout;
